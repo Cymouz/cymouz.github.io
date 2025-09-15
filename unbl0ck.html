@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+    <title>Google Classroom</title>
+     <meta charset="UTF-8">
+   <script language="JavaScript">
+   document.addEventListener('contextmenu', event => event.preventDefault())
+</script>
+<script src="https://cdn.gravitec.net/storage/967623066c0085c5f1f0471ca9558098/client.js" async></script>             
+        
+                
+             
+                
+                <script language="Javascript">
+    window.onload=function(){
+    var mobile = (/iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm/i.test(navigator.userAgent.toLowerCase()));
+    if (mobile) {
+        alert("Most games are only playable on keyboard and mouse, some games may work on mobiles");              
+    } else {
+
+    }
+  }
+  </script>
+           
+                
+                
+                
+                
+                
+                
+         <script>  
+  document.addEventListener("DOMContentLoaded", function() {
+  const color1Input = document.getElementById("color1");
+  const color2Input = document.getElementById("color2");
+
+  function setGradient() {
+    const color1 = color1Input.value;
+    const color2 = color2Input.value;
+    document.body.style.background = `linear-gradient(180deg, ${color1} 0%, ${color2} 100%)`;
+    // Store colors in cookies
+    document.cookie = `color1=${color1}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`; // Never expires
+    document.cookie = `color2=${color2}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`; // Never expires
+  }
+
+  function getCookie(name) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split('; ');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].split('=');
+      if (cookie[0] === name) {
+        return cookie[1];
+      }
+    }
+    return null;
+  }
+
+  // Retrieve colors from cookies
+  const storedColor1 = getCookie('color1');
+  const storedColor2 = getCookie('color2');
+  if (storedColor1 && storedColor2) {
+    color1Input.value = storedColor1;
+    color2Input.value = storedColor2;
+    setGradient();
+  }
+
+  color1Input.addEventListener("input", setGradient);
+  color2Input.addEventListener("input", setGradient);
+
+  // Set initial gradient
+  setGradient();
+});
+
+    </script>  
+    
+    
+    
+    
+    
+           <script>
+           //settings
+           
+           document.addEventListener("DOMContentLoaded", function() {
+  const openSettingsBtn = document.getElementById("open-settings-btn");
+  const settingsMenu = document.getElementById("settings-menu");
+  const closeBtn = document.getElementById("close-btn");
+  const color1Input = document.getElementById("color1");
+  const color2Input = document.getElementById("color2");
+
+  function setGradient() {
+    const color1 = color1Input.value;
+    const color2 = color2Input.value;
+    document.body.style.background = `linear-gradient(180deg, ${color1} 0%, ${color2} 100%)`;
+  }
+
+  openSettingsBtn.addEventListener("click", function() {
+    settingsMenu.style.display = "block";
+  });
+
+  closeBtn.addEventListener("click", function() {
+    settingsMenu.style.display = "none";
+  });
+
+  color1Input.addEventListener("input", setGradient);
+  color2Input.addEventListener("input", setGradient);
+
+  // Set initial gradient
+  setGradient();
+});
+
+           
+           
+           </script>
+           
+<style>
+        
+       
+       /*Settings*/
+       
+#settings-menu {
+  position: fixed;
+        display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px); /* Apply the frosted glass effect */
+  background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for opacity */
+  z-index: 999; /* Set a higher z-index value */
+}
+
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-header h2 {
+  margin: 0;
+}
+
+.settings-content {
+  margin-top: 20px;
+}
+
+button {
+  position: fixed;
+  top: 20px; /* Adjust the distance from the top edge */
+  right: 20px; /* Adjust the distance from the right edge */
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
+}
+
+button#close-btn {
+  font-weight: bold;
+}
+
+        /* setup */
+        
+        
+    body {
+
+
+
+
+
+   
+  background: linear-gradient(180deg, rgba(15,0,38,1) 0%, rgba(68,0,116,1) 100%);
+    
+ 
+ 
+ 
+ 
+ font-family: "Helvetica Neue", "Calibri Light", Roboto, sans-serif;
+  color: rgb(178, 190, 181);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+}
+        
+  #line{
+    font-weight: bold;
+    color: rgb(255, 0, 0);
+  }
+      
+        
+        div.container p {
+font-family: Arial;
+font-size: 10px;
+font-style: italic;
+font-weight: normal;
+color: #b5b5b5;
+}
+ 
+        /* link colors */
+        
+  /* unvisited link */
+a:link {
+  color: white;
+}
+
+/* visited link */
+a:visited {
+  color: white;
+}
+
+/* mouse over link */
+a:hover {
+  color: lightgrey;
+}
+
+/* selected link */
+a:active {
+  color: lightblue;
+}
+        
+    
+       
+        
+            /* setup */
+        body {
+            text-align: center;
+            font-family: Tahoma;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 400;
+            margin: 15px 0;
+        }
+
+        h2 {
+            font-weight: normal;
+            font-size: 16px;
+            margin-bottom: 40px;
+            display: block;
+        }
+
+        a {
+            text-decoration: none;
+            display: inline-block;
+            color: #333;
+        }
+
+        .source {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dotted #aaa;
+        }
+
+        h2 a, .source a {
+            text-decoration: underline;
+            color: #417378;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* * * * * * * * *
+             BUTTONS
+        * * * * * * * * */
+        #background {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.25); /* Semi-transparent background color */
+  border-radius: 15px;
+  backdrop-filter: blur(10px); /* Apply the frosted glass effect */
+}
+
+
+        #background a {
+            display: block;
+            padding: 10px 20px;
+            color: #40E0D0;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            
+                border-radius: 15px;
+        }
+
+        #background div {
+            position: absolute;
+            display: block;
+            width: 0%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(64, 224, 208, 0.90);
+            z-index: 1;
+            overflow: hidden;
+            transition: .8s all ease;
+                 border-radius: 15px;
+                
+        }
+
+        #background:hover div {
+            width: 100%;
+                 
+        }
+
+       #background span {
+  position: absolute;
+  color: #4b0082;
+  width: 100%; /* Set width to 100% to center the text */
+  top: 0;
+  left: 0;
+  display: block;
+  text-align: center;
+  padding: 15px 0;
+  	
+                border-radius: 15px;
+}
+      
+        
+    </style>
+              
+              
+         
+  
+  
+  </head>
+  <body>
+  
+  
+  
+  
+  
+  
+   <div id="settings-menu">
+    <div class="settings-header">
+      <h2>Settings</h2>
+      <button id="close-btn">X</button>
+    </div>
+    <div class="settings-content">
+      <label for="color1">First Color:</label>
+      <input type="color" id="color1" value="#0f0026">
+      <br>
+      <label for="color2">Second Color:</label>
+      <input type="color" id="color2" value="#440074">
+    </div>
+  </div>
+  <button id="open-settings-btn">⚙</button>
+  
+  
+  
+  
+  
+  
+  
+  
+    <main>
+        <h1>Stuff that doesn't show up in your history.</h1>  
+        <span id="line">Don't forget to subscribe!</span> <br>
+            
+          
+            
+    
+  <!--     <script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UClm4T3lL7sb0FSg9FBaokDw" data-layout="full" data-theme="dark" data-count="default"></div>
+
+
+
+     <script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCkLMbBk_GVTkfekXeBdDgZg" data-layout="full" data-theme="dark" data-count="default"></div>
+            
+         -->
+            
+            
+     <br> (Push ctrl + F to search)<br>
+          
+
+<div class="container">
+<p>Version 4.20.56</p> <!--^8^1^8^1^8^1^8^1^8^1^8^1^891^8^1^8^1^8^1^8^1^8^1^8^1^8^1^8^1^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^8^-->
+</div>
+            
+             
+            
+    <br><br>Sites
+     <br><br>
+            
+           
+            
+            	
+                	<div id="background">
+                <a href="https://www.myandroid.org/playonline/androidemulator.php"> Android
+                  <div><span>Go</span></div>
+                </a></div><br><br>
+              
+                	<div id="background">
+                <a href="https://animixplay.st"> Animixplay anime 📽
+                  <div><span>Go</span></div>
+                </a></div><br><br>
+
+                	<div id="background">
+                <a href="https://www.bing.com/"> Bing 🔎
+                  <div><span>Go</span></div>
+                </a></div><br><br>
+               
+            	
+            
+              		<div id="background">
+                <a href="https://copilot.microsoft.com/"> ChatGPT but slightly Better 🤖
+                  <div><span>Go</span></div>
+                </a></div><br><br>
+            
+           
+            	    <div id="background">
+ 				 <a href="https://kahoot.club/"> Kahoot Cheats 📜
+    				<div><span>Go</span></div>
+ 				 </a></div><br><br>
+              
+              	<div id="background">
+                <a href="https://jonahkc.github.io/youtube-unblcked/"> YouTube Video Unblock 📽
+                  <div><span>Go</span></div>
+                </a></div><br><br>
+            
+            <div id="background">
+                <a href="https://www.voicy.network/"> Voicy Soundboard 🔊
+                  <div><span>Go</span></div>
+                </a></div><br><br>
+            
+            <br>
+       
+            
+     Games <br><br>
+          
+            
+            
+            <br><strong>A</strong><br>
+            
+
+<div id="background">
+  <a href="https://www.autodraw.com/">AutoDraw ✏
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+             <br><strong>B</strong><br>
+            
+             
+            <div id="background">
+  <a href="https://medv.io/bit-planes/">Bit Planes 🛩
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>C</strong><br>
+            
+            <div id="background">
+  <a href="https://www.onlinegames.io/games/2023/q2/capybara-clicker-pro/index.html">Capybara Clicker 🐾
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            <div id="background">
+  <a href="https://offline-dino-game.firebaseapp.com/">Chrome Dino Game 🦖
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+          <br><strong>D</strong><br>  
+            
+<div id="background">
+  <a href="https://htmlgames.github.io/htmlgames/differences/jump/">Doodle Jump 🕹
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+
+<div id="background">
+  <a href="https://yexex.github.io/ducklife/ducklife1/index.html">Duck Life 1 🦆
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/ducklife/ducklife2/index.html">Duck Life 2 🦆
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/ducklife/ducklife3/index.html">Duck Life 3 🦆
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/ducklife/ducklife4/index.html">Duck Life 4 🦆
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            
+            <br><strong>F</strong><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/fnaf/fnaf-1/index.html">FNaF 1 🐻
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/fnaf/fnaf-2/index.html">FNaF 2 🐻
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/fnaf/fnaf-3/index.html">FNaF 3 🐻
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/fnaf/fnaf-4/index.html">FNaF 4 🐻
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>G</strong><br>
+
+<div id="background">
+  <a href="https://geometrydashlite.io/">Geometry Dash 🎵
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+             <br><strong>H</strong><br>
+            
+            <div id="background">
+  <a href="https://www.nguh.org/tools/hunger_games_simulator">Hunger Games Sim ⚔
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+        
+            
+            
+            <br><strong>J</strong><br>
+
+<div id="background">
+  <a href="http://js-racing.knockknock.jp/">Js Racing 🏎
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            <br><strong>L</strong><br>
+
+<div id="background">
+  <a href="https://lolbeans.io/">Lolbeans.io 🫘
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>M</strong><br>
+
+            
+            
+<div id="background">
+  <a href="https://sd592g.github.io/zj684od4lfg/">Minecraft (1.5.2) 🎮
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+<div id="background">
+  <a href="https://mk48.io/">MK48.io 🛳
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+            <br><strong>N</strong><br>
+            
+            <div id="background">
+  <a href="https://neal.fun">Neal.fun 🕹
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>O</strong><br>
+                   
+     <div id="background">
+  <a href="https://ovo-modloader.github.io/versions/1.4.4b/index.html"> OVO ⚪
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+     <div id="background">
+  <a href="https://ovo-modloader.github.io/versions/2.0.2alpha/index.html"> OVO 2 ⚪
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>P</strong><br>
+            
+     <div id="background">
+  <a href="https://pokemon-infinite-fusion.coderobo.org"> Pokemon Fusion 🐾
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+          
+            
+            <br><strong>R</strong><br>
+
+<div id="background">
+  <a href="https://loserboysonyt.github.io/">Retro Bowl 🏈
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            <div id="background">
+  <a href="https://www.retrogames.cz/index.php"> Retrogames 👾
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://v6p9d9t4.ssl.hwcdn.net/html/565140/index.html">Rocketpult 🚀
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+          
+            
+            <br><strong>S</strong><br>
+            
+<div id="background">
+  <a href="https://sandtris.com/">Sandtris 🕹
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://sandspiel.club/">Sandspiel 🌳
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://shellshock.io">Shell Shockers 🍳
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>           
+            
+<div id="background">
+  <a href="https://yexex.github.io/slope/index.html">Slope 🟢
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+                <div id="background">
+  <a href="https://slowroads.io"> Slowroads.io 🚗
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+<div id="background">
+  <a href="https://www.michaelbromley.co.uk/experiments/css-space-shooter/">Space Shooter 🚀
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+            <div id="background">
+  <a href="https://www.onlinegames.io/games/2021/unity3/stickman-destruction/index.html">Stickman Destruction 💣
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+<div id="background">
+  <a href="https://www.stumbleguys.com/play">Stumble Guys 🏃
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>W</strong><br>
+
+<div id="background">
+  <a href="https://paveldogreat.github.io/WebGL-Fluid-Simulation/">WebGL Fluid simulation 🌊
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+
+<div id="background">
+  <a href="https://lawriecape.co.uk/wiblr/">WibLr 🖼
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+            
+            
+            <br><strong>Y</strong><br>
+
+<div id="background">
+  <a href="https://yexex.github.io/yohoho/index.html">yohoho.io 🏴‍☠
+    <div><span>Play</span></div>
+  </a>
+</div><br><br>
+
+        
+
+
+   
+            Want a game or website added? Email me at <a href="mailto:awesomess22@hotmail.com" target="_blank">awesomess22@hotmail.com
+
+         
+
+    
+    </main>
+  </body>
+</html>

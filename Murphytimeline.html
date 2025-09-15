@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #1e3c72, #2a5298, #7E2196);
+            color: #1d1d1f;
+            line-height: 1.5;
+            padding: 40px;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            animation: fadeInDown 1s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+
+        header p {
+            font-size: 20px;
+            color: #d1d1d6;
+            margin-top: 10px;
+        }
+
+        .timeline {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateX(-50%);
+        }
+
+       .event {
+   display: flex;
+   align-items: center;
+   margin: 40px 0;
+   opacity: 0;
+   transform: translateX(var(--slide-direction, -100px)) scale(0.95);
+}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+.event {
+    display: flex;
+    align-items: center;
+    margin: 40px 0;
+    opacity: 0; /* Initial opacity is 0 (hidden) */
+    transform: translateX(var(--slide-direction, -100px)) scale(0.95); /* Initial transform for off-screen */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition for both opacity and transform */
+}
+
+.event.animate {
+    opacity: 1; /* Make the element visible when in view */
+    transform: translateX(0) scale(1); /* Move it to its normal position */
+}
+
+.event:nth-child(odd) {
+    --slide-direction: 100px; /* Right slide for odd items */
+    flex-direction: row-reverse;
+}
+
+.event:nth-child(odd) .content {
+    text-align: right;
+    padding-right: 40px;
+}
+
+.event:nth-child(even) {
+    --slide-direction: -100px; /* Left slide for even items */
+}
+
+.event:nth-child(even) .content {
+    padding-left: 40px;
+}
+
+/* Optional: Reset transform and opacity when not animated */
+.event:not(.animate) {
+    opacity: 0; /* Hidden when off-screen */
+    transform: translateX(var(--slide-direction, -100px)) scale(0.95); /* Reset to off-screen position */
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(var(--slide-direction)) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+        .event:nth-child(odd) {
+            flex-direction: row-reverse;
+            --slide-direction: 100px;
+        }
+
+        .event:nth-child(odd) .content {
+            text-align: right;
+            padding-right: 40px;
+        }
+
+        .event:nth-child(even) .content {
+            padding-left: 40px;
+        }
+
+       .content {
+            width: 45%;
+            background: rgba(99, 99, 99, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+            
+            
+              .image-style {
+      width: 100%;
+      height: auto;
+      border: 25% solid #000; /* 25% border around the image */
+      border-radius: 8px; /* Optional: rounds the corners of the image */
+      object-fit: cover; /* Ensures the image fills the container properly */
+  }
+
+        .content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .content .year {
+            font-size: 18px;
+            color: #d1d1d6;
+            margin: 5px 0;
+        }
+
+        .content p {
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            background: #00ddeb;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .event:hover .dot {
+            transform: translateX(-50%) scale(1.5);
+        }
+
+        .illustration {
+            font-style: italic;
+            color: #b0b0b5;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 14px;
+            color: #d1d1d6;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(var(--slide-direction)) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .event {
+                flex-direction: column;
+                align-items: flex-start;
+                margin: 20px 0;
+                transform: translateX(0) scale(0.95);
+                --slide-direction: 0;
+            }
+
+            .event:nth-child(odd), .event:nth-child(even) .content {
+                text-align: left;
+                padding-left: 40px;
+                width: 100%;
+            }
+
+            .dot {
+                left: 20px;
+            }
+        }
+            
+            
+            
+         
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <header>
+        <h1>Historical Timeline</h1>
+   <br><br>
+    </header>
+
+    <div class="timeline">
+        <div class="event" style="--order: 1;">
+            <div class="content">
+                <h2>Trevithick Invents Locomotive</h2>
+                <div class="year">1804</div>
+                <p>Richard Trevithick’s steam locomotive runs on an industrial rail-line in Britain, marking an early milestone in the Industrial Revolution, enhancing transportation.</p>
+                <img src="https://museum.wales/media/46593/586.png" class="image-style">
+            </div>
+            <div class="dot"></div>
+        </div>
+
+       <div class="event" style="--order: 2;">
+    <div class="content">
+        <h2>Fulton Builds Steamboat</h2>
+        <div class="year">1807</div>
+        <p>Robert Fulton builds the Clermont, the first paddle-wheel steamboat, improving transportation across U.S. waterways, aiding industrialization.</p>
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjos1wnCls2uqWw5DDkGSjWR7HVBOE2SY-Bhoj09iNLmHdEqvh90KOlNR9ICoV24Ql7V3xLeBwoEV5uKizfav39SHk4NSj-pc_PKVJ5OGskX7ujPpnDJO4YyEJs9fcvrtqiC-v3s7Tu8Zg/s1600/024-North+River+Steamboat.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 3;">
+    <div class="content">
+        <h2>Congress of Vienna Meets</h2>
+        <div class="year">1814</div>
+        <p>Congress of Vienna begins to restore the old order after Napoleon’s defeat, as European powers redraw the map to maintain a balance of power.</p>
+        <img src="https://cdn.britannica.com/29/175629-050-11A7121B/Congress-of-Vienna-watercolor-August-Friedrich-Andreas-Campe.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 4;">
+    <div class="content">
+        <h2>Shelley Writes Frankenstein</h2>
+        <div class="year">1816</div>
+        <p>Mary Shelley writes Frankenstein, a key romantic work reflecting fears of industrialization and scientific advances.</p>
+        <img src="https://recollections.biz/blog/wp-content/uploads/2018/10/mary-shelley-featured-image-800.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 5;">
+    <div class="content">
+        <h2>Mexico Gains Independence</h2>
+        <div class="year">1821</div>
+        <p>Mexico declares independence from Spain, part of a wave of nationalist movements in the Americas.</p>
+        <img src="https://cdn.thecollector.com/wp-content/uploads/2022/11/mexican-war-of-independence.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 6;">
+    <div class="content">
+        <h2>Liberals Overthrow Charles X</h2>
+        <div class="year">1830</div>
+        <p>Liberals overthrow Charles X in France, establishing a constitutional monarchy, driven by liberalism and nationalism.</p>
+        <img src="https://cdn.britannica.com/38/187138-050-E88A0A56/Louis-Philippe-carriages-Mob-residence-Chateau-dEu-February-24-1848.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 7;">
+    <div class="content">
+        <h2>Great Reform Act Passed</h2>
+        <div class="year">1832</div>
+        <p>Great Reform Act in Britain expands voting rights to the industrial middle class, strengthening liberalism and stabilizing Britain politically.</p>
+        <img src="https://www.nationalarchives.gov.uk/wp-content/uploads/2022/07/The_School_of_Reform_BM_18680808.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 8;">
+    <div class="content">
+        <h2>Opium War Starts</h2>
+        <div class="year">1839</div>
+        <p>Opium War begins in China, signaling Western imperial pressure on East Asia.</p>
+        <img src="https://cdn.thecollector.com/wp-content/uploads/2023/10/how-did-opium-wars-impact-china.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 9;">
+    <div class="content">
+        <h2>Revolutions Sweep Europe</h2>
+        <div class="year">1848</div>
+        <p>Revolutions erupt across Europe, starting with the overthrow of Louis-Philippe in France, as liberals and nationalists challenge conservative regimes.</p>
+        <img src="https://schoolhistory.co.uk/wp-content/uploads/2019/10/The-revolutions-of-1820_5.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 10;">
+    <div class="content">
+        <h2>Great Exhibition Opens</h2>
+        <div class="year">1851</div>
+        <p>Great Exhibition opens in London’s Crystal Palace, showcasing industrial progress and Britain’s global dominance.</p>
+        <img src="https://www.historic-uk.com/wp-content/uploads/2015/03/Crystal_Palace_-_Queen_Victoria_opens_the_Great_Exhibition.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 11;">
+    <div class="content">
+        <h2>Louis-Napoleon Becomes Emperor</h2>
+        <div class="year">1852</div>
+        <p>Louis-Napoleon becomes Napoleon III, establishing the Second Empire in France, marking a return to authoritarian rule.</p>
+        <img src="https://snippetsofparis.com/wp-content/uploads/2022/03/Napoleon_III-Winterhalter-Billet_mg_6161.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 12;">
+    <div class="content">
+        <h2>Treaty of Paris Signed</h2>
+        <div class="year">1856</div>
+        <p>Treaty of Paris ends the Crimean War, weakening the Concert of Europe and opening the door to Italian and German unification.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/Treaty_of_Paris_by_Benjamin_West_1783.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 13;">
+    <div class="content">
+        <h2>Darwin Publishes Origin</h2>
+        <div class="year">1859</div>
+        <p>Charles Darwin publishes On the Origin of Species, introducing natural selection and challenging traditional views of humanity.</p>
+        <img src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?crop=1xw:1.0xh;center,top&resize=640:*" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 14;">
+    <div class="content">
+        <h2>Garibaldi Conquers Sicily</h2>
+        <div class="year">1860</div>
+        <p>Giuseppe Garibaldi conquers Sicily and Naples for Italian unification, a key step toward a unified Italy under Victor Emmanuel II.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Partenza_da_Quarto.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 15;">
+    <div class="content">
+        <h2>Alexander II Frees Serfs</h2>
+        <div class="year">1861</div>
+        <p>Czar Alexander II emancipates Russian serfs, attempting reform but failing to fully modernize Russia.</p>
+        <img src="https://usrussiarelations.org/media/63ec2bd081a947fabbca0e39016726b0_900.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 16;">
+    <div class="content">
+        <h2>Civil War Begins</h2>
+        <div class="year">1861</div>
+        <p>American Civil War begins, a struggle over slavery and national unity.</p>
+        <img src="https://assets.editorial.aetnd.com/uploads/2009/10/civil-war-gettyimages-3427284.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 17;">
+    <div class="content">
+        <h2>Prussia Defeats Austria</h2>
+        <div class="year">1866</div>
+        <p>Prussia defeats Austria in the Austro-Prussian War, gaining Venetia for Italy, advancing German and Italian unification.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Schlacht-bei-koeniggraetz-von-georg-bleibtreu.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 18;">
+    <div class="content">
+        <h2>Suez Canal Completed</h2>
+        <div class="year">1869</div>
+        <p>Suez Canal completed, enhancing global trade and Western imperialism.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Aerial_view_of_city_of_Suez_and_Suez_Canal.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 19;">
+    <div class="content">
+        <h2>Franco-Prussian War Starts</h2>
+        <div class="year">1870</div>
+        <p>Franco-Prussian War begins, leading to German unification as Bismarck uses war to unite Germany under William I.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/A_v_Werner_-_Kaiserproklamation_am_18_Januar_1871_%283._Fassung_1885%29.jpg/1200px-A_v_Werner_-_Kaiserproklamation_am_18_Januar_1871_%283._Fassung_1885%29.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 20;">
+    <div class="content">
+        <h2>William I Becomes Kaiser</h2>
+        <div class="year">1871</div>
+        <p>William I proclaimed Kaiser of the Second German Empire, completing German unification at Versailles.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Wilhelm1.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 21;">
+    <div class="content">
+        <h2>Bell Invents Telephone</h2>
+        <div class="year">1876</div>
+        <p>Alexander Graham Bell invents the telephone, revolutionizing communication during the Second Industrial Revolution.</p>
+        <img src="https://assets.editorial.aetnd.com/uploads/2012/05/this-day-in-history-03-07-1876-alexander-graham-bell-patents-the-telephone.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 22;">
+    <div class="content">
+        <h2>Alexander II Assassinated</h2>
+        <div class="year">1881</div>
+        <p>Alexander II assassinated; Alexander III turns to repression, ending reform efforts in Russia.</p>
+        <img src="https://ichef.bbci.co.uk/images/ic/1200x675/p01gn2t5.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 23;">
+    <div class="content">
+        <h2>Dreyfus Affair Begins</h2>
+        <div class="year">1894</div>
+        <p>Dreyfus Affair begins in France, fueling anti-Semitism, highlighting social tensions and inspiring Zionism.</p>
+        <img src="https://www.famous-trials.com/images/ftrials/Dreyfus/rennesctmartialrennesA.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 24;">
+    <div class="content">
+        <h2>Marconi Sends Radio Waves</h2>
+        <div class="year">1901</div>
+        <p>Guglielmo Marconi sends the first radio waves across the Atlantic, advancing global communication technology.</p>
+        <img src="https://c.files.bbci.co.uk/6E48/production/_124423282_gettyimages-90731570.jpg" class="image-style">
+    </div>
+    <div class="dot"></div>
+</div>
+
+<div class="event" style="--order: 25;">
+    <div class="content">
+        <h2>Bloody Sunday Sparks Unrest</h2>
+        <div class="year">1905</div>
+        <p>Bloody Sunday in St. Petersburg sparks Russian unrest, leading to the creation of the Duma under Nicholas II.</p>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRHfeY92hzF9TXfKdwpDJBoxD2bpqLr1OZ4w&s" class="image-style">
+    </div>
+        
+        
+        
+
+    <div class="dot"></div>
+</div>
+
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Drake Lousberg. All rights reserved.</p>
+    </footer>
+<script>
+
+ document.addEventListener("DOMContentLoaded", function() {
+    // Create an Intersection Observer
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            // If the element is in view, add the 'animate' class
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+            } else {
+                // Reset the animation and opacity when the element is off-screen
+                entry.target.classList.remove('animate');
+            }
+        });
+    }, {
+        threshold: 0.5 // Adjust threshold as needed
+    });
+
+    // Target all .event elements
+    const events = document.querySelectorAll('.event');
+    events.forEach(event => observer.observe(event));
+});
+
+
+    // Particles animation (no changes needed here)
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particlesArray = [];
+    const numberOfParticles = 100;
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 5 + 1;
+            this.speedX = Math.random() * 1 - 0.5;
+            this.speedY = Math.random() * 1 - 0.5;
+        }
+        update(mouseX, mouseY) {
+            const dx = mouseX - this.x;
+            const dy = mouseY - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const force = -distance / 100;
+            if (distance < 100) {
+                this.x -= (dx / distance) * force;
+                this.y -= (dy / distance) * force;
+            }
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+            if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+        }
+        draw() {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        particlesArray = [];
+        for (let i = 0; i < numberOfParticles; i++) {
+            particlesArray.push(new Particle());
+        }
+    }
+
+    let mouseX = 0;
+    let mouseY = 0;
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.x;
+        mouseY = e.y;
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particlesArray.length; i++) {
+            particlesArray[i].update(mouseX, mouseY);
+            particlesArray[i].draw();
+        }
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
+    });
+
+
+</script>
+
+</body>
+</html>
