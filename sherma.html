@@ -5,18 +5,17 @@
   <title>Sherma Song Autoplay</title>
 </head>
 <body>
-  <audio id="shermaAudio" src="sherma-song.mp3" loop></audio>
+  <audio id="shermaAudio" src="sherma-song.mp3" loop controls style="display:block;margin:20px auto;"></audio>
+  <button id="playBtn" style="display:block;margin:20px auto;padding:10px 20px;font-size:16px;">Play Sherma Song</button>
   <script>
-    // Try to autoplay after user interaction
-    function playAudio() {
+    document.getElementById('playBtn').addEventListener('click', function() {
       var audio = document.getElementById('shermaAudio');
-      audio.play();
-      document.removeEventListener('click', playAudio);
-    }
-    document.addEventListener('click', playAudio);
-
-    // Optionally, show a message to prompt user interaction
-    document.body.innerHTML += '<div style="position:fixed;top:0;left:0;width:100%;background:#ffc;padding:10px;text-align:center;z-index:9999;">Click anywhere to play the song!</div>';
+      if (audio) {
+        audio.play().catch(function(error) {
+          console.log('Audio play failed:', error);
+        });
+      }
+    });
   </script>
 </body>
 </html>
