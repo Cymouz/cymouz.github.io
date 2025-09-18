@@ -1,5 +1,22 @@
-<audio autoplay loop>
-  <source src="cymouz.qzz.io\sherma-song.mp3" type="audio/mpeg">
-</audio>   
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sherma Song Autoplay</title>
+</head>
+<body>
+  <audio id="shermaAudio" src="sherma-song.mp3" loop></audio>
+  <script>
+    // Try to autoplay after user interaction
+    function playAudio() {
+      var audio = document.getElementById('shermaAudio');
+      audio.play();
+      document.removeEventListener('click', playAudio);
+    }
+    document.addEventListener('click', playAudio);
 
-<iframe src="cymouz.github.io\sherma-song.mp3"> </iframe>
+    // Optionally, show a message to prompt user interaction
+    document.body.innerHTML += '<div style="position:fixed;top:0;left:0;width:100%;background:#ffc;padding:10px;text-align:center;z-index:9999;">Click anywhere to play the song!</div>';
+  </script>
+</body>
+</html>
