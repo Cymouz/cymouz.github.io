@@ -3,26 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>Sherma Song Autoplay</title>
+  <style>
+    body {
+      min-height:100vh;
+      margin:0;
+      background:linear-gradient(180deg,#222 0%,#111 80%,#000 100%);
+      color:#fff;
+      font-family:sans-serif;
+    }
+  </style>
 </head>
 <body>
   <audio id="shermaAudio" src="sherma-song.mp3" loop style="display:none;"></audio>
-  <button id="playBtn" style="display:none;margin:20px auto;padding:10px 20px;font-size:16px;">Enable Audio</button>
+  <div id="gifContainer" style="position:relative;width:320px;margin:80px auto 0 auto;cursor:pointer;display:block;">
+    <img id="shermaGif" src="Cymouz.github.io/sherma.gif" style="width:320px;filter:grayscale(100%);opacity:0.7;" alt="Sherma GIF" />
+    <div id="speechBubble" style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:12px 24px;border-radius:24px;font-size:22px;box-shadow:0 4px 16px #000;white-space:nowrap;">Click me!</div>
+  </div>
   <script>
     window.addEventListener('DOMContentLoaded', function() {
       var audio = document.getElementById('shermaAudio');
-      var playBtn = document.getElementById('playBtn');
-      audio.muted = false;
-      var playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(function(error) {
-          // Autoplay was blocked
-          playBtn.style.display = 'block';
-        });
-      }
-      playBtn.addEventListener('click', function() {
+      var gif = document.getElementById('shermaGif');
+      var speechBubble = document.getElementById('speechBubble');
+      var gifContainer = document.getElementById('gifContainer');
+      // Pause GIF by showing grayscale and opacity
+      gif.style.filter = 'grayscale(100%)';
+      gif.style.opacity = '0.7';
+      speechBubble.style.display = 'block';
+      gifContainer.addEventListener('click', function() {
         audio.muted = false;
         audio.play();
-        playBtn.style.display = 'none';
+        // Play GIF by removing grayscale and opacity
+        gif.style.filter = 'none';
+        gif.style.opacity = '1';
+        speechBubble.style.display = 'none';
       });
     });
   </script>
