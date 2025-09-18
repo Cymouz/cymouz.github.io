@@ -6,15 +6,24 @@
 </head>
 <body>
   <audio id="shermaAudio" src="sherma-song.mp3" loop controls style="display:block;margin:20px auto;"></audio>
-  <button id="playBtn" style="display:block;margin:20px auto;padding:10px 20px;font-size:16px;">Play Sherma Song</button>
+  <button id="playBtn" style="display:none;margin:20px auto;padding:10px 20px;font-size:16px;">Enable Audio</button>
   <script>
-    document.getElementById('playBtn').addEventListener('click', function() {
+    window.addEventListener('DOMContentLoaded', function() {
       var audio = document.getElementById('shermaAudio');
-      if (audio) {
-        audio.play().catch(function(error) {
-          console.log('Audio play failed:', error);
+      var playBtn = document.getElementById('playBtn');
+      audio.muted = false;
+      var playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(function(error) {
+          // Autoplay was blocked
+          playBtn.style.display = 'block';
         });
       }
+      playBtn.addEventListener('click', function() {
+        audio.muted = false;
+        audio.play();
+        playBtn.style.display = 'none';
+      });
     });
   </script>
 </body>
