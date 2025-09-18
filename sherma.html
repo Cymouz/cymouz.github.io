@@ -17,7 +17,7 @@
 <body>
   <audio id="shermaAudio" src="sherma-song.mp3" loop style="display:none;"></audio>
   <div id="gifContainer" style="position:relative;width:320px;margin:80px auto 0 auto;cursor:pointer;display:block;">
-  <img id="shermaImg" src="sherma.png" style="width:320px;height:320px;object-fit:cover;display:block;" alt="Sherma Still" />
+  <img id="shermaImg" src="sherma.png" style="display:block;max-width:100%;height:auto;" alt="Sherma Still" />
     <div id="speechBubble" style="position:absolute;top:-90px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:16px 32px;border-radius:32px;font-size:22px;box-shadow:0 4px 16px #000;white-space:nowrap;">
       Click me!
       <svg width="40" height="30" style="position:absolute;left:50%;top:100%;transform:translateX(-50%);" viewBox="0 0 40 30"><polygon points="0,0 40,0 20,30" style="fill:#222;"/></svg>
@@ -33,12 +33,16 @@
       gifContainer.addEventListener('click', function() {
         audio.muted = false;
         audio.play();
-        // Swap static image for animated GIF and keep size consistent
-        img.src = 'sherma.gif';
-        img.style.width = '320px';
-        img.style.height = '320px';
-        img.style.objectFit = 'cover';
-        speechBubble.style.display = 'none';
+        // Swap static image for animated GIF and match PNG size
+        var tempImg = new Image();
+        tempImg.src = 'sherma.png';
+        tempImg.onload = function() {
+          img.src = 'sherma.gif';
+          img.style.width = tempImg.width + 'px';
+          img.style.height = tempImg.height + 'px';
+          img.style.objectFit = 'contain';
+          speechBubble.style.display = 'none';
+        };
       });
     });
   </script>
