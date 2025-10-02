@@ -180,7 +180,7 @@
     // Countdown + redirect after 2.5s
     const targetURL = "https://cymouz.qzz.io/photoresources";
     const countEl = document.getElementById('count');
-    let remaining = 2.5;
+    let remaining = 10;
     const tick = setInterval(() => {
       remaining = Math.max(0, +(remaining - 0.1).toFixed(1));
       countEl.textContent = remaining.toFixed(1);
