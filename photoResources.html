@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photography Resources</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+      background-size: 400% 400%; /* for animated gradient */
+      animation: bgShift 20s ease infinite;
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 40px;
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 
+        -1px -1px 0 #fff,  
+         1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+         1px  1px 0 #fff; /* white outline */
+      animation: titleShift 15s ease infinite, glow 3s infinite alternate;
+    }
+
+    @keyframes titleShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 10px rgba(255,255,255,0.3); }
+      to   { text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 25px rgba(255,255,255,0.8); }
+    }
+
+    .button-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .tilt-btn {
+      position: relative;
+      background: #222;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      font-size: 1.1rem;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      overflow: hidden;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .tilt-btn::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+        rgba(255,255,255,0.4) 0%, 
+        rgba(255,255,255,0.15) 30%, 
+        rgba(255,255,255,0) 70%);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .tilt-btn:hover::before {
+      opacity: 1;
+    }
+
+    /* Click effect */
+    .tilt-btn:active {
+      transform: scale(0.95) rotateX(0) rotateY(0);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+      transition: transform 0.05s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="title">Photography Resources</h1>
+
+  <div class="button-grid">
+    <a href="https://www.rei.com/learn/expert-advice/photo-editing-basics.html" target="_blank" rel="noopener noreferrer" class="tilt-btn">🛠️ Editing Basics</a>
+    <a href="https://capturetheatlas.com/photography/photography-guides/" target="_blank" rel="noopener noreferrer" class="tilt-btn">🌍 Guides</a>
+    <a href="https://lightroom.adobe.com/" target="_blank" rel="noopener noreferrer" class="tilt-btn">💡 Lightroom</a>
+    <a href="https://digital-photography-school.com/total-beginners-guide-to-lightroom-step-by-step/" target="_blank" rel="noopener noreferrer" class="tilt-btn">📖 Beginner’s Lightroom Guide</a>
+  </div>
+
+  <script>
+    // Safer color palette (no overly bright/neon colors)
+    const colors = [
+      "#4e9ac7", "#243b55", "#6a85b6", "#bac8e0",
+      "#667db6", "#0082c8", "#2c5364", "#203a43",
+      "#3a6073", "#16222a", "#485563", "#29323c"
+    ];
+
+    function randomGradient() {
+      const angle = Math.floor(Math.random() * 360);
+      const color1 = colors[Math.floor(Math.random() * colors.length)];
+      const color2 = colors[Math.floor(Math.random() * colors.length)];
+      return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+    }
+
+    // Apply random background gradient
+    document.body.style.background = randomGradient();
+
+    // Apply random gradient to title text
+    const title = document.getElementById("title");
+    title.style.background = randomGradient();
+    title.style.webkitBackgroundClip = "text";
+    title.style.webkitTextFillColor = "transparent";
+
+    // Tilt + shine effect
+    const buttons = document.querySelectorAll('.tilt-btn');
+    const maxTilt = 15;
+
+    buttons.forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const normX = (x / rect.width) * 2 - 1;
+        const normY = (y / rect.height) * 2 - 1;
+
+        const rotateX = Math.max(-1, Math.min(1, normY)) * -maxTilt;
+        const rotateY = Math.max(-1, Math.min(1, normX)) * maxTilt;
+
+        btn.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+        btn.style.setProperty('--x', `${x}px`);
+        btn.style.setProperty('--y', `${y}px`);
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'rotateX(0) rotateY(0)';
+      });
+    });
+  </script>
+</body>
+</html>
