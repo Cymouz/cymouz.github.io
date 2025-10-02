@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Error</title>
+  <style>
+    /* Layout */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+      background-size: 400% 400%;
+      animation: bgShift 20s ease infinite;
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Title with random gradient + white outline + glow */
+    h1 {
+      font-size: 3rem;
+      margin: 0 20px 16px;
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow:
+        -1px -1px 0 #fff,
+         1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+         1px  1px 0 #fff;
+      animation: titleShift 15s ease infinite, glow 3s infinite alternate;
+    }
+
+    @keyframes titleShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 10px rgba(255,255,255,0.3); }
+      to   { text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 25px rgba(255,255,255,0.8); }
+    }
+
+    /* Message block */
+    .message {
+      font-size: 1.3rem;
+      opacity: 0.95;
+      margin-bottom: 24px;
+    }
+
+    /* Redirect status */
+    .status {
+      font-size: 1rem;
+      opacity: 0.85;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      animation: pulse 1s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.6); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.7; }
+    }
+
+    /* Optional manual button with tilt + shine for consistency */
+    .tilt-btn {
+      position: relative;
+      background: #222;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      overflow: hidden;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 18px;
+    }
+    .tilt-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%),
+        rgba(255,255,255,0.4) 0%,
+        rgba(255,255,255,0.15) 30%,
+        rgba(255,255,255,0) 70%);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .tilt-btn:hover::before { opacity: 1; }
+    .tilt-btn:active {
+      transform: scale(0.95) rotateX(0) rotateY(0);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+      transition: transform 0.05s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">You spelt the URL wrong</h1>
+
+  <div class="message">Redirecting to the correct page…</div>
+
+  <div class="status" aria-live="polite" aria-atomic="true">
+    <span id="count">2.5</span>s
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+  </div>
+
+  <!-- Optional manual redirect button (keeps style consistent) -->
+  <a id="manual" class="tilt-btn" href="https://cymouz.qzz.io/photoresources">⚡ Go now</a>
+
+  <script>
+    // Safe, readable palette (avoids neon/over-bright tones)
+    const colors = [
+      "#4e9ac7", "#243b55", "#6a85b6", "#bac8e0",
+      "#667db6", "#0082c8", "#2c5364", "#203a43",
+      "#3a6073", "#16222a", "#485563", "#29323c"
+    ];
+
+    function randomGradient() {
+      const angle = Math.floor(Math.random() * 360);
+      const c1 = colors[Math.floor(Math.random() * colors.length)];
+      const c2 = colors[Math.floor(Math.random() * colors.length)];
+      return `linear-gradient(${angle}deg, ${c1}, ${c2})`;
+    }
+
+    // Apply animated, safe gradients
+    document.body.style.background = randomGradient();
+
+    const title = document.getElementById("title");
+    title.style.background = randomGradient();
+    title.style.webkitBackgroundClip = "text";
+    title.style.webkitTextFillColor = "transparent";
+
+    // Smooth tilt + shine for the optional button
+    const manualBtn = document.getElementById('manual');
+    const maxTilt = 12;
+    manualBtn.addEventListener('mousemove', (e) => {
+      const rect = manualBtn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const normX = (x / rect.width) * 2 - 1;
+      const normY = (y / rect.height) * 2 - 1;
+      const rotateX = Math.max(-1, Math.min(1, normY)) * -maxTilt;
+      const rotateY = Math.max(-1, Math.min(1, normX)) * maxTilt;
+      manualBtn.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      manualBtn.style.setProperty('--x', `${x}px`);
+      manualBtn.style.setProperty('--y', `${y}px`);
+    });
+    manualBtn.addEventListener('mouseleave', () => {
+      manualBtn.style.transform = 'rotateX(0) rotateY(0)';
+    });
+
+    // Countdown + redirect after 2.5s
+    const targetURL = "https://cymouz.qzz.io/photoresources";
+    const countEl = document.getElementById('count');
+    let remaining = 2.5;
+    const tick = setInterval(() => {
+      remaining = Math.max(0, +(remaining - 0.1).toFixed(1));
+      countEl.textContent = remaining.toFixed(1);
+      if (remaining <= 0) {
+        clearInterval(tick);
+        window.location.replace(targetURL);
+      }
+    }, 100);
+
+    // Fallback: direct redirect in case interval is throttled
+    setTimeout(() => window.location.replace(targetURL), 2500);
+  </script>
+  <noscript>
+    <style>
+      .status { display: none; }
+    </style>
+    <div class="message">JavaScript is required to redirect automatically.</div>
+    <a class="tilt-btn" href="https://cymouz.qzz.io/photoresources">Go to the correct page</a>
+  </noscript>
+</body>
+</html>
