@@ -24,37 +24,39 @@
       /* Background gradient and animation will be set by JavaScript */
     }
 
-    @keyframes move {
+    @keyframes flow {
       0% { 
-        transform: translate(0, 0) scale(1);
+        transform: translate(0, 0) rotate(0deg);
       }
-      33% {
-        transform: translate(30px, 50px) scale(1.1);
+      25% {
+        transform: translate(100px, -150px) rotate(90deg);
       }
-      66% {
-        transform: translate(-25px, 10px) scale(0.9);
+      50% {
+        transform: translate(200px, 50px) rotate(180deg);
+      }
+      75% {
+        transform: translate(-100px, 100px) rotate(270deg);
       }
       100% {
-        transform: translate(0, 0) scale(1);
+        transform: translate(0, 0) rotate(360deg);
       }
     }
 
     .gradient-blob {
       position: fixed;
-      width: 75vmax;
-      height: 75vmax;
+      width: 100vmax;
+      height: 100vmax;
       border-radius: 50%;
-      filter: blur(60px);
+      filter: blur(80px);
       will-change: transform;
       mix-blend-mode: screen;
-      transition: transform 0.3s ease;
-      opacity: 0.7;
+      opacity: 0.6;
       z-index: -1;
-      animation-name: move;
-      animation-duration: 25s;
-      animation-timing-function: ease-in-out;
+      animation-name: flow;
+      animation-duration: 35s;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       animation-iteration-count: infinite;
-      animation-direction: alternate;
+      animation-direction: normal;
     }
 
     h1 {
@@ -160,32 +162,30 @@
       const blob = document.createElement('div');
       blob.className = 'gradient-blob';
       
-      // Wider position range for better coverage
-      blob.style.left = `${Math.random() * 100 - 25}%`;
-      blob.style.top = `${Math.random() * 100 - 25}%`;
+      // Position blobs with wider range to allow movement off-screen
+      blob.style.left = `${Math.random() * 200 - 50}%`;
+      blob.style.top = `${Math.random() * 200 - 50}%`;
       
-      // Create smoother gradients with multiple color stops
+      // Create smooth, flowing gradients
       const color1 = getRandomColor();
       const color2 = getRandomColor();
       const color3 = getRandomColor();
       blob.style.background = `
         radial-gradient(
-          circle at center,
+          circle at 30% 70%,
           ${color1} 0%,
-          ${color2} 50%,
+          ${color2} 45%,
           ${color3} 100%
         )
       `;
       
-      // Randomize animation properties
-      const duration = 25 + Math.random() * 20; // Slower for smoother movement
-      const delay = -Math.random() * 15;
-      const direction = Math.random() > 0.5 ? 'alternate' : 'alternate-reverse';
+      // Randomize animation for flowing effect
+      const duration = 35 + Math.random() * 40; // Longer duration for smoother flow
+      const delay = -Math.random() * 35; // More varied delays
       
-      // Apply animation with specific properties
+      // Apply animation properties
       blob.style.animationDuration = `${duration}s`;
       blob.style.animationDelay = `${delay}s`;
-      blob.style.animationDirection = direction;
       
       return blob;
     }
@@ -193,16 +193,16 @@
     // Add multiple blobs
     const blobContainer = document.createElement('div');
     blobContainer.style.position = 'fixed';
-    blobContainer.style.width = '100%';
-    blobContainer.style.height = '100%';
-    blobContainer.style.top = '0';
-    blobContainer.style.left = '0';
+    blobContainer.style.width = '200%';
+    blobContainer.style.height = '200%';
+    blobContainer.style.top = '-50%';
+    blobContainer.style.left = '-50%';
     blobContainer.style.overflow = 'hidden';
     blobContainer.style.zIndex = '-1';
-    blobContainer.style.filter = 'blur(40px)'; // Additional container blur for smoother blending
+    blobContainer.style.filter = 'blur(60px)'; // Increased blur for smoother blending
 
-    // Create and add more blobs for better coverage
-    for (let i = 0; i < 8; i++) {
+    // Create more blobs for fuller coverage
+    for (let i = 0; i < 12; i++) {
       blobContainer.appendChild(createBlob());
     }
 
