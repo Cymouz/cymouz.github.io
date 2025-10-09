@@ -25,8 +25,9 @@
     }
 
     @keyframes bgShift {
-      0% { background-position: 0% 0%; }
-      100% { background-position: 100% 100%; }
+      0% { background-position: 0 0; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 200% 200%; }
     }
 
     h1 {
@@ -124,31 +125,30 @@
       return `hsl(${h}, ${s}%, ${l}%)`;
     }
 
-    // Create a seamless gradient by ensuring first and last colors match
-    const baseColors = [];
-    for (let i = 0; i < 5; i++) { // Generate 5 base colors
-      baseColors.push(getRandomColor());
-    }
+    // Generate random angle between 0 and 360 degrees
+    const angle = Math.floor(Math.random() * 360);
     
-    // Create color stops with interpolated positions for smoother transition
-    const colorStops = [];
-    baseColors.forEach((color, i) => {
-      const position = (i * 25); // Spread colors evenly
-      colorStops.push(`${color} ${position}%`);
-      
-      // Add an interpolated color stop between each main color
-      if (i < baseColors.length - 1) {
-        colorStops.push(`${color} ${position + 12.5}%`);
-      }
-    });
+    // Create colors array with the first color repeated at the end
+    const firstColor = getRandomColor();
+    const colors = [
+      firstColor,
+      getRandomColor(),
+      getRandomColor(),
+      getRandomColor(),
+      firstColor // Repeat first color to ensure seamless loop
+    ];
     
-    // Repeat the first color at the end for seamless wrapping
-    colorStops.push(`${baseColors[0]} 100%`);
+    // Create gradient string with precise color stops
+    const gradient = colors.map((color, index) => {
+      // Calculate percentage for this color stop
+      const percent = (index / (colors.length - 1)) * 100;
+      return `${color} ${percent}%`;
+    }).join(', ');
     
-    // Apply the animated gradient with smooth transitions
-    document.body.style.background = `linear-gradient(135deg, ${colorStops.join(', ')})`;
-    document.body.style.backgroundSize = '200% 200%';
-    document.body.style.animation = 'bgShift 15s linear infinite';
+    // Apply the animated gradient with random angle
+    document.body.style.background = `linear-gradient(${angle}deg, ${gradient})`;
+    document.body.style.backgroundSize = '400% 400%';
+    document.body.style.animation = 'bgShift 20s linear infinite';
 
     // Apply random gradient to title text
     const title = document.getElementById("title");
