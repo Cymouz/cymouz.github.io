@@ -124,16 +124,31 @@
       return `hsl(${h}, ${s}%, ${l}%)`;
     }
 
-    // Create random gradient with multiple color stops
-    const colorStops = [];
-    for (let i = 0; i < 6; i++) { // Generate 6 random colors
-      colorStops.push(getRandomColor());
+    // Create a seamless gradient by ensuring first and last colors match
+    const baseColors = [];
+    for (let i = 0; i < 5; i++) { // Generate 5 base colors
+      baseColors.push(getRandomColor());
     }
     
-    // Apply the animated gradient with random colors
-    document.body.style.background = `linear-gradient(-45deg, ${colorStops.join(', ')})`;
-    document.body.style.backgroundSize = '400% 400%';
-    document.body.style.animation = 'bgShift 20s ease infinite';
+    // Create color stops with interpolated positions for smoother transition
+    const colorStops = [];
+    baseColors.forEach((color, i) => {
+      const position = (i * 25); // Spread colors evenly
+      colorStops.push(`${color} ${position}%`);
+      
+      // Add an interpolated color stop between each main color
+      if (i < baseColors.length - 1) {
+        colorStops.push(`${color} ${position + 12.5}%`);
+      }
+    });
+    
+    // Repeat the first color at the end for seamless wrapping
+    colorStops.push(`${baseColors[0]} 100%`);
+    
+    // Apply the animated gradient with smooth transitions
+    document.body.style.background = `linear-gradient(135deg, ${colorStops.join(', ')})`;
+    document.body.style.backgroundSize = '200% 200%';
+    document.body.style.animation = 'bgShift 15s linear infinite';
 
     // Apply random gradient to title text
     const title = document.getElementById("title");
