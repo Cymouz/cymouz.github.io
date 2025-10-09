@@ -159,13 +159,18 @@
     document.body.style.backgroundSize = '200% 200%';
 
     // Create multiple blobs
-    function createBlob() {
+    function createBlob(baseX, baseY, cellSize) {
       const blob = document.createElement('div');
       blob.className = 'gradient-blob';
       
-      // Position blobs with even wider range
-      blob.style.left = `${Math.random() * 300 - 100}%`;
-      blob.style.top = `${Math.random() * 300 - 100}%`;
+      // Position blob within its grid cell with some randomness
+      // but not too far from its base position
+      const maxOffset = cellSize * 0.3; // 30% of cell size
+      const randomX = (Math.random() * maxOffset) - (maxOffset / 2);
+      const randomY = (Math.random() * maxOffset) - (maxOffset / 2);
+      
+      blob.style.left = `${baseX + randomX}%`;
+      blob.style.top = `${baseY + randomY}%`;
       
       // Create smoother, more expansive gradients
       const color1 = getRandomColor();
@@ -173,35 +178,34 @@
       const color3 = getRandomColor();
       const color4 = getRandomColor();
       
-      // Use multiple gradient layers for fuller coverage
+      // Use multiple gradient layers with controlled center points
       blob.style.background = `
         radial-gradient(
-          circle at ${Math.random() * 100}% ${Math.random() * 100}%,
+          circle at 40% 40%,
           ${color1} 0%,
           ${color2} 35%,
           ${color3} 65%,
           ${color4} 100%
         ),
         radial-gradient(
-          circle at ${Math.random() * 100}% ${Math.random() * 100}%,
+          circle at 60% 60%,
           ${color4} 0%,
           ${color3} 50%,
           ${color1} 100%
         )
       `;
       
-      // Randomize animation for flowing effect
-      const duration = 45 + Math.random() * 30; // Adjusted for smoother flow
-      const delay = -Math.random() * 45; // More varied delays
+      // Randomize animation within controlled range
+      const duration = 40 + Math.random() * 20; // 40-60s
+      const delay = -Math.random() * 40;
       
-      // Apply animation properties
       blob.style.animationDuration = `${duration}s`;
       blob.style.animationDelay = `${delay}s`;
       
       return blob;
     }
 
-    // Add multiple blobs
+    // Create blobs in a grid pattern to ensure coverage
     const blobContainer = document.createElement('div');
     blobContainer.style.position = 'fixed';
     blobContainer.style.width = '300%';
@@ -210,19 +214,34 @@
     blobContainer.style.left = '-100%';
     blobContainer.style.overflow = 'hidden';
     blobContainer.style.zIndex = '-1';
-    blobContainer.style.filter = 'blur(80px)'; // Increased blur for smoother blending
+    blobContainer.style.filter = 'blur(80px)';
 
-    // Create many more blobs for complete coverage
-    for (let i = 0; i < 20; i++) {
-      blobContainer.appendChild(createBlob());
+    // Create grid of blobs with controlled positioning
+    const gridSize = 5; // 5x5 grid
+    const cellSize = 100 / gridSize; // percentage size of each cell
+    
+    // Create first layer of blobs in grid
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const baseX = (x * cellSize) - 50; // -50 to 50 range
+        const baseY = (y * cellSize) - 50;
+        blobContainer.appendChild(createBlob(baseX, baseY, cellSize));
+      }
     }
 
-    // Add a second layer of blobs for better coverage
+    // Add a second layer of blobs offset from the first
     const overlayContainer = blobContainer.cloneNode(false);
     overlayContainer.style.filter = 'blur(100px)';
-    for (let i = 0; i < 10; i++) {
-      overlayContainer.appendChild(createBlob());
+    
+    // Create second layer offset by half a cell
+    for (let y = 0; y < gridSize - 1; y++) {
+      for (let x = 0; x < gridSize - 1; x++) {
+        const baseX = (x * cellSize + cellSize/2) - 50;
+        const baseY = (y * cellSize + cellSize/2) - 50;
+        overlayContainer.appendChild(createBlob(baseX, baseY, cellSize));
+      }
     }
+    
     document.body.insertBefore(overlayContainer, document.body.firstChild);
 
     document.body.insertBefore(blobContainer, document.body.firstChild);
