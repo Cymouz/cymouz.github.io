@@ -4,12 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Photography Resources</title>
-  <script>
-    window.addEventListener('load', function() {
-      document.body.style.animationDelay = (-Math.random() * 20) + 's';
-    });
-  </script>
   <style>
+    #background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+
+    .blob {
+      position: absolute;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      animation: move 25s infinite cubic-bezier(0.77, 0, 0.18, 1);
+    }
+
+    @keyframes move {
+      0% {
+        transform: translate(0, 0);
+      }
+      33% {
+        transform: translate(30vw, -20vw);
+      }
+      66% {
+        transform: translate(-20vw, 30vw);
+      }
+      100% {
+        transform: translate(0, 0);
+      }
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -21,7 +52,8 @@
       color: white;
       text-align: center;
       overflow-x: hidden;
-      /* Background gradient and animation will be set by JavaScript */
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes flow {
@@ -162,50 +194,37 @@
     document.body.style.backgroundSize = '200% 200%';
 
     // Create multiple blobs
-    function createBlob(baseX, baseY, cellSize) {
+    // Create the background system
+    const background = document.createElement('div');
+    background.id = 'background';
+    document.body.appendChild(background);
+
+    function createBlob() {
       const blob = document.createElement('div');
-      blob.className = 'gradient-blob';
+      blob.className = 'blob';
       
-      // Position blob within its grid cell with some randomness
-      // but not too far from its base position
-      const maxOffset = cellSize * 0.3; // 30% of cell size
-      const randomX = (Math.random() * maxOffset) - (maxOffset / 2);
-      const randomY = (Math.random() * maxOffset) - (maxOffset / 2);
+      // Random starting position
+      blob.style.left = `${Math.random() * 75}%`;
+      blob.style.top = `${Math.random() * 75}%`;
       
-      blob.style.left = `${baseX + randomX}%`;
-      blob.style.top = `${baseY + randomY}%`;
+      // Random colors
+      const hue = Math.random() * 360;
+      const sat = 70 + Math.random() * 30;
+      const light = 40 + Math.random() * 20;
+      blob.style.background = `radial-gradient(circle at center, 
+        hsla(${hue}, ${sat}%, ${light}%, 0.8),
+        hsla(${hue + 30}, ${sat}%, ${light}%, 0.3))`;
       
-      // Create smoother, more expansive gradients
-      const color1 = getRandomColor();
-      const color2 = getRandomColor();
-      const color3 = getRandomColor();
-      const color4 = getRandomColor();
-      
-      // Use multiple gradient layers with controlled center points
-      blob.style.background = `
-        radial-gradient(
-          circle at 40% 40%,
-          ${color1} 0%,
-          ${color2} 35%,
-          ${color3} 65%,
-          ${color4} 100%
-        ),
-        radial-gradient(
-          circle at 60% 60%,
-          ${color4} 0%,
-          ${color3} 50%,
-          ${color1} 100%
-        )
-      `;
-      
-      // Randomize animation within controlled range
-      const duration = 40 + Math.random() * 20; // 40-60s
-      const delay = -Math.random() * 40;
-      
-      blob.style.animationDuration = `${duration}s`;
-      blob.style.animationDelay = `${delay}s`;
+      // Random animation timing
+      blob.style.animationDelay = `${-Math.random() * 25}s`;
+      blob.style.animationDuration = `${25 + Math.random() * 15}s`;
       
       return blob;
+    }
+
+    // Create blobs
+    for (let i = 0; i < 8; i++) {
+      background.appendChild(createBlob());
     }
 
     // Create background container
