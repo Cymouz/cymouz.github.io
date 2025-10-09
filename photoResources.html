@@ -43,7 +43,7 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -51,7 +51,7 @@
       font-family: 'Segoe UI', sans-serif;
       color: white;
       text-align: center;
-      overflow-x: hidden;
+      overflow: hidden;
       position: relative;
       z-index: 1;
     }
@@ -235,91 +235,12 @@
     }
 
     // Create blobs
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 12; i++) {
       background.appendChild(createBlob());
     }
 
-    // Create background container
-    const backgroundContainer = document.createElement('div');
-    backgroundContainer.style.position = 'fixed';
-    backgroundContainer.style.width = '100%';
-    backgroundContainer.style.height = '100%';
-    backgroundContainer.style.top = '0';
-    backgroundContainer.style.left = '0';
-    backgroundContainer.style.overflow = 'hidden';
-    backgroundContainer.style.zIndex = '-1'; // Ensure it stays behind content
-    
-    // Create blob container
-    const blobContainer = document.createElement('div');
-    blobContainer.style.position = 'absolute';
-    blobContainer.style.width = '300%';
-    blobContainer.style.height = '300%';
-    blobContainer.style.top = '-100%';
-    blobContainer.style.left = '-100%';
-    blobContainer.style.filter = 'blur(80px)';
-
-    // Create grid of blobs with controlled positioning
-    const gridSize = 5; // 5x5 grid
-    const cellSize = 100 / gridSize;
-    
-    // Create blobs in grid
-    for (let y = 0; y < gridSize + 1; y++) {
-      for (let x = 0; x < gridSize + 1; x++) {
-        const baseX = (x * cellSize) - 50;
-        const baseY = (y * cellSize) - 50;
-        blobContainer.appendChild(createBlob(baseX, baseY, cellSize));
-      }
-    }
-
-    // Add offset blobs for better coverage
-    for (let y = 0; y < gridSize; y++) {
-      for (let x = 0; x < gridSize; x++) {
-        const baseX = (x * cellSize + cellSize/2) - 50;
-        const baseY = (y * cellSize + cellSize/2) - 50;
-        blobContainer.appendChild(createBlob(baseX, baseY, cellSize));
-      }
-    }
-    
-    // Add blob container to background container
-    backgroundContainer.appendChild(blobContainer);
-    
-    // Insert background at the very beginning of body
-    document.body.insertBefore(backgroundContainer, document.body.firstChild);
-
-    document.body.insertBefore(blobContainer, document.body.firstChild);
-
-    // Apply random gradient to title text
-    const title = document.getElementById("title");
-    title.style.background = randomGradient();
-    title.style.webkitBackgroundClip = "text";
-    title.style.webkitTextFillColor = "transparent";
-
-    // Tilt + shine effect
-    const tiltButtons2 = document.querySelectorAll('.tilt-btn');
-    const maxTilt = 15;
-
-    tiltButtons2.forEach(btn => {
-      btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const normX = (x / rect.width) * 2 - 1;
-        const normY = (y / rect.height) * 2 - 1;
-
-        const rotateX = Math.max(-1, Math.min(1, normY)) * -maxTilt;
-        const rotateY = Math.max(-1, Math.min(1, normX)) * maxTilt;
-
-        btn.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-
-        btn.style.setProperty('--x', `${x}px`);
-        btn.style.setProperty('--y', `${y}px`);
-      });
-
-      btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'rotateX(0) rotateY(0)';
-      });
-    });
+    // No need for these anymore as we have simplified the title styling
+    // and already have button effects above
   </script>
 </body>
 </html>
