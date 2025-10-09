@@ -44,13 +44,13 @@
 
     .gradient-blob {
       position: fixed;
-      width: 100vmax;
-      height: 100vmax;
+      width: 150vmax;
+      height: 150vmax;
       border-radius: 50%;
-      filter: blur(80px);
+      filter: blur(100px);
       will-change: transform;
-      mix-blend-mode: screen;
-      opacity: 0.6;
+      mix-blend-mode: normal;
+      opacity: 0.5;
       z-index: -1;
       animation-name: flow;
       animation-duration: 35s;
@@ -149,39 +149,50 @@
   <script>
     function getRandomColor() {
       const h = Math.random() * 360;
-      const s = 70 + Math.random() * 30;
-      const l = 40 + Math.random() * 20;
-      return `hsla(${h}, ${s}%, ${l}%, 0.7)`;
+      const s = 60 + Math.random() * 40; // 60-100% saturation
+      const l = 45 + Math.random() * 25; // 45-70% lightness
+      return `hsla(${h}, ${s}%, ${l}%, 0.4)`; // Lower opacity for better blending
     }
 
-    // Set a gradient background base
-    document.body.style.background = 'radial-gradient(circle at center, #2a2a2a, #1a1a1a)';
+    // Set a gradient background base that's lighter
+    document.body.style.background = 'radial-gradient(circle at center, #2d2d2d, #1d1d1d)';
+    document.body.style.backgroundSize = '200% 200%';
 
     // Create multiple blobs
     function createBlob() {
       const blob = document.createElement('div');
       blob.className = 'gradient-blob';
       
-      // Position blobs with wider range to allow movement off-screen
-      blob.style.left = `${Math.random() * 200 - 50}%`;
-      blob.style.top = `${Math.random() * 200 - 50}%`;
+      // Position blobs with even wider range
+      blob.style.left = `${Math.random() * 300 - 100}%`;
+      blob.style.top = `${Math.random() * 300 - 100}%`;
       
-      // Create smooth, flowing gradients
+      // Create smoother, more expansive gradients
       const color1 = getRandomColor();
       const color2 = getRandomColor();
       const color3 = getRandomColor();
+      const color4 = getRandomColor();
+      
+      // Use multiple gradient layers for fuller coverage
       blob.style.background = `
         radial-gradient(
-          circle at 30% 70%,
+          circle at ${Math.random() * 100}% ${Math.random() * 100}%,
           ${color1} 0%,
-          ${color2} 45%,
-          ${color3} 100%
+          ${color2} 35%,
+          ${color3} 65%,
+          ${color4} 100%
+        ),
+        radial-gradient(
+          circle at ${Math.random() * 100}% ${Math.random() * 100}%,
+          ${color4} 0%,
+          ${color3} 50%,
+          ${color1} 100%
         )
       `;
       
       // Randomize animation for flowing effect
-      const duration = 35 + Math.random() * 40; // Longer duration for smoother flow
-      const delay = -Math.random() * 35; // More varied delays
+      const duration = 45 + Math.random() * 30; // Adjusted for smoother flow
+      const delay = -Math.random() * 45; // More varied delays
       
       // Apply animation properties
       blob.style.animationDuration = `${duration}s`;
@@ -193,18 +204,26 @@
     // Add multiple blobs
     const blobContainer = document.createElement('div');
     blobContainer.style.position = 'fixed';
-    blobContainer.style.width = '200%';
-    blobContainer.style.height = '200%';
-    blobContainer.style.top = '-50%';
-    blobContainer.style.left = '-50%';
+    blobContainer.style.width = '300%';
+    blobContainer.style.height = '300%';
+    blobContainer.style.top = '-100%';
+    blobContainer.style.left = '-100%';
     blobContainer.style.overflow = 'hidden';
     blobContainer.style.zIndex = '-1';
-    blobContainer.style.filter = 'blur(60px)'; // Increased blur for smoother blending
+    blobContainer.style.filter = 'blur(80px)'; // Increased blur for smoother blending
 
-    // Create more blobs for fuller coverage
-    for (let i = 0; i < 12; i++) {
+    // Create many more blobs for complete coverage
+    for (let i = 0; i < 20; i++) {
       blobContainer.appendChild(createBlob());
     }
+
+    // Add a second layer of blobs for better coverage
+    const overlayContainer = blobContainer.cloneNode(false);
+    overlayContainer.style.filter = 'blur(100px)';
+    for (let i = 0; i < 10; i++) {
+      overlayContainer.appendChild(createBlob());
+    }
+    document.body.insertBefore(overlayContainer, document.body.firstChild);
 
     document.body.insertBefore(blobContainer, document.body.firstChild);
 
