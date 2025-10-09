@@ -18,11 +18,11 @@
 
     .blob {
       position: absolute;
-      width: 50vw;
-      height: 50vw;
+      width: 70vw;
+      height: 70vw;
       border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.5;
+      filter: blur(80px);
+      opacity: 0.4;
       animation: move 25s infinite cubic-bezier(0.77, 0, 0.18, 1);
     }
 
@@ -31,10 +31,10 @@
         transform: translate(0, 0);
       }
       33% {
-        transform: translate(30vw, -20vw);
+        transform: translate(15vw, -15vw);
       }
       66% {
-        transform: translate(-20vw, 30vw);
+        transform: translate(-15vw, 15vw);
       }
       100% {
         transform: translate(0, 0);
@@ -211,32 +211,56 @@
     background.id = 'background';
     document.body.appendChild(background);
 
-    function createBlob() {
+    function createBlob(x, y) {
       const blob = document.createElement('div');
       blob.className = 'blob';
       
-      // Random starting position
-      blob.style.left = `${Math.random() * 75}%`;
-      blob.style.top = `${Math.random() * 75}%`;
+      // Position within grid cell with some randomness
+      const randomX = x + (Math.random() * 20 - 10); // ±10% random offset
+      const randomY = y + (Math.random() * 20 - 10);
       
-      // Random colors
+      blob.style.left = `${randomX}%`;
+      blob.style.top = `${randomY}%`;
+      
+      // Random colors with controlled saturation and lightness
       const hue = Math.random() * 360;
-      const sat = 70 + Math.random() * 30;
-      const light = 40 + Math.random() * 20;
+      const sat = 65 + Math.random() * 35; // 65-100% saturation
+      const light = 35 + Math.random() * 30; // 35-65% lightness
       blob.style.background = `radial-gradient(circle at center, 
         hsla(${hue}, ${sat}%, ${light}%, 0.8),
         hsla(${hue + 30}, ${sat}%, ${light}%, 0.3))`;
       
-      // Random animation timing
+      // Varied animation timing
       blob.style.animationDelay = `${-Math.random() * 25}s`;
-      blob.style.animationDuration = `${25 + Math.random() * 15}s`;
+      blob.style.animationDuration = `${20 + Math.random() * 15}s`;
       
       return blob;
     }
 
-    // Create blobs
-    for (let i = 0; i < 12; i++) {
-      background.appendChild(createBlob());
+    // Create grid of blobs with overlapping
+    const gridSize = 4; // 4x4 grid
+    const spacing = 100 / (gridSize - 1); // Ensure coverage to edges
+
+    // Create main grid of blobs
+    for (let y = 0; y <= gridSize - 1; y++) {
+      for (let x = 0; x <= gridSize - 1; x++) {
+        background.appendChild(createBlob(x * spacing, y * spacing));
+      }
+    }
+
+    // Add offset blobs between grid points for better coverage
+    for (let y = 0; y < gridSize - 1; y++) {
+      for (let x = 0; x < gridSize - 1; x++) {
+        background.appendChild(createBlob(x * spacing + spacing/2, y * spacing + spacing/2));
+      }
+    }
+
+    // Add extra random blobs for more variety
+    for (let i = 0; i < 8; i++) {
+      background.appendChild(createBlob(
+        Math.random() * 100,
+        Math.random() * 100
+      ));
     }
 
     // No need for these anymore as we have simplified the title styling
