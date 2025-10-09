@@ -21,9 +21,7 @@
       color: white;
       text-align: center;
       overflow-x: hidden;
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-      background-size: 400% 400%; /* for animated gradient */
-      animation: bgShift 20s ease infinite;
+      /* Background gradient and animation will be set by JavaScript */
     }
 
     @keyframes bgShift {
@@ -127,15 +125,16 @@
       "#3a6073", "#16222a", "#485563", "#29323c"
     ];
 
-    function randomGradient() {
-      const angle = Math.floor(Math.random() * 360);
-      const color1 = colors[Math.floor(Math.random() * colors.length)];
-      const color2 = colors[Math.floor(Math.random() * colors.length)];
-      return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+    function getRandomColors() {
+      const shuffled = colors.sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, 4); // Get 4 random colors
     }
 
-    // Apply random background gradient
-    document.body.style.background = randomGradient();
+    // Create and apply the animated gradient with random colors
+    const selectedColors = getRandomColors();
+    document.body.style.background = `linear-gradient(-45deg, ${selectedColors.join(', ')})`;
+    document.body.style.backgroundSize = '400% 400%';
+    document.body.style.animation = 'bgShift 20s ease infinite';
 
     // Apply random gradient to title text
     const title = document.getElementById("title");
