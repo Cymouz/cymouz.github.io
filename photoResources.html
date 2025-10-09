@@ -24,9 +24,30 @@
       /* Background gradient and animation will be set by JavaScript */
     }
 
-    @keyframes bgShift {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+    @keyframes move {
+      0%, 100% { 
+        transform: translate(0, 0);
+      }
+      25% {
+        transform: translate(10px, 15px);
+      }
+      50% {
+        transform: translate(-5px, 20px);
+      }
+      75% {
+        transform: translate(-15px, 5px);
+      }
+    }
+
+    .gradient-blob {
+      position: fixed;
+      width: 50vmax;
+      height: 50vmax;
+      border-radius: 50%;
+      filter: blur(40px);
+      animation: move 15s ease-in-out infinite;
+      opacity: 0.8;
+      z-index: -1;
     }
 
     h1 {
@@ -118,37 +139,54 @@
 
   <script>
     function getRandomColor() {
-      const h = Math.random() * 360; // Random hue
-      const s = 70 + Math.random() * 30; // Saturation between 70-100%
-      const l = 40 + Math.random() * 20; // Lightness between 40-60%
-      return `hsl(${h}, ${s}%, ${l}%)`;
+      const h = Math.random() * 360;
+      const s = 70 + Math.random() * 30;
+      const l = 40 + Math.random() * 20;
+      return `hsla(${h}, ${s}%, ${l}%, 0.8)`;
     }
 
-    // Generate random angle between -45 and 45 degrees for smoother animation
-    const angle = Math.floor(Math.random() * 90) - 45;
-    
-    // Create colors array with repeated colors for seamless transition
-    const firstColor = getRandomColor();
-    const secondColor = getRandomColor();
-    const thirdColor = getRandomColor();
-    
-    // Create gradient with repeated colors for seamless looping
-    const gradient = [
-      firstColor,
-      secondColor,
-      thirdColor,
-      firstColor,  // Repeat first color
-      secondColor, // Repeat second color
-      thirdColor  // Repeat third color
-    ].map((color, index) => {
-      const percent = (index * 20); // Spread colors evenly
-      return `${color} ${percent}%`;
-    }).join(', ');
-    
-    // Apply the animated gradient
-    document.body.style.background = `linear-gradient(${angle}deg, ${gradient})`;
-    document.body.style.backgroundSize = '200% 100%';
-    document.body.style.animation = 'bgShift 15s linear infinite';
+    // Set a dark background
+    document.body.style.background = '#1a1a1a';
+
+    // Create multiple blobs
+    function createBlob() {
+      const blob = document.createElement('div');
+      blob.className = 'gradient-blob';
+      
+      // Random position
+      blob.style.left = `${Math.random() * 100}%`;
+      blob.style.top = `${Math.random() * 100}%`;
+      
+      // Random colors for radial gradient
+      const color1 = getRandomColor();
+      const color2 = getRandomColor();
+      blob.style.background = `radial-gradient(circle at center, ${color1}, ${color2})`;
+      
+      // Random animation duration and delay
+      const duration = 15 + Math.random() * 10;
+      const delay = -Math.random() * 10;
+      blob.style.animation = `move ${duration}s ease-in-out infinite`;
+      blob.style.animationDelay = `${delay}s`;
+      
+      return blob;
+    }
+
+    // Add multiple blobs
+    const blobContainer = document.createElement('div');
+    blobContainer.style.position = 'fixed';
+    blobContainer.style.width = '100%';
+    blobContainer.style.height = '100%';
+    blobContainer.style.top = '0';
+    blobContainer.style.left = '0';
+    blobContainer.style.overflow = 'hidden';
+    blobContainer.style.zIndex = '-1';
+
+    // Create and add blobs
+    for (let i = 0; i < 5; i++) {
+      blobContainer.appendChild(createBlob());
+    }
+
+    document.body.insertBefore(blobContainer, document.body.firstChild);
 
     // Apply random gradient to title text
     const title = document.getElementById("title");
