@@ -118,21 +118,21 @@
   </div>
 
   <script>
-    // Safer color palette (no overly bright/neon colors)
-    const colors = [
-      "#4e9ac7", "#243b55", "#6a85b6", "#bac8e0",
-      "#667db6", "#0082c8", "#2c5364", "#203a43",
-      "#3a6073", "#16222a", "#485563", "#29323c"
-    ];
-
-    function getRandomColors() {
-      const shuffled = colors.sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, 4); // Get 4 random colors
+    function getRandomColor() {
+      const h = Math.random() * 360; // Random hue
+      const s = 70 + Math.random() * 30; // Saturation between 70-100%
+      const l = 40 + Math.random() * 20; // Lightness between 40-60%
+      return `hsl(${h}, ${s}%, ${l}%)`;
     }
 
-    // Create and apply the animated gradient with random colors
-    const selectedColors = getRandomColors();
-    document.body.style.background = `linear-gradient(-45deg, ${selectedColors.join(', ')})`;
+    // Create random gradient with multiple color stops
+    const colorStops = [];
+    for (let i = 0; i < 6; i++) { // Generate 6 random colors
+      colorStops.push(getRandomColor());
+    }
+    
+    // Apply the animated gradient with random colors
+    document.body.style.background = `linear-gradient(-45deg, ${colorStops.join(', ')})`;
     document.body.style.backgroundSize = '400% 400%';
     document.body.style.animation = 'bgShift 20s ease infinite';
 
