@@ -176,9 +176,9 @@
     }
 
     // Initialize button effects
-    const buttons = document.querySelectorAll('.tilt-btn');
+    const tiltButtons = document.querySelectorAll('.tilt-btn');
     
-    buttons.forEach(btn => {
+    tiltButtons.forEach(btn => {
       btn.addEventListener('mousemove', e => {
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -295,10 +295,10 @@
     title.style.webkitTextFillColor = "transparent";
 
     // Tilt + shine effect
-    const buttons = document.querySelectorAll('.tilt-btn');
+    const tiltButtons2 = document.querySelectorAll('.tilt-btn');
     const maxTilt = 15;
 
-    buttons.forEach(btn => {
+    tiltButtons2.forEach(btn => {
       btn.addEventListener('mousemove', (e) => {
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - rect.left;
