@@ -25,29 +25,36 @@
     }
 
     @keyframes move {
-      0%, 100% { 
-        transform: translate(0, 0);
+      0% { 
+        transform: translate(0, 0) scale(1);
       }
-      25% {
-        transform: translate(10px, 15px);
+      33% {
+        transform: translate(30px, 50px) scale(1.1);
       }
-      50% {
-        transform: translate(-5px, 20px);
+      66% {
+        transform: translate(-25px, 10px) scale(0.9);
       }
-      75% {
-        transform: translate(-15px, 5px);
+      100% {
+        transform: translate(0, 0) scale(1);
       }
     }
 
     .gradient-blob {
       position: fixed;
-      width: 50vmax;
-      height: 50vmax;
+      width: 75vmax;
+      height: 75vmax;
       border-radius: 50%;
-      filter: blur(40px);
-      animation: move 15s ease-in-out infinite;
-      opacity: 0.8;
+      filter: blur(60px);
+      will-change: transform;
+      mix-blend-mode: screen;
+      transition: transform 0.3s ease;
+      opacity: 0.7;
       z-index: -1;
+      animation-name: move;
+      animation-duration: 25s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
     }
 
     h1 {
@@ -142,31 +149,43 @@
       const h = Math.random() * 360;
       const s = 70 + Math.random() * 30;
       const l = 40 + Math.random() * 20;
-      return `hsla(${h}, ${s}%, ${l}%, 0.8)`;
+      return `hsla(${h}, ${s}%, ${l}%, 0.7)`;
     }
 
-    // Set a dark background
-    document.body.style.background = '#1a1a1a';
+    // Set a gradient background base
+    document.body.style.background = 'radial-gradient(circle at center, #2a2a2a, #1a1a1a)';
 
     // Create multiple blobs
     function createBlob() {
       const blob = document.createElement('div');
       blob.className = 'gradient-blob';
       
-      // Random position
-      blob.style.left = `${Math.random() * 100}%`;
-      blob.style.top = `${Math.random() * 100}%`;
+      // Wider position range for better coverage
+      blob.style.left = `${Math.random() * 100 - 25}%`;
+      blob.style.top = `${Math.random() * 100 - 25}%`;
       
-      // Random colors for radial gradient
+      // Create smoother gradients with multiple color stops
       const color1 = getRandomColor();
       const color2 = getRandomColor();
-      blob.style.background = `radial-gradient(circle at center, ${color1}, ${color2})`;
+      const color3 = getRandomColor();
+      blob.style.background = `
+        radial-gradient(
+          circle at center,
+          ${color1} 0%,
+          ${color2} 50%,
+          ${color3} 100%
+        )
+      `;
       
-      // Random animation duration and delay
-      const duration = 15 + Math.random() * 10;
-      const delay = -Math.random() * 10;
-      blob.style.animation = `move ${duration}s ease-in-out infinite`;
+      // Randomize animation properties
+      const duration = 25 + Math.random() * 20; // Slower for smoother movement
+      const delay = -Math.random() * 15;
+      const direction = Math.random() > 0.5 ? 'alternate' : 'alternate-reverse';
+      
+      // Apply animation with specific properties
+      blob.style.animationDuration = `${duration}s`;
       blob.style.animationDelay = `${delay}s`;
+      blob.style.animationDirection = direction;
       
       return blob;
     }
@@ -180,9 +199,10 @@
     blobContainer.style.left = '0';
     blobContainer.style.overflow = 'hidden';
     blobContainer.style.zIndex = '-1';
+    blobContainer.style.filter = 'blur(40px)'; // Additional container blur for smoother blending
 
-    // Create and add blobs
-    for (let i = 0; i < 5; i++) {
+    // Create and add more blobs for better coverage
+    for (let i = 0; i < 8; i++) {
       blobContainer.appendChild(createBlob());
     }
 
