@@ -93,7 +93,7 @@
 
     .tilt-btn {
       position: relative;
-      background: #222;
+      background: rgba(34, 34, 34, 0.9);
       color: white;
       border: none;
       padding: 20px 40px;
@@ -106,6 +106,8 @@
       overflow: hidden;
       text-decoration: none;
       display: inline-block;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
     }
 
     .tilt-btn::before {
@@ -121,6 +123,7 @@
       opacity: 0;
       transition: opacity 0.2s;
       pointer-events: none;
+      z-index: 1;
     }
 
     .tilt-btn:hover::before {
@@ -205,44 +208,52 @@
       return blob;
     }
 
-    // Create blobs in a grid pattern to ensure coverage
+    // Create background container
+    const backgroundContainer = document.createElement('div');
+    backgroundContainer.style.position = 'fixed';
+    backgroundContainer.style.width = '100%';
+    backgroundContainer.style.height = '100%';
+    backgroundContainer.style.top = '0';
+    backgroundContainer.style.left = '0';
+    backgroundContainer.style.overflow = 'hidden';
+    backgroundContainer.style.zIndex = '-1'; // Ensure it stays behind content
+    
+    // Create blob container
     const blobContainer = document.createElement('div');
-    blobContainer.style.position = 'fixed';
+    blobContainer.style.position = 'absolute';
     blobContainer.style.width = '300%';
     blobContainer.style.height = '300%';
     blobContainer.style.top = '-100%';
     blobContainer.style.left = '-100%';
-    blobContainer.style.overflow = 'hidden';
-    blobContainer.style.zIndex = '-1';
     blobContainer.style.filter = 'blur(80px)';
 
     // Create grid of blobs with controlled positioning
     const gridSize = 5; // 5x5 grid
-    const cellSize = 100 / gridSize; // percentage size of each cell
+    const cellSize = 100 / gridSize;
     
-    // Create first layer of blobs in grid
-    for (let y = 0; y < gridSize; y++) {
-      for (let x = 0; x < gridSize; x++) {
-        const baseX = (x * cellSize) - 50; // -50 to 50 range
+    // Create blobs in grid
+    for (let y = 0; y < gridSize + 1; y++) {
+      for (let x = 0; x < gridSize + 1; x++) {
+        const baseX = (x * cellSize) - 50;
         const baseY = (y * cellSize) - 50;
         blobContainer.appendChild(createBlob(baseX, baseY, cellSize));
       }
     }
 
-    // Add a second layer of blobs offset from the first
-    const overlayContainer = blobContainer.cloneNode(false);
-    overlayContainer.style.filter = 'blur(100px)';
-    
-    // Create second layer offset by half a cell
-    for (let y = 0; y < gridSize - 1; y++) {
-      for (let x = 0; x < gridSize - 1; x++) {
+    // Add offset blobs for better coverage
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
         const baseX = (x * cellSize + cellSize/2) - 50;
         const baseY = (y * cellSize + cellSize/2) - 50;
-        overlayContainer.appendChild(createBlob(baseX, baseY, cellSize));
+        blobContainer.appendChild(createBlob(baseX, baseY, cellSize));
       }
     }
     
-    document.body.insertBefore(overlayContainer, document.body.firstChild);
+    // Add blob container to background container
+    backgroundContainer.appendChild(blobContainer);
+    
+    // Insert background at the very beginning of body
+    document.body.insertBefore(backgroundContainer, document.body.firstChild);
 
     document.body.insertBefore(blobContainer, document.body.firstChild);
 
