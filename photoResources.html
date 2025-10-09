@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Photography Resources</title>
+  <script>
+    window.addEventListener('load', function() {
+      document.body.style.animationDelay = (-Math.random() * 20) + 's';
+    });
+  </script>
   <style>
     body {
       margin: 0;
@@ -16,6 +21,7 @@
       color: white;
       text-align: center;
       overflow-x: hidden;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%; /* for animated gradient */
       animation: bgShift 20s ease infinite;
     }
