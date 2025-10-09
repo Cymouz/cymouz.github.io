@@ -237,8 +237,8 @@
       return blob;
     }
 
-    // Create grid of blobs with overlapping
-    const gridSize = 4; // 4x4 grid
+    // Create dense grid of blobs with overlapping
+    const gridSize = 6; // 6x6 grid
     const spacing = 100 / (gridSize - 1); // Ensure coverage to edges
 
     // Create main grid of blobs
@@ -255,8 +255,22 @@
       }
     }
 
+    // Add diagonal offset blobs for even more coverage
+    for (let y = 0; y < gridSize - 1; y++) {
+      for (let x = 0; x < gridSize - 1; x++) {
+        background.appendChild(createBlob(
+          x * spacing + spacing/3,
+          y * spacing + spacing/3
+        ));
+        background.appendChild(createBlob(
+          x * spacing + spacing*2/3,
+          y * spacing + spacing*2/3
+        ));
+      }
+    }
+
     // Add extra random blobs for more variety
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 16; i++) {
       background.appendChild(createBlob(
         Math.random() * 100,
         Math.random() * 100
