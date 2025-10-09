@@ -94,26 +94,10 @@
     h1 {
       font-size: 3rem;
       margin-bottom: 40px;
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 
-        -1px -1px 0 #fff,  
-         1px -1px 0 #fff,
-        -1px  1px 0 #fff,
-         1px  1px 0 #fff; /* white outline */
-      animation: titleShift 15s ease infinite, glow 3s infinite alternate;
-    }
-
-    @keyframes titleShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes glow {
-      from { text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 10px rgba(255,255,255,0.3); }
-      to   { text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 25px rgba(255,255,255,0.8); }
+      color: white;
+      text-shadow: 0 0 15px rgba(255,255,255,0.5);
+      position: relative;
+      z-index: 2;
     }
 
     .button-grid {
@@ -125,7 +109,7 @@
 
     .tilt-btn {
       position: relative;
-      background: rgba(34, 34, 34, 0.9);
+      background: rgba(20, 20, 20, 0.95);
       color: white;
       border: none;
       padding: 20px 40px;
@@ -134,12 +118,14 @@
       cursor: pointer;
       box-shadow: 0 15px 30px rgba(0,0,0,0.5);
       transform-style: preserve-3d;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.3s ease;
       overflow: hidden;
       text-decoration: none;
       display: inline-block;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      perspective: 1000px;
+      z-index: 2;
     }
 
     .tilt-btn::before {
@@ -148,14 +134,15 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       border-radius: inherit;
-      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
-        rgba(255,255,255,0.4) 0%, 
-        rgba(255,255,255,0.15) 30%, 
-        rgba(255,255,255,0) 70%);
+      background: radial-gradient(
+        circle at var(--x, 50%) var(--y, 50%), 
+        rgba(255,255,255,0.5) 0%, 
+        rgba(255,255,255,0.2) 20%, 
+        transparent 50%
+      );
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.3s ease;
       pointer-events: none;
-      z-index: 1;
     }
 
     .tilt-btn:hover::before {
@@ -164,9 +151,8 @@
 
     /* Click effect */
     .tilt-btn:active {
-      transform: scale(0.95) rotateX(0) rotateY(0);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.6);
-      transition: transform 0.05s ease;
+      transform: scale(0.97);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
     }
   </style>
 </head>
@@ -189,11 +175,37 @@
       return `hsla(${h}, ${s}%, ${l}%, 0.4)`; // Lower opacity for better blending
     }
 
-    // Set a gradient background base that's lighter
-    document.body.style.background = 'radial-gradient(circle at center, #2d2d2d, #1d1d1d)';
-    document.body.style.backgroundSize = '200% 200%';
+    // Initialize button effects
+    const buttons = document.querySelectorAll('.tilt-btn');
+    
+    buttons.forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Calculate rotation based on mouse position
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+        
+        // Update shine effect position
+        btn.style.setProperty('--x', `${x}px`);
+        btn.style.setProperty('--y', `${y}px`);
+        
+        // Apply tilt
+        btn.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
 
-    // Create multiple blobs
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+      });
+    });
+
+    // Set dark background
+    document.body.style.background = '#1a1a1a';
+
     // Create the background system
     const background = document.createElement('div');
     background.id = 'background';
