@@ -23,9 +23,9 @@
       width: 70vw;
       height: 70vw;
       border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.3;
-      mix-blend-mode: soft-light;
+      filter: blur(120px);
+      opacity: 0.28;
+      mix-blend-mode: screen;
       will-change: transform;
       animation: move 30s infinite cubic-bezier(0.4, 0, 0.6, 1);
     }
@@ -139,12 +139,13 @@
       border-radius: inherit;
       background: radial-gradient(
         circle at var(--x, 50%) var(--y, 50%), 
-        rgba(255,255,255,0.5) 0%, 
-        rgba(255,255,255,0.2) 20%, 
+        rgba(255,255,255,0.28) 0%, 
+        rgba(255,255,255,0.12) 20%, 
         transparent 50%
       );
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      mix-blend-mode: overlay;
       pointer-events: none;
     }
 
@@ -154,8 +155,18 @@
 
     /* Click effect */
     .tilt-btn:active {
-      transform: scale(0.97);
+      transform: scale(0.985);
       box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    }
+
+    /* Improve overall rendering and reduce banding/artifacts */
+    #background,
+    .blob,
+    .gradient-blob {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
     }
   </style>
 </head>
