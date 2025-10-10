@@ -5,294 +5,325 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Photography Resources</title>
   <style>
-    #background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      overflow: visible;
-      background: #1a1a1a;
+    /* Reset / foundations */
+    :root{
+      /* Page / button tokens */
+      --bg-color: #0f0f10;
+      --button-bg: rgba(30,30,30,0.8);
+      --button-text: #ffffff;
+      --btn-radius: 14px;
+
+      /* Background layers (defaults) */
+      --layer-size: 140vmax;           /* diameter of large circular layers */
+      --layer-blur: 110px;            /* blur applied to large layers */
+      --layer-mix-mode: screen;       /* blend mode for layers */
+
+      /* Layer A color (hsla) and position */
+      --layerA-h: 14;                 /* hue */
+      --layerA-s: 85%;                /* saturation */
+      --layerA-l: 62%;                /* lightness */
+      --layerA-a: 0.95;               /* alpha */
+      --layerA-posX: 30%;
+      --layerA-posY: 35%;
+      --layerA-opacity: 0.6;
+      --floatA-duration: 36s;
+
+      /* Layer B color (hsla) and position */
+      --layerB-h: 215;
+      --layerB-s: 82%;
+      --layerB-l: 62%;
+      --layerB-a: 0.94;
+      --layerB-posX: 65%;
+      --layerB-posY: 65%;
+      --layerB-opacity: 0.5;
+      --floatB-duration: 48s;
+
+  /* Layer C (extra filling) */
+  --layerC-h: 280;
+  --layerC-s: 78%;
+  --layerC-l: 60%;
+  --layerC-a: 0.9;
+  --layerC-posX: 20%;
+  --layerC-posY: 70%;
+  --layerC-opacity: 0.45;
+  --floatC-duration: 54s;
+
+  /* Layer D (extra filling) */
+  --layerD-h: 40;
+  --layerD-s: 70%;
+  --layerD-l: 55%;
+  --layerD-a: 0.88;
+  --layerD-posX: 80%;
+  --layerD-posY: 30%;
+  --layerD-opacity: 0.4;
+  --floatD-duration: 66s;
+
+      /* Noise overlay */
+      --noise-opacity: 0.06;
+      --noise-blend: overlay;
     }
 
-    .blob {
-      position: absolute;
-      width: 70vw;
-      height: 70vw;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.28;
-      mix-blend-mode: screen;
-      will-change: transform;
-      animation: move 30s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    html,body{height:100%;margin:0}
+    body{
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:var(--button-text);
+      background:var(--bg-color);
+      overflow:auto;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      position:relative;
     }
 
-    @keyframes move {
-      0% {
-        transform: translate(0, 0);
-      }
-      33% {
-        transform: translate(10vw, -10vw);
-      }
-      66% {
-        transform: translate(-10vw, 10vw);
-      }
-      100% {
-        transform: translate(0, 0);
-      }
+    /* Container for the visual background layers */
+    .bg-root{
+      position:fixed;
+      inset:0; /* top:0;right:0;bottom:0;left:0 */
+      pointer-events:none;
+      z-index:0;
+      overflow:visible;
+      isolation:isolate; /* contain blend modes */
     }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      text-align: center;
-      position: relative;
-      z-index: 1;
+    /* Two large gradient layers for crossing colors */
+    .bg-layer{
+      position:absolute;
+      left:50%;top:50%;
+      width:var(--layer-size);height:var(--layer-size);
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+      filter:blur(var(--layer-blur));
+      will-change:transform,opacity;
+      opacity:var(--layerA-opacity);
+      mix-blend-mode:var(--layer-mix-mode);
+      transform-origin:center;
+      backface-visibility:hidden;
     }
 
-    @keyframes flow {
-      0% { 
-        transform: translate(0, 0) rotate(0deg);
-      }
-      25% {
-        transform: translate(100px, -150px) rotate(90deg);
-      }
-      50% {
-        transform: translate(200px, 50px) rotate(180deg);
-      }
-      75% {
-        transform: translate(-100px, 100px) rotate(270deg);
-      }
-      100% {
-        transform: translate(0, 0) rotate(360deg);
-      }
+    /* Gentle slow motion */
+    @keyframes floatA{0%{transform:translate(-45%,-50%) rotate(0deg) scale(1)}50%{transform:translate(-55%,-60%) rotate(180deg) scale(1.02)}100%{transform:translate(-45%,-50%) rotate(360deg) scale(1)}}
+    @keyframes floatB{0%{transform:translate(-50%,-45%) rotate(0deg) scale(1)}50%{transform:translate(-40%,-55%) rotate(-180deg) scale(0.98)}100%{transform:translate(-50%,-45%) rotate(-360deg) scale(1)}}
+  @keyframes floatC{0%{transform:translate(-48%,-52%) rotate(0deg) scale(1)}50%{transform:translate(-52%,-58%) rotate(210deg) scale(1.01)}100%{transform:translate(-48%,-52%) rotate(420deg) scale(1)}}
+  @keyframes floatD{0%{transform:translate(-52%,-48%) rotate(0deg) scale(1)}50%{transform:translate(-58%,-42%) rotate(-210deg) scale(0.99)}100%{transform:translate(-52%,-48%) rotate(-420deg) scale(1)}}
+
+    /* Use CSS variables to construct the radial gradients so they are tweakable */
+    .bg-layer.a{
+      background: radial-gradient(circle at var(--layerA-posX) var(--layerA-posY),
+        hsla(var(--layerA-h), var(--layerA-s), var(--layerA-l), var(--layerA-a)) 0%,
+        hsla(var(--layerA-h), var(--layerA-s), calc(var(--layerA-l) - 10%), 0.42) 18%,
+        hsla(var(--layerA-h), var(--layerA-s), calc(var(--layerA-l) - 20%), 0.06) 55%,
+        transparent 100%);
+      animation: floatA var(--floatA-duration) linear infinite;
+      opacity: var(--layerA-opacity);
     }
 
-    .gradient-blob {
-      position: fixed;
-      width: 150vmax;
-      height: 150vmax;
-      border-radius: 50%;
-      filter: blur(100px);
-      will-change: transform;
-      mix-blend-mode: normal;
-      opacity: 0.5;
-      z-index: -1;
-      animation-name: flow;
-      animation-duration: 35s;
-      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      animation-iteration-count: infinite;
-      animation-direction: normal;
+    .bg-layer.b{
+      background: radial-gradient(circle at var(--layerB-posX) var(--layerB-posY),
+        hsla(var(--layerB-h), var(--layerB-s), var(--layerB-l), var(--layerB-a)) 0%,
+        hsla(var(--layerB-h), var(--layerB-s), calc(var(--layerB-l) - 8%), 0.36) 20%,
+        hsla(var(--layerB-h), var(--layerB-s), calc(var(--layerB-l) - 18%), 0.05) 55%,
+        transparent 100%);
+      animation: floatB var(--floatB-duration) linear infinite;
+      opacity: var(--layerB-opacity);
     }
 
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 40px;
-      color: white;
-      text-shadow: 0 0 15px rgba(255,255,255,0.5);
-      position: relative;
-      z-index: 2;
+    .bg-layer.c{
+      background: radial-gradient(circle at var(--layerC-posX) var(--layerC-posY),
+        hsla(var(--layerC-h), var(--layerC-s), var(--layerC-l), var(--layerC-a)) 0%,
+        hsla(var(--layerC-h), var(--layerC-s), calc(var(--layerC-l) - 8%), 0.36) 20%,
+        hsla(var(--layerC-h), var(--layerC-s), calc(var(--layerC-l) - 18%), 0.05) 55%,
+        transparent 100%);
+      animation: floatC var(--floatC-duration) linear infinite;
+      opacity: var(--layerC-opacity);
     }
 
-    .button-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
+    .bg-layer.d{
+      background: radial-gradient(circle at var(--layerD-posX) var(--layerD-posY),
+        hsla(var(--layerD-h), var(--layerD-s), var(--layerD-l), var(--layerD-a)) 0%,
+        hsla(var(--layerD-h), var(--layerD-s), calc(var(--layerD-l) - 8%), 0.34) 20%,
+        hsla(var(--layerD-h), var(--layerD-s), calc(var(--layerD-l) - 16%), 0.05) 55%,
+        transparent 100%);
+      animation: floatD var(--floatD-duration) linear infinite;
+      opacity: var(--layerD-opacity);
     }
 
-    .tilt-btn {
-      position: relative;
-      background: rgba(30, 30, 30, 0.8);
-      color: white;
-      border: none;
-      padding: 20px 40px;
-      font-size: 1.1rem;
-      border-radius: 14px;
-      cursor: pointer;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-      transform-style: preserve-3d;
-      transition: all 0.3s ease;
-      overflow: hidden;
-      text-decoration: none;
-      display: inline-block;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      perspective: 1000px;
-      z-index: 10;
+    /* Canvas-based metaballs (lava) - placed behind other background layers */
+    #lamp-anim{
+      position:absolute;
+      left:50%;top:50%;
+      width:160vmax;height:160vmax;
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+      pointer-events:none;
+      z-index:-1;
+      filter:blur(48px);
+      mix-blend-mode:screen;
+      opacity:0.85;
     }
 
-    .tilt-btn::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border-radius: inherit;
-      background: radial-gradient(
-        circle at var(--x, 50%) var(--y, 50%), 
-        rgba(255,255,255,0.28) 0%, 
-        rgba(255,255,255,0.12) 20%, 
-        transparent 50%
-      );
-      opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-      mix-blend-mode: overlay;
-      pointer-events: none;
+    /* Optional subtle noise overlay to hide banding */
+    .noise{
+      position:absolute;inset:0;
+      /* static SVG noise; control strength via --noise-opacity */
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><filter id="n"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+      mix-blend-mode:var(--noise-blend);
+      pointer-events:none;
+      opacity:var(--noise-opacity);
     }
 
-    .tilt-btn:hover::before {
-      opacity: 1;
+    /* Page content sits above visuals */
+    main{position:relative;z-index:2;padding:48px 20px;max-width:960px;text-align:center}
+    h1{font-size:2.6rem;margin:0 0 28px;text-shadow:0 6px 20px rgba(0,0,0,0.6)}
+
+    .button-grid{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
+
+    .tilt-btn{
+      --x:50%;--y:50%;
+      position:relative;display:inline-block;text-decoration:none;
+      padding:16px 32px;border-radius:var(--btn-radius);
+      background:var(--button-bg);color:var(--button-text);border:0;cursor:pointer;
+      box-shadow:0 12px 26px rgba(0,0,0,0.5);transition:transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .22s, background .22s;z-index:2;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      user-select:none;outline:0;display:flex;align-items:center;gap:10px;font-size:1.05rem
     }
 
-    /* Click effect */
-    .tilt-btn:active {
-      transform: scale(0.985);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    .tilt-btn:focus{box-shadow:0 12px 34px rgba(0,0,0,0.6), 0 0 0 4px rgba(100,150,255,0.12)}
+
+    /* shine */
+    .tilt-btn::before{
+      content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .18s ease, transform .18s ease;mix-blend-mode:overlay;background:radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 18%, transparent 45%)}
+    .tilt-btn:hover::before,.tilt-btn:focus::before{opacity:1}
+
+    .tilt-btn .label{position:relative;z-index:2;text-shadow:0 2px 10px rgba(0,0,0,0.45)}
+
+    .tilt-btn:active{transform:translateY(2px) scale(.995);box-shadow:0 6px 18px rgba(0,0,0,0.45)}
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce){
+      .bg-layer{animation:none!important;transition:none!important}
+      .tilt-btn{transition:none}
     }
 
-    /* Improve overall rendering and reduce banding/artifacts */
-    #background,
-    .blob,
-    .gradient-blob {
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      -webkit-transform: translateZ(0);
-      -webkit-backface-visibility: hidden;
+    /* Small screens */
+    @media (max-width:520px){
+      h1{font-size:1.9rem}
+      .tilt-btn{padding:12px 18px;font-size:0.98rem}
     }
   </style>
 </head>
 <body>
-
-  <h1 id="title">Photography Resources</h1>
-
-  <div class="button-grid">
-    <a href="https://www.rei.com/learn/expert-advice/photo-editing-basics.html" target="_blank" rel="noopener noreferrer" class="tilt-btn">🛠️ Editing Basics</a>
-    <a href="https://capturetheatlas.com/photography/photography-guides/" target="_blank" rel="noopener noreferrer" class="tilt-btn">🌍 Guides</a>
-    <a href="https://www.adobe.com/products/photoshop-lightroom/login.html" target="_blank" rel="noopener noreferrer" class="tilt-btn">💡 Lightroom</a>
-    <a href="https://digital-photography-school.com/total-beginners-guide-to-lightroom-step-by-step/" target="_blank" rel="noopener noreferrer" class="tilt-btn">📖 Beginner’s Lightroom Guide</a>
+  <div class="bg-root" aria-hidden="true">
+    <div class="bg-layer a" id="layerA"></div>
+    <div class="bg-layer b" id="layerB"></div>
+    <div class="bg-layer c" id="layerC"></div>
+    <div class="bg-layer d" id="layerD"></div>
+    <div class="noise"></div>
   </div>
 
+  <main>
+    <h1>Photography Resources</h1>
+    <div class="button-grid" role="navigation" aria-label="Useful links">
+      <a class="tilt-btn" href="https://www.rei.com/learn/expert-advice/photo-editing-basics.html" target="_blank" rel="noopener noreferrer"><span class="label">🛠️ Editing Basics</span></a>
+      <a class="tilt-btn" href="https://capturetheatlas.com/photography/photography-guides/" target="_blank" rel="noopener noreferrer"><span class="label">🌍 Guides</span></a>
+      <a class="tilt-btn" href="https://www.adobe.com/products/photoshop-lightroom/login.html" target="_blank" rel="noopener noreferrer"><span class="label">💡 Lightroom</span></a>
+      <a class="tilt-btn" href="https://digital-photography-school.com/total-beginners-guide-to-lightroom-step-by-step/" target="_blank" rel="noopener noreferrer"><span class="label">📖 Beginner’s Lightroom Guide</span></a>
+    </div>
+  </main>
+
   <script>
-    function getRandomColor() {
-      const h = Math.random() * 360;
-      const s = 60 + Math.random() * 40; // 60-100% saturation
-      const l = 45 + Math.random() * 25; // 45-70% lightness
-      return `hsla(${h}, ${s}%, ${l}%, 0.4)`; // Lower opacity for better blending
-    }
+    // Keep JS minimal: update layer colors randomly on load and handle tilt effect
+    (function(){
+      const rand = (min,max) => Math.random()*(max-min)+min;
 
-    // Initialize button effects
-    const tiltButtons = document.querySelectorAll('.tilt-btn');
-    
-    tiltButtons.forEach(btn => {
-      btn.addEventListener('mousemove', e => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Calculate rotation based on mouse position
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -10;
-        const rotateY = ((x - centerX) / centerX) * 10;
-        
-        // Update shine effect position
-        btn.style.setProperty('--x', `${x}px`);
-        btn.style.setProperty('--y', `${y}px`);
-        
-        // Apply tilt
-        btn.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      // Slightly randomized color palettes for each load while keeping vibrancy
+      const toColor = (h,s,l,a=1) => `hsla(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%, ${a})`;
+
+  const layerA = document.getElementById('layerA');
+  const layerB = document.getElementById('layerB');
+  const layerC = document.getElementById('layerC');
+  const layerD = document.getElementById('layerD');
+
+      // pick two harmonious hues
+      const baseHue = rand(0,360);
+      const hueA = baseHue;
+      const hueB = (baseHue + rand(120,200)) % 360;
+
+      const sat = rand(65,92);
+      const lightA = rand(52,72);
+      const lightB = rand(52,72);
+
+  layerA.style.background = `radial-gradient(circle at ${rand(20,40)}% ${rand(25,45)}%, ${toColor(hueA,sat,lightA,0.95)} 0%, ${toColor(hueA,sat,lightA-10,0.42)} 18%, ${toColor(hueA,sat,lightA-20,0.06)} 55%, transparent 100%)`;
+  layerB.style.background = `radial-gradient(circle at ${rand(60,80)}% ${rand(60,80)}%, ${toColor(hueB,sat,lightB,0.94)} 0%, ${toColor(hueB,sat,lightB-8,0.36)} 20%, ${toColor(hueB,sat,lightB-18,0.05)} 55%, transparent 100%)`;
+  // extra filler blobs C & D
+  const hueC = (baseHue + rand(40,140)) % 360;
+  const hueD = (baseHue + rand(200,300)) % 360;
+  const lightC = rand(48,68);
+  const lightD = rand(45,66);
+  layerC.style.background = `radial-gradient(circle at ${rand(10,30)}% ${rand(60,80)}%, ${toColor(hueC,sat,lightC,0.9)} 0%, ${toColor(hueC,sat,lightC-8,0.36)} 20%, ${toColor(hueC,sat,lightC-18,0.05)} 55%, transparent 100%)`;
+  layerD.style.background = `radial-gradient(circle at ${rand(70,90)}% ${rand(20,40)}%, ${toColor(hueD,sat,lightD,0.88)} 0%, ${toColor(hueD,sat,lightD-8,0.34)} 20%, ${toColor(hueD,sat,lightD-16,0.05)} 55%, transparent 100%)`;
+
+      // Tilt effect for buttons
+      const buttons = document.querySelectorAll('.tilt-btn');
+      buttons.forEach(btn => {
+        const rectFn = () => btn.getBoundingClientRect();
+        btn.addEventListener('mousemove', e=>{
+          const r = rectFn();
+          const x = e.clientX - r.left;
+          const y = e.clientY - r.top;
+          const px = Math.round((x/r.width)*100);
+          const py = Math.round((y/r.height)*100);
+          btn.style.setProperty('--x', px + '%');
+          btn.style.setProperty('--y', py + '%');
+
+          // small tilt transform
+          const cx = r.width/2, cy = r.height/2;
+          const dx = (x - cx)/cx; // -1..1
+          const dy = (y - cy)/cy;
+          const rx = (dy)*-6; // rotateX
+          const ry = (dx)*6; // rotateY
+          btn.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+        });
+        btn.addEventListener('mouseleave', ()=>{btn.style.transform='perspective(900px) rotateX(0) rotateY(0)';btn.style.setProperty('--x','50%');btn.style.setProperty('--y','50%')});
+
+        // Add a short click delay so users can see the pressed animation before navigation
+        btn.addEventListener('click', function(e){
+          // Let modifier clicks (ctrl/meta/shift/alt) and middle/right clicks through
+          if (e.defaultPrevented) return;
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+
+          // If link has target _blank or rel noopener, we still delay for visual feedback but allow open in new tab
+          e.preventDefault();
+
+          btn.classList.add('pressed');
+          // small visual pressed state that complements :active
+          btn.style.transform = 'perspective(900px) translateY(3px) scale(0.992)';
+
+          const href = btn.getAttribute('href');
+          const target = btn.getAttribute('target');
+
+          setTimeout(()=>{
+            btn.classList.remove('pressed');
+            // Follow the link after delay
+            if (href){
+              if (target === '_blank' || btn.hasAttribute('download')){
+                window.open(href, target || '_blank');
+              } else {
+                window.location.href = href;
+              }
+            }
+          }, 220);
+        });
       });
 
-      btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-      });
-    });
-
-    // Set dark background
-    document.body.style.background = '#1a1a1a';
-
-    // Create the background system
-    const background = document.createElement('div');
-    background.id = 'background';
-    document.body.appendChild(background);
-
-    function createBlob(x, y) {
-      const blob = document.createElement('div');
-      blob.className = 'blob';
-      
-      // Position within grid cell with some randomness
-      const randomX = x + (Math.random() * 20 - 10); // ±10% random offset
-      const randomY = y + (Math.random() * 20 - 10);
-      
-      blob.style.left = `${randomX}%`;
-      blob.style.top = `${randomY}%`;
-      
-      // Brighter colors with higher saturation and lightness
-      const hue = Math.random() * 360;
-      const sat = 70 + Math.random() * 30; // 70-100% saturation
-      const light = 60 + Math.random() * 20; // 60-80% lightness
-      blob.style.background = `radial-gradient(circle at center, 
-        hsla(${hue}, ${sat}%, ${light}%, 0.3),
-        hsla(${hue + 30}, ${sat}%, ${light - 10}%, 0.1))`;
-      
-      // Smoother animation timing
-      blob.style.animationDelay = `${-Math.random() * 30}s`;
-      blob.style.animationDuration = `${30 + Math.random() * 20}s`;
-      
-      return blob;
-    }
-
-    // Create dense grid of blobs with overlapping
-    const gridSize = 6; // 6x6 grid
-    const spacing = 100 / (gridSize - 1); // Ensure coverage to edges
-
-    // Create main grid of blobs
-    for (let y = 0; y <= gridSize - 1; y++) {
-      for (let x = 0; x <= gridSize - 1; x++) {
-        background.appendChild(createBlob(x * spacing, y * spacing));
+      // Small accessibility: respect reduced motion
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if(mq.matches){
+        layerA.style.animation = 'none'; layerB.style.animation = 'none'; layerC.style.animation = 'none'; layerD.style.animation = 'none';
       }
-    }
 
-    // Add offset blobs between grid points for better coverage
-    for (let y = 0; y < gridSize - 1; y++) {
-      for (let x = 0; x < gridSize - 1; x++) {
-        background.appendChild(createBlob(x * spacing + spacing/2, y * spacing + spacing/2));
-      }
-    }
-
-    // Add diagonal offset blobs for even more coverage
-    for (let y = 0; y < gridSize - 1; y++) {
-      for (let x = 0; x < gridSize - 1; x++) {
-        background.appendChild(createBlob(
-          x * spacing + spacing/3,
-          y * spacing + spacing/3
-        ));
-        background.appendChild(createBlob(
-          x * spacing + spacing*2/3,
-          y * spacing + spacing*2/3
-        ));
-      }
-    }
-
-    // Add extra random blobs for more variety
-    for (let i = 0; i < 16; i++) {
-      background.appendChild(createBlob(
-        Math.random() * 100,
-        Math.random() * 100
-      ));
-    }
-
-    // No need for these anymore as we have simplified the title styling
-    // and already have button effects above
+    })();
   </script>
 </body>
 </html>
