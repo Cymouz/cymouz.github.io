@@ -9,10 +9,12 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: -1;
-      overflow: hidden;
+      overflow: visible;
       background: #1a1a1a;
     }
 
@@ -45,7 +47,7 @@
 
     body {
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -53,7 +55,6 @@
       font-family: 'Segoe UI', sans-serif;
       color: white;
       text-align: center;
-      overflow: hidden;
       position: relative;
       z-index: 1;
     }
@@ -111,7 +112,7 @@
 
     .tilt-btn {
       position: relative;
-      background: rgba(20, 20, 20, 0.95);
+      background: rgba(30, 30, 30, 0.8);
       color: white;
       border: none;
       padding: 20px 40px;
@@ -120,14 +121,14 @@
       cursor: pointer;
       box-shadow: 0 15px 30px rgba(0,0,0,0.5);
       transform-style: preserve-3d;
-      transition: transform 0.3s ease;
+      transition: all 0.3s ease;
       overflow: hidden;
       text-decoration: none;
       display: inline-block;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       perspective: 1000px;
-      z-index: 2;
+      z-index: 10;
     }
 
     .tilt-btn::before {
@@ -224,13 +225,13 @@
       blob.style.left = `${randomX}%`;
       blob.style.top = `${randomY}%`;
       
-      // Random colors with softer saturation and controlled lightness
+      // Brighter colors with higher saturation and lightness
       const hue = Math.random() * 360;
-      const sat = 50 + Math.random() * 30; // 50-80% saturation
-      const light = 40 + Math.random() * 20; // 40-60% lightness
+      const sat = 70 + Math.random() * 30; // 70-100% saturation
+      const light = 60 + Math.random() * 20; // 60-80% lightness
       blob.style.background = `radial-gradient(circle at center, 
-        hsla(${hue}, ${sat}%, ${light}%, 0.4),
-        hsla(${hue + 20}, ${sat - 10}%, ${light}%, 0.1))`;
+        hsla(${hue}, ${sat}%, ${light}%, 0.3),
+        hsla(${hue + 30}, ${sat}%, ${light - 10}%, 0.1))`;
       
       // Smoother animation timing
       blob.style.animationDelay = `${-Math.random() * 30}s`;
