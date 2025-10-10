@@ -21,9 +21,11 @@
       width: 70vw;
       height: 70vw;
       border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.4;
-      animation: move 25s infinite cubic-bezier(0.77, 0, 0.18, 1);
+      filter: blur(100px);
+      opacity: 0.3;
+      mix-blend-mode: soft-light;
+      will-change: transform;
+      animation: move 30s infinite cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     @keyframes move {
@@ -31,10 +33,10 @@
         transform: translate(0, 0);
       }
       33% {
-        transform: translate(15vw, -15vw);
+        transform: translate(10vw, -10vw);
       }
       66% {
-        transform: translate(-15vw, 15vw);
+        transform: translate(-10vw, 10vw);
       }
       100% {
         transform: translate(0, 0);
@@ -222,17 +224,17 @@
       blob.style.left = `${randomX}%`;
       blob.style.top = `${randomY}%`;
       
-      // Random colors with controlled saturation and lightness
+      // Random colors with softer saturation and controlled lightness
       const hue = Math.random() * 360;
-      const sat = 65 + Math.random() * 35; // 65-100% saturation
-      const light = 35 + Math.random() * 30; // 35-65% lightness
+      const sat = 50 + Math.random() * 30; // 50-80% saturation
+      const light = 40 + Math.random() * 20; // 40-60% lightness
       blob.style.background = `radial-gradient(circle at center, 
-        hsla(${hue}, ${sat}%, ${light}%, 0.8),
-        hsla(${hue + 30}, ${sat}%, ${light}%, 0.3))`;
+        hsla(${hue}, ${sat}%, ${light}%, 0.4),
+        hsla(${hue + 20}, ${sat - 10}%, ${light}%, 0.1))`;
       
-      // Varied animation timing
-      blob.style.animationDelay = `${-Math.random() * 25}s`;
-      blob.style.animationDuration = `${20 + Math.random() * 15}s`;
+      // Smoother animation timing
+      blob.style.animationDelay = `${-Math.random() * 30}s`;
+      blob.style.animationDuration = `${30 + Math.random() * 20}s`;
       
       return blob;
     }
