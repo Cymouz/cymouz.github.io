@@ -1,22 +1,9 @@
 <div id="insta-gallery" class="gallery"></div>
 <header><a href="/">Home</a></header>
 
-I'm lowk too lazy to finish this
-<script>
-fetch('/.netlify/functions/instagram')
-  .then(res => res.json())
-  .then(posts => {
-    const gallery = document.getElementById('insta-gallery');
-    posts.forEach(post => {
-      gallery.innerHTML += `
-        <a href="${post.link}" target="_blank">
-          <img src="${post.image}" alt="${post.caption}" loading="lazy">
-        </a>
-      `;
-    });
-  })
-  .catch(err => console.error(err));
-</script>
+I'm lowk too lazy to finish this you can find my photos on instagram  
+<br/>
+<a href="https://www.instagram.com/cy.mouz">Here is a link to it<a/>
 
 <style>
 .gallery {
