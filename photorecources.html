@@ -133,7 +133,7 @@
   </div>
 
   <!-- Optional manual redirect button (keeps style consistent) -->
-  <a id="manual" class="tilt-btn" href="https://cymouz.qzz.io/photoresources">⚡ Go now</a>
+  <a id="manual" class="tilt-btn" href="/photoresources">⚡ Go now</a>
 
   <script>
     // Safe, readable palette (avoids neon/over-bright tones)
@@ -177,28 +177,28 @@
       manualBtn.style.transform = 'rotateX(0) rotateY(0)';
     });
 
-    // Countdown + redirect after some secconds
-    const targetURL = "https://cymouz.qzz.io/photoresources";
+    // Countdown + redirect after some seconds
+    const targetURL = "/photoresources";
     const countEl = document.getElementById('count');
     let remaining = 10;
     const tick = setInterval(() => {
-      remaining = Math.max(0, +(remaining - 0.1).toFixed(1));
-      countEl.textContent = remaining.toFixed(1);
+      remaining = Math.max(0, remaining - 1);
+      countEl.textContent = remaining;
       if (remaining <= 0) {
         clearInterval(tick);
         window.location.replace(targetURL);
       }
-    }, 100);
+    }, 1000);
 
     // Fallback: direct redirect in case interval is throttled
-    setTimeout(() => window.location.replace(targetURL), 2500);
+    setTimeout(() => window.location.replace(targetURL), 10500);
   </script>
   <noscript>
     <style>
       .status { display: none; }
     </style>
     <div class="message">JavaScript is required to redirect automatically.</div>
-    <a class="tilt-btn" href="https://cymouz.qzz.io/photoresources">Go to the correct page</a>
+    <a class="tilt-btn" href="/photoresources">Go to the correct page</a>
   </noscript>
 </body>
 </html>
