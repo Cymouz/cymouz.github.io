@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -26,8 +25,6 @@
   ]
 }
 </script>
-
-
 
 <head>
   <link rel="icon" href="/favicon.ico" />
@@ -281,7 +278,111 @@
       font-size: 1.2rem;
     }
 
+    /* === SHOP PANEL STYLES ADDED HERE === */
+    .shop-panel {
+      position: fixed;
+      right: 16px;
+      top: 16px;
+      z-index: 1001;
+      background: rgba(15, 8, 30, 0.85);
+      border: 1px solid rgba(179, 102, 255, 0.45);
+      border-radius: 14px;
+      color: #fff;
+      width: clamp(200px, 80vw, 260px);
+      transform: translateY(-150px);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+      pointer-events: none;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .shop-panel.active {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .shop-header {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 12px;
+      user-select: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    .shop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 12px;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+
+    .shop-list.open {
+      max-height: 60vh;
+      padding: 0 12px 12px 12px;
+      overflow-y: auto;
+      border-top: 1px solid rgba(179, 102, 255, 0.2);
+    }
+
+    .upgrade-btn {
+      background: rgba(75, 10, 74, 0.6);
+      border: 1px solid rgba(179, 102, 255, 0.4);
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .upgrade-btn:hover:not(:disabled) {
+      background: rgba(179, 102, 255, 0.3);
+      border-color: rgba(255, 102, 204, 0.6);
+    }
+
+    .upgrade-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .save-load-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .save-load-controls button {
+      flex: 1;
+      background: rgba(255, 77, 109, 0.15);
+      border: 1px solid rgba(255, 77, 109, 0.5);
+      color: #ff4d6d;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .save-load-controls button:hover {
+      background: rgba(255, 77, 109, 0.3);
+    }
+
     @media (max-width: 640px) {
+      .shop-panel {
+        top: 60px;
+        right: 12px;
+        width: 220px;
+      }
       .cookie-counter {
         left: 12px;
         top: 12px;
@@ -567,11 +668,10 @@
     Hi, I'm Cymouz, aka Drake Lousberg. I'm a tech enthusiast, photographer, gamer, and snowboarder in Alaska.
   </div>
 
-  <!-- Skills section - directly under bio -->
   <div class="interests">
     <div class="skills-grid">
       <div class="skill-card">
-        <div class="skill-card-icon">📸</div>
+        <div class="skill-card-icon">📷</div>
         <div class="skill-card-title">Photography</div>
       </div>
       <div class="skill-card">
@@ -589,10 +689,8 @@
     </div>
   </div>
 
-  <!-- Desktop Links title -->
   <h2 class="links-title">Socials</h2>
 
-  <!-- Desktop Links -->
   <div class="socials" id="desktop-socials">
     <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/instagram.svg" alt="Instagram" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Instagram</a>
     <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/youtube.svg" alt="YouTube" style="width: 25px; height: auto; vertical-align: middle; margin-right: 8px;">YouTube</a>
@@ -603,7 +701,6 @@
     <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/makerworld.svg" alt="Maker World" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Maker World</a>
   </div>
 
-  <!-- Mobile-only collapsible links section -->
   <div class="links-section">
     <div class="links-header">
       <h2>Socials</h2>
