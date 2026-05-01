@@ -40,15 +40,18 @@ const ClickerGame = (() => {
     // --- Click Power Upgrades ---
     multiplier: { name: "🖱️ Multiplier", desc: "+1 Point per click", count: 0, baseCost: 15, costScale: 1.5, type: "click", effectValue: 1 },
     heavyMouse: { name: "🔨 Heavy Mouse", desc: "+5 Points per click", count: 0, baseCost: 150, costScale: 1.6, type: "click", effectValue: 5 },
-    
+    motorizedMouse: { name: "⚡ Motorized Mouse", desc: "+10 Points per click", count: 0, baseCost: 1500, costScale: 1.7, type: "click", effectValue: 10 },
+
     // --- Auto-Clicker Upgrades ---
     autoClicker: { name: "⚙️ Auto-Clicker", desc: "+1 Point per second", count: 0, baseCost: 50, costScale: 1.6, type: "auto", effectValue: 1 },
     robotFriend: { name: "🤖 Robot Friend", desc: "+10 Points per second", count: 0, baseCost: 500, costScale: 1.7, type: "auto", effectValue: 10 },
-    
+    botnet: { name: "🤖🛜🤖 Botnet", desc: "+50 Points per second", count: 0, baseCost: 5000, costScale: 1.8, type: "auto", effectValue: 50 },
+    factory: { name: "🏭 Factory", desc: "+200 Points per second", count: 0, baseCost: 20000, costScale: 1.9, type: "auto", effectValue: 200 },
+
     // --- Global Buff Upgrades ---
     efficiency: { name: "📉 Efficiency", desc: "Costs reduced by 5%", count: 0, baseCost: 200, costScale: 2.0, type: "discount", effectValue: 0.05 }
-  };
-
+    solarPanels: { name: "☀️ Solar Panels" desc: "Costts reduced by 10%", count: 0, baseCost: 1000, costScale: 2.5, type: "discount", effectValue: 0.10 }
+    
 
   // --- Save / Load Logic ---
   const saveData = () => {
