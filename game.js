@@ -49,9 +49,10 @@ const ClickerGame = (() => {
     factory: { name: "🏭 Factory", desc: "+200 Points per second", count: 0, baseCost: 20000, costScale: 1.9, type: "auto", effectValue: 200 },
 
     // --- Global Buff Upgrades ---
-    efficiency: { name: "📉 Efficiency", desc: "Costs reduced by 5%", count: 0, baseCost: 200, costScale: 2.0, type: "discount", effectValue: 0.05 }
-    solarPanels: { name: "☀️ Solar Panels" desc: "Costts reduced by 10%", count: 0, baseCost: 1000, costScale: 2.5, type: "discount", effectValue: 0.10 }
-    
+    efficiency: { name: "📉 Efficiency", desc: "Costs reduced by 5%", count: 0, baseCost: 200, costScale: 2.0, type: "discount", effectValue: 0.05 },
+    solarPanels: { name: "☀️ Solar Panels", desc: "Costs reduced by 10%", count: 0, baseCost: 1000, costScale: 2.5, type: "discount", effectValue: 0.10 }
+  };
+
 
   // --- Save / Load Logic ---
   const saveData = () => {
