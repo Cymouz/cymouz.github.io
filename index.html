@@ -47,6 +47,10 @@
       color: white;
       text-align: center;
       overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
       background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
       animation: bgShift 20s ease infinite;
@@ -63,18 +67,18 @@
     h1 {
       font-size: clamp(2rem, 8vw, 3.5rem);
       margin: 0 20px 16px;
-      background: linear-gradient(135deg, #b366ff 0%, #ff4d6d 100%);
-      background-size: 200% 200%;
+      background: linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%);
+      background-size: 200% 100%;
+      background-position: 0% 50%;
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: titleShift 15s ease infinite;
+      animation: titleShift 12s linear infinite;
     }
 
     @keyframes titleShift {
       0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
 
     /* Bio section */
@@ -202,6 +206,36 @@
       transform: rotate(180deg);
     }
 
+    .particle-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      opacity: 0.95;
+      transform: translate(-50%, -50%) scale(1);
+      transition: transform 0.75s ease-out, opacity 0.75s ease-out;
+      will-change: transform, opacity;
+      mix-blend-mode: screen;
+    }
+
+    .title-spin {
+      animation: titleSpin 0.8s ease;
+    }
+
+    @keyframes titleSpin {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(180deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .socials-mobile {
       max-height: 0;
       overflow: hidden;
@@ -251,7 +285,7 @@
       cursor: pointer;
       box-shadow: 0 15px 30px rgba(0,0,0,0.5);
       transform-style: preserve-3d;
-      transition: box-shadow 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
       overflow: hidden;
       text-decoration: none;
       display: inline-flex;
@@ -374,6 +408,7 @@
   </style>
 </head>
 <body>
+  <div class="particle-container" id="particle-container"></div>
   <h1 id="title">Cymouz</h1>
 
   <div class="bio">
@@ -436,9 +471,63 @@
   <script>
     // Violet/Purple and Dark Red gradient - no random colors
     const title = document.getElementById("title");
-    title.style.background = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 100%)";
+    title.style.backgroundImage = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%)";
+    title.style.backgroundSize = "200% 100%";
+    title.style.backgroundPosition = "0% 50%";
     title.style.webkitBackgroundClip = "text";
     title.style.webkitTextFillColor = "transparent";
+
+    const titleClicksTarget = 5;
+    let titleClicks = 0;
+    let titleResetTimer = null;
+    const particleContainer = document.getElementById('particle-container');
+
+    const resetTitleClicks = () => {
+      titleClicks = 0;
+      titleResetTimer = null;
+    };
+
+    const spawnParticles = (count) => {
+      const rect = title.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      for (let i = 0; i < count; i += 1) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const hue = 280 + Math.random() * 80;
+        particle.style.background = `hsl(${hue}, 100%, 78%)`;
+        particle.style.left = `${centerX}px`;
+        particle.style.top = `${centerY}px`;
+        particleContainer.appendChild(particle);
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 120 + Math.random() * 80;
+        const travelX = Math.cos(angle) * distance;
+        const travelY = Math.sin(angle) * distance;
+
+        requestAnimationFrame(() => {
+          particle.style.transform = `translate(calc(-50% + ${travelX}px), calc(-50% + ${travelY}px)) scale(0.35)`;
+          particle.style.opacity = '0';
+        });
+
+        const removeDelay = 750 + Math.random() * 250;
+        setTimeout(() => particle.remove(), removeDelay);
+      }
+    };
+
+    title.addEventListener('click', () => {
+      titleClicks += 1;
+      clearTimeout(titleResetTimer);
+      titleResetTimer = setTimeout(resetTitleClicks, 1200);
+
+      if (titleClicks >= titleClicksTarget) {
+        titleClicks = 0;
+        title.classList.add('title-spin');
+        setTimeout(() => title.classList.remove('title-spin'), 800);
+        spawnParticles(20);
+      }
+    });
 
     // Mobile collapsible links section
     const linksHeader = document.querySelector('.links-header');
@@ -454,14 +543,8 @@
       });
     }
 
-    // Detect if device supports hover (not a touch device)
-    const isTouchDevice = () => {
-      return (('ontouchstart' in window) ||
-              (navigator.maxTouchPoints > 0) ||
-              (navigator.msMaxTouchPoints > 0));
-    };
-
-    const isDesktop = !isTouchDevice();
+    // Detect whether the current pointer can hover reliably
+    const canHover = window.matchMedia('(hover: hover)').matches || window.matchMedia('(any-hover: hover)').matches;
 
     // Use requestAnimationFrame for smooth 60fps+ animations
     let mouseX = 0;
@@ -471,11 +554,11 @@
     let currentBackgroundX = 0;
     let currentBackgroundY = 0;
 
-    // Smooth tilt + shine for social buttons (desktop only)
+    // Smooth tilt + shine for social buttons on hover-capable devices
     const socialBtns = document.querySelectorAll('.social-btn');
     const maxTilt = 12;
     
-    if (isDesktop) {
+    if (canHover) {
       socialBtns.forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
           const rect = btn.getBoundingClientRect();
@@ -567,7 +650,7 @@
     document.head.appendChild(style);
 
     // High-performance parallax using requestAnimationFrame (unlimited FPS)
-    if (isDesktop) {
+    if (canHover) {
       document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
