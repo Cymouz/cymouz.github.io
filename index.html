@@ -1,152 +1,576 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-             <title>Welcome to my website!</title>
-        <link rel="icon" type="https://github.com/Cymouz/cymouz.github.io/blob/792198f5f85bb1173fc17e2ef1223de3a34c51a1/logo.PNG" />
-   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3326807906191632"
-     crossorigin="anonymous"></script>
-        </head>
-    <body>
-        <body style="background-color:black;">
+<html lang="en">
 
+<head>
+  <link rel="icon" href="/favicon.ico" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cymouz</title>
+  <style>
+    /* Layout */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
+      background-size: 400% 400%;
+      animation: bgShift 20s ease infinite;
+      padding: 20px;
+    }
 
-        <style>
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-            h1 {
+    /* Title with animated gradient */
+    h1 {
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      margin: 0 20px 16px;
+      background: linear-gradient(135deg, #b366ff 0%, #ff4d6d 100%);
+      background-size: 200% 200%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleShift 15s ease infinite;
+    }
 
-               color:rgb(0,256,0);
+    @keyframes titleShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
+    /* Bio section */
+    .bio {
+      font-size: clamp(1rem, 3vw, 1.1rem);
+      opacity: 0.95;
+      margin-bottom: 32px;
+      max-width: 600px;
+      line-height: 1.6;
+      animation: slideUp 0.8s ease-out;
+      padding: 0 20px;
+    }
 
+    @keyframes slideUp {
+      from { 
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 0.95;
+        transform: translateY(0);
+      }
+    }
 
-            }
+    /* Skills section - directly under bio, smaller, centered */
+    .interests {
+      margin: 24px 0 40px 0;
+      animation: slideUp 0.8s ease-out 0.2s backwards;
+      width: 100%;
+    }
 
-            #lol {
+    .skills-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: clamp(8px, 1.5vw, 10px);
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 0 10px;
+      justify-content: center;
+    }
 
-            color:rgb(256,256,256);
+    .skill-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(179, 102, 255, 0.3);
+      padding: clamp(10px, 2vw, 14px);
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(10px);
+      animation: slideUp 0.8s ease-out backwards;
+      will-change: transform;
+      flex: 0 1 auto;
+    }
 
-            }
+    .skill-card:nth-child(1) { animation-delay: 0.2s; }
+    .skill-card:nth-child(2) { animation-delay: 0.25s; }
+    .skill-card:nth-child(3) { animation-delay: 0.3s; }
+    .skill-card:nth-child(4) { animation-delay: 0.35s; }
 
-            @import 'https://fonts.googleapis.com/css?family=Inconsolata';
+    .skill-card.hovering {
+      background: rgba(255, 102, 204, 0.15);
+      border-color: rgba(179, 102, 255, 0.6);
+      box-shadow: 0 8px 24px rgba(179, 102, 255, 0.2);
+    }
 
-html {
-  min-height: 100%;
-}
+    .skill-card-icon {
+      font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+      margin-bottom: 6px;
+    }
 
-body {
-  box-sizing: border-box;
-  height: 100%;
-  background-color: #000000;
-  background-image: radial-gradient(#11581E, #041607);
-  font-family: 'Inconsolata', Helvetica, sans-serif;
-  font-size: 1.25rem;
-  color: rgba(128, 255, 128, 0.8);
-  text-shadow: 0 0 1ex rgba(51, 255, 51, 1), 0 0 2px rgba(255, 255, 255, 0.8);
-}
+    .skill-card-title {
+      font-weight: 600;
+      font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+    }
 
-.overlay {
-  pointer-events: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
-  background-size: auto 4px;
-  z-index: 99;
-}
+    /* Links section title - desktop only */
+    .links-title {
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      margin: 32px 0 20px 0;
+      opacity: 0.9;
+      animation: slideUp 0.8s ease-out 0.3s backwards;
+      display: block;
+    }
 
-.overlay::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  display: block;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(0deg, transparent 0%, rgba(32, 128, 32, 0.2) 2%, rgba(32, 128, 32, 0.8) 3%, rgba(32, 128, 32, 0.2) 3%, transparent 100%);
-  background-repeat: no-repeat;
-  animation: scan 7.5s linear 0s infinite;
-}
+    /* Mobile-only collapsible links */
+    .links-section {
+      display: none;
+      width: 100%;
+      animation: slideUp 0.8s ease-out 0.3s backwards;
+    }
 
-@keyframes scan {
-  0% { background-position: 0 -100vh; }
-  35%, 100% { background-position: 0 100vh; }
-}
+    .links-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      margin: 32px 0 0 0;
+      padding: 14px 20px;
+      background: rgba(75, 10, 74, 0.6);
+      border: 1px solid rgba(179, 102, 255, 0.4);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
 
-.terminal {
-  box-sizing: inherit;
-  position: absolute;
-  height: 100%;
-  width: 1000px;
-  max-width: 100%;
-  padding: 4rem;
-  text-transform: uppercase;
-}
+    .links-header:hover {
+      background: rgba(75, 10, 74, 0.8);
+      border-color: rgba(179, 102, 255, 0.6);
+    }
 
-.output {
-  color: rgba(128, 255, 128, 0.8);
-  text-shadow: 0 0 1ex #3f3, 0 0 2px rgba(255, 255, 255, 0.8);
-}
+    .links-header h2 {
+      font-size: 1.1rem;
+      margin: 0;
+      opacity: 0.9;
+    }
 
-.output::before {
-  content: "> ";
-}
+    .links-toggle {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+      display: inline-block;
+    }
 
-.input {
-  color: rgba(192, 255, 192, 0.8);
-  text-shadow: 0 0 1ex #3f3, 0 0 2px rgba(255, 255, 255, 0.8);
-}
+    .links-toggle.open {
+      transform: rotate(180deg);
+    }
 
-.input::before {
-  content: "$ ";
-}
+    .socials-mobile {
+      max-height: 0;
+      overflow: hidden;
+      margin-bottom: 0;
+      flex-direction: column;
+      gap: 10px;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                  margin-top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      margin-top: 0;
+      padding: 0;
+      width: calc(100% + 30px);
+      margin-left: -15px;
+      padding-left: 15px;
+      padding-right: 15px;
+      box-sizing: border-box;
+    }
 
-a {
-  color: #fff;
-  text-decoration: none;
-}
+    .socials-mobile.open {
+      max-height: 800px;
+      margin-top: 12px;
+      padding-bottom: 0;
+    }
 
-a::before {
-  content: "[";
-}
+    /* Social links container - desktop */
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(10px, 2vw, 12px);
+      justify-content: center;
+      margin-bottom: 32px;
+      max-width: 100%;
+      animation: slideUp 0.8s ease-out 0.4s backwards;
+      padding: 0 10px;
+    }
 
-a::after {
-  content: "]";
-}
+    /* Social button with tilt + shine */
+    .social-btn {
+      position: relative;
+      background: rgba(75, 10, 74, 0.6);
+      color: white;
+      border: 1px solid rgba(179, 102, 255, 0.4);
+      padding: clamp(10px, 2.5vw, 12px) clamp(16px, 4vw, 20px);
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      transform-style: preserve-3d;
+      transition: box-shadow 0.15s ease;
+      overflow: hidden;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      will-change: transform;
+      box-sizing: border-box;
+    }
 
-.errorcode {
-  color: white;
-}
+    .social-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%),
+        rgba(255,255,255,0.4) 0%,
+        rgba(255,255,255,0.15) 30%,
+        rgba(255,255,255,0) 70%);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
 
-.copyright {
-  font-size: .7rem;
-}
+    .social-btn:hover::before { opacity: 1; }
+    .social-btn:active {
+      transform: scale(0.95) rotateX(0) rotateY(0);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+      transition: transform 0.05s ease;
+    }
 
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
 
-        </style>
-        <div class="overlay"></div>
-        <div class="terminal">
-        <br><br>
+      h1 {
+        margin-bottom: 12px;
+      }
 
-        <h1>Cymouz's website!</h1>
+      .bio {
+        margin-bottom: 20px;
+        padding: 0 15px;
+      }
 
+      .interests {
+        margin: 16px 0 32px 0;
+        padding: 0 15px;
+      }
+
+      .socials {
+        display: none;
+      }
+
+      .links-title {
+        display: none;
+      }
+
+      /* Show collapsible links on mobile */
+      .links-section {
+        display: block;
+        width: 100%;
+        padding: 0 15px;
+        box-sizing: border-box;
+      }
+
+      .social-btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 18px 20px;
+        justify-content: center;
+        box-shadow: none;
+        border: 1px solid rgba(179, 102, 255, 0.4);
+        box-sizing: border-box;
+      }
+
+      .social-btn:hover {
+        background: rgba(255, 102, 204, 0.15);
+        border-color: rgba(179, 102, 255, 0.6);
+      }
+
+      /* Disable tilt effect on touch devices */
+      @media (hover: none) and (pointer: coarse) {
+        .social-btn {
+          transform-style: flat;
+        }
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      .socials-mobile.open {
+        gap: 8px;
+      }
+
+      .social-btn {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Desktop - hide mobile links section, show title */
+    @media (min-width: 769px) {
+      .links-section {
+        display: none;
+      }
+
+      .socials-mobile {
+        display: none;
+      }
+
+      .links-title {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Cymouz</h1>
+
+  <div class="bio">
+    Hi, I'm Cymouz, aka Drake Lousberg. I'm a tech enthusiast, photographer, gamer, and snowboarder in Alaska.
+  </div>
+
+  <!-- Skills section - directly under bio -->
+  <div class="interests">
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-icon">📸</div>
+        <div class="skill-card-title">Photography</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-icon">💻</div>
+        <div class="skill-card-title">Tech</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-icon">🎮</div>
+        <div class="skill-card-title">Gaming</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-icon">🏂</div>
+        <div class="skill-card-title">Snowboarding</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Links title -->
+  <h2 class="links-title">Links</h2>
+
+  <!-- Desktop Links -->
+  <div class="socials" id="desktop-socials">
+    <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn">📸 Instagram</a>
+    <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn">📺 YouTube</a>
+    <a href="https://discord.com/users/cymouz" target="_blank" rel="noopener noreferrer" class="social-btn">💬 Discord</a>
+    <a href="https://steamcommunity.com/id/Cymouz/" target="_blank" rel="noopener noreferrer" class="social-btn">🎮 Steam</a>
+    <a href="https://www.roblox.com/users/1574140524/profile" target="_blank" rel="noopener noreferrer" class="social-btn">🎮 Roblox</a>
+    <a href="https://www.xbox.com/play/user/Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn">🎮 Xbox</a>
+    <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn">🛠️ Maker World</a>
+  </div>
+
+  <!-- Mobile-only collapsible links section -->
+  <div class="links-section">
+    <div class="links-header">
+      <h2>Links</h2>
+      <span class="links-toggle">▼</span>
+    </div>
+    <div class="socials-mobile" id="mobile-socials">
+      <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn">📸 Instagram</a>
+      <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn">📺 YouTube</a>
+      <a href="https://discord.com/users/cymouz" target="_blank" rel="noopener noreferrer" class="social-btn">💬 Discord</a>
+      <a href="https://steamcommunity.com/id/Cymouz/" target="_blank" rel="noopener noreferrer" class="social-btn">🎮 Steam</a>
+      <a href="https://www.roblox.com/users/1574140524/profile" target="_blank" rel="noopener noreferrer" class="social-btn">🎯 Roblox</a>
+      <a href="https://www.xbox.com/play/user/Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn">🎮 Xbox</a>
+      <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn">🛠️ Maker World</a>
+    </div>
+  </div>
+
+  <script>
+    // Violet/Purple and Dark Red gradient - no random colors
+    const title = document.getElementById("title");
+    title.style.background = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 100%)";
+    title.style.webkitBackgroundClip = "text";
+    title.style.webkitTextFillColor = "transparent";
+
+    // Mobile collapsible links section
+    const linksHeader = document.querySelector('.links-header');
+    const mobileSocials = document.getElementById('mobile-socials');
+    const linksToggle = document.querySelector('.links-toggle');
+    let isLinksOpen = false;
+
+    if (linksHeader) {
+      linksHeader.addEventListener('click', () => {
+        isLinksOpen = !isLinksOpen;
+        mobileSocials.classList.toggle('open', isLinksOpen);
+        linksToggle.classList.toggle('open', isLinksOpen);
+      });
+    }
+
+    // Detect if device supports hover (not a touch device)
+    const isTouchDevice = () => {
+      return (('ontouchstart' in window) ||
+              (navigator.maxTouchPoints > 0) ||
+              (navigator.msMaxTouchPoints > 0));
+    };
+
+    const isDesktop = !isTouchDevice();
+
+    // Use requestAnimationFrame for smooth 60fps+ animations
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetBackgroundX = 0;
+    let targetBackgroundY = 0;
+    let currentBackgroundX = 0;
+    let currentBackgroundY = 0;
+
+    // Smooth tilt + shine for social buttons (desktop only)
+    const socialBtns = document.querySelectorAll('.social-btn');
+    const maxTilt = 12;
+    
+    if (isDesktop) {
+      socialBtns.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const normX = (x / rect.width) * 2 - 1;
+          const normY = (y / rect.height) * 2 - 1;
+          const rotateX = Math.max(-1, Math.min(1, normY)) * -maxTilt;
+          const rotateY = Math.max(-1, Math.min(1, normX)) * maxTilt;
+          btn.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+          btn.style.setProperty('--x', `${x}px`);
+          btn.style.setProperty('--y', `${y}px`);
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = 'rotateX(0) rotateY(0)';
+        });
+      });
+    } else {
+      // Touch device: simplify interactions
+      socialBtns.forEach(btn => {
+        btn.addEventListener('touchstart', () => {
+          btn.style.background = 'rgba(255, 102, 204, 0.2)';
+        });
+        btn.addEventListener('touchend', () => {
+          btn.style.background = 'rgba(75, 10, 74, 0.6)';
+        });
+      });
+    }
+
+    // Floating animation for skill cards with requestAnimationFrame
+    const skillCards = document.querySelectorAll('.skill-card');
+    const cardAnimations = new Map();
+    
+    skillCards.forEach((card) => {
+      let targetY = 0;
+      let currentY = 0;
+      let animationId = null;
       
+      card.addEventListener('mouseenter', () => {
+        card.classList.add('hovering');
+        targetY = -8;
+        
+        if (!animationId) {
+          const animateCard = () => {
+            currentY += (targetY - currentY) * 0.15;
+            card.style.transform = `translateY(${currentY}px)`;
+            
+            if (Math.abs(targetY - currentY) > 0.1) {
+              animationId = requestAnimationFrame(animateCard);
+            } else {
+              card.style.transform = `translateY(${targetY}px)`;
+              animationId = null;
+            }
+          };
+          animationId = requestAnimationFrame(animateCard);
+        }
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.classList.remove('hovering');
+        targetY = 0;
+        
+        if (!animationId) {
+          const animateCard = () => {
+            currentY += (targetY - currentY) * 0.15;
+            card.style.transform = `translateY(${currentY}px)`;
+            
+            if (Math.abs(targetY - currentY) > 0.1) {
+              animationId = requestAnimationFrame(animateCard);
+            } else {
+              card.style.transform = `translateY(0px)`;
+              animationId = null;
+            }
+          };
+          animationId = requestAnimationFrame(animateCard);
+        }
+      });
+    });
 
-        <p id="lol">
+    // Add floating keyframes dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+    `;
+    document.head.appendChild(style);
 
-        Hello, I am Cymouz and this is my website... Pretty cool <em>right</em>? <br>
-            <strong>It would be nice if you could take a moment to subscribe!
-            <h1>Stuff</h1>
-              
-            	<h3>
-                <a href="/photos">[ Photography Portfolio ]</a>
-                  
-                 <br>
-                </h3>
+    // High-performance parallax using requestAnimationFrame (unlimited FPS)
+    if (isDesktop) {
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        targetBackgroundX = (mouseX / window.innerWidth) * 10 - 5;
+        targetBackgroundY = (mouseY / window.innerHeight) * 10 - 5;
+      });
 
-        </p>
+      // Animation loop for smooth parallax
+      function updateParallax() {
+        // Smooth easing for parallax
+        currentBackgroundX += (targetBackgroundX - currentBackgroundX) * 0.1;
+        currentBackgroundY += (targetBackgroundY - currentBackgroundY) * 0.1;
+        
+        document.body.style.backgroundPosition = `${currentBackgroundX}% ${currentBackgroundY}%`;
+        
+        requestAnimationFrame(updateParallax);
+      }
+      
+      updateParallax();
+    }
 
-    </body>
+    // Handle responsive animations on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      // Don't restart animation on resize to prevent flickering
+      // Animation continues smoothly in the background
+      resizeTimeout = setTimeout(() => {
+        // Just update variables if needed, but don't interrupt animation
+      }, 250);
+    });
+  </script>
+</body>
 </html>
