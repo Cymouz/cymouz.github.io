@@ -230,10 +230,158 @@
       animation: titleSpin 0.8s ease;
     }
 
+    .cookie-counter {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 1001;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 14px;
+      min-width: 120px;
+      background: rgba(15, 8, 30, 0.85);
+      border: 1px solid rgba(179, 102, 255, 0.45);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 0.85rem;
+      text-align: left;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+      user-select: none;
+      pointer-events: none;
+      transform: translateY(-150px);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    }
+
+    .cookie-counter.counter-active {
+      background: rgba(88, 26, 133, 0.95);
+      border-color: rgba(255, 119, 168, 0.75);
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cookie-counter span {
+      display: block;
+      line-height: 1.2;
+    }
+
+    .cookie-counter .label {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .cookie-counter .value {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 640px) {
+      .cookie-counter {
+        left: 12px;
+        top: 12px;
+        padding: 8px 12px;
+        min-width: 110px;
+        font-size: 0.8rem;
+      }
+    }
+
     @keyframes titleSpin {
       0% { transform: rotate(0deg); }
       50% { transform: rotate(180deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    /* Game Mode Styles */
+    .game-mode-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      z-index: 998;
+      transition: background 0.5s ease;
+      pointer-events: none;
+    }
+
+    .game-mode-overlay.active {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .fade-out {
+      animation: fadeOutElement 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeOutElement {
+      from {
+        opacity: 1;
+        visibility: visible;
+      }
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .title-center {
+      transition: all 0.6s ease-out;
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      z-index: 1000;
+    }
+
+    .click-feedback {
+      position: fixed;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ff4d6d;
+      pointer-events: none;
+      user-select: none;
+      animation: clickFeedbackRise 1s ease-out forwards;
+      z-index: 1000;
+    }
+
+    @keyframes clickFeedbackRise {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-60px) scale(0.8);
+        opacity: 0;
+      }
+    }
+
+    .exit-clicker-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255, 77, 109, 0.2);
+      border: 1.5px solid rgba(255, 77, 109, 0.6);
+      color: #ff4d6d;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .exit-clicker-btn:hover {
+      background: rgba(255, 77, 109, 0.35);
+      border-color: rgba(255, 77, 109, 0.8);
+      box-shadow: 0 8px 20px rgba(255, 77, 109, 0.25);
+    }
+
+    .exit-clicker-btn:active {
+      transform: scale(0.95);
     }
 
     .socials-mobile {
@@ -409,6 +557,10 @@
 </head>
 <body>
   <div class="particle-container" id="particle-container"></div>
+  <div class="cookie-counter" id="cookie-counter">
+    <span class="label" id="cookie-counter-label">Clicker locked</span>
+    <span class="value" id="cookie-counter-value">0</span>
+  </div>
   <h1 id="title">Cymouz</h1>
 
   <div class="bio">
@@ -468,6 +620,7 @@
     </div>
   </div>
 
+  <script src="game.js"></script>
   <script>
     // Violet/Purple and Dark Red gradient - no random colors
     const title = document.getElementById("title");
@@ -477,15 +630,7 @@
     title.style.webkitBackgroundClip = "text";
     title.style.webkitTextFillColor = "transparent";
 
-    const titleClicksTarget = 5;
-    let titleClicks = 0;
-    let titleResetTimer = null;
     const particleContainer = document.getElementById('particle-container');
-
-    const resetTitleClicks = () => {
-      titleClicks = 0;
-      titleResetTimer = null;
-    };
 
     const spawnParticles = (count) => {
       const rect = title.getBoundingClientRect();
@@ -516,15 +661,35 @@
       }
     };
 
+    const titleClicksTarget = 5;
+    let titleClicks = 0;
+    let titleResetTimer = null;
+
+    const resetTitleClicks = () => {
+      titleClicks = 0;
+      titleResetTimer = null;
+    };
+
     title.addEventListener('click', () => {
       titleClicks += 1;
       clearTimeout(titleResetTimer);
       titleResetTimer = setTimeout(resetTitleClicks, 1200);
 
-      if (titleClicks >= titleClicksTarget) {
+      if (ClickerGame.isActive()) {
+        ClickerGame.increaseScore(1);
+        const rect = title.getBoundingClientRect();
+        ClickerGame.showClickFeedback(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        spawnParticles(6);
+      }
+
+      if (titleClicks >= titleClicksTarget && !ClickerGame.isActive()) {
         titleClicks = 0;
         title.classList.add('title-spin');
-        setTimeout(() => title.classList.remove('title-spin'), 800);
+        setTimeout(() => {
+          title.classList.remove('title-spin');
+          ClickerGame.activateGameMode();
+          ClickerGame.increaseScore(5);
+        }, 800);
         spawnParticles(20);
       }
     });
