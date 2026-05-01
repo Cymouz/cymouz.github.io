@@ -475,5 +475,5 @@ if (document.readyState === 'loading') {
     if (liveVersion && liveVersion !== currentVersion) {
       document.getElementById('update-banner').classList.add('show');
     }
-  }, 10000); 
+  }, 10000);
 })();
