@@ -34,6 +34,51 @@
   <style>
 
 
+
+/* --- Update Banner Styles --- */
+.update-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(150px); /* Hidden off-screen by default */
+  background: #1a1a2e;
+  border: 1px solid #b366ff;
+  box-shadow: 0 4px 15px rgba(179, 102, 255, 0.3);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  z-index: 10000;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.update-banner.show {
+  transform: translateX(-50%) translateY(0); /* Slides up into view */
+}
+
+.update-banner button {
+  background: #b366ff;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.update-banner button:hover {
+  background: #9933ff;
+}
+
+
+
+
+
 /* --- Cheat Code Styles --- */
     .cheat-activated-text {
       position: fixed;
@@ -998,5 +1043,9 @@
       }, 250);
     });
   </script>
+  <div id="update-banner" class="update-banner">
+  <span>A new version of the site is available!</span>
+  <button onclick="window.location.reload(true)">Refresh</button>
+</div>
 </body>
 </html>

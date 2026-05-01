@@ -439,3 +439,41 @@ if (document.readyState === 'loading') {
 } else {
   ClickerGame.init();
 }
+
+
+// ==========================================
+// 🔄 Auto-Update Checker
+// ==========================================
+(() => {
+  let currentVersion = null;
+
+  // 1. Get the version ID when the user first loads the page
+  const fetchVersion = async () => {
+    try {
+      // Adding ?t=Date.now() prevents the browser from loading a cached version of the file
+      const response = await fetch('/version.json?t=' + Date.now());
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.version;
+    } catch (err) {
+      return null;
+    }
+  };
+
+  // 2. Initialize the current version
+  fetchVersion().then(version => {
+    if (version) currentVersion = version;
+  });
+
+  // 3. Check for a new version every specified interval
+  setInterval(async () => {
+    if (!currentVersion) return; // If we didn't get a starting version, don't do anything
+    
+    const liveVersion = await fetchVersion();
+    
+    // If the live version is different from the one we loaded with, show the banner!
+    if (liveVersion && liveVersion !== currentVersion) {
+      document.getElementById('update-banner').classList.add('show');
+    }
+  }, 10000); 
+})();
