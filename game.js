@@ -5,23 +5,37 @@ const ClickerGame = (() => {
   let gameMode = false;
   let renderShopItems = null;
 
+  // --- Cheat Variables ---
+  let isCheatActive = false;
+  let cheatInterval = null;
+  let preCheatUpgrades = {};
+  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
+  let konamiIndex = 0;
+
+  // Listen for cheat code
+  document.addEventListener('keydown', (e) => {
+    if (!clickerActive || isCheatActive) {
+      konamiIndex = 0;
+      return;
+    }
+    
+    const key = e.key;
+    const expected = konamiCode[konamiIndex];
+    // Ignore case to allow uppercase or lowercase 'A' and 'B'
+    if (key.toLowerCase() === expected.toLowerCase()) {
+      konamiIndex++;
+      if (konamiIndex === konamiCode.length) {
+        activateCheat();
+        konamiIndex = 0;
+      }
+    } else {
+      konamiIndex = 0;
+    }
+  });
+
   // =======================================================================
   // 🛒 UPGRADES DICTIONARY
   // =======================================================================
-  // HOW TO ADD NEW UPGRADES:
-  // Copy the template below, paste it, change the ID, and tweak the values!
-  //
-  // myNewUpgradeID: { 
-  //   name: "🌟 Name",           // Display name (emojis work great!)
-  //   desc: "What it does",      // Description under the name
-  //   count: 0,                  // ALWAYS leave as 0
-  //   baseCost: 100,             // Starting price
-  //   costScale: 1.5,            // Price multiplier per level (1.5 = +50% cost)
-  //   type: "click",             // CHOOSE ONE: "click", "auto", or "discount"
-  //   effectValue: 5             // How much it adds/reduces per level
-  // },
-  // =======================================================================
-
   let upgrades = {
     // --- Click Power Upgrades ---
     multiplier: { name: "🖱️ Multiplier", desc: "+1 Point per click", count: 0, baseCost: 15, costScale: 1.5, type: "click", effectValue: 1 },
@@ -38,7 +52,18 @@ const ClickerGame = (() => {
 
   // --- Save / Load Logic ---
   const saveData = () => {
-    const data = { score: clickerScore, upgrades };
+    let upgradesToSave = upgrades;
+
+    // SAFEGUARD: If cheat is active, fake the save data by injecting the real (pre-cheat) levels.
+    // This allows score to save correctly without saving the cheated upgrade levels.
+    if (isCheatActive) {
+      upgradesToSave = JSON.parse(JSON.stringify(upgrades)); // clone
+      for (let key in preCheatUpgrades) {
+        upgradesToSave[key].count = preCheatUpgrades[key];
+      }
+    }
+
+    const data = { score: clickerScore, upgrades: upgradesToSave };
     localStorage.setItem('cymouz_game_data', JSON.stringify(data));
   };
 
@@ -49,7 +74,6 @@ const ClickerGame = (() => {
         const data = JSON.parse(dataStr);
         if (typeof data.score === 'number') clickerScore = data.score;
         if (data.upgrades) {
-          // Dynamically load counts for whatever upgrades exist in our code
           for (let key in upgrades) {
             if (data.upgrades[key]) {
               upgrades[key].count = data.upgrades[key].count || 0;
@@ -67,28 +91,23 @@ const ClickerGame = (() => {
   };
 
   // --- Dynamic Math & Formulas ---
-  
-  // Calculates the global shop discount
   const getDiscountMult = () => {
     let mult = 1;
     for (let key in upgrades) {
       if (upgrades[key].type === "discount") {
-        // e.g. 5% discount = 0.95 ^ level
         mult *= Math.pow(1 - upgrades[key].effectValue, upgrades[key].count);
       }
     }
     return mult;
   };
 
-  // Calculates a specific upgrade's current cost
   const getUpgradeCost = (key) => {
     const u = upgrades[key];
     return Math.floor(u.baseCost * Math.pow(u.costScale, u.count) * getDiscountMult());
   };
 
-  // Calculates total click power based on all "click" type upgrades
   const getClickValue = () => {
-    let clickPower = 1; // Base click is always 1
+    let clickPower = 1;
     for (let key in upgrades) {
       if (upgrades[key].type === "click") {
         clickPower += (upgrades[key].count * upgrades[key].effectValue);
@@ -97,7 +116,6 @@ const ClickerGame = (() => {
     return clickPower;
   };
 
-  // Calculates total points per second based on all "auto" type upgrades
   const getAutoClickValue = () => {
     let autoPower = 0;
     for (let key in upgrades) {
@@ -119,7 +137,7 @@ const ClickerGame = (() => {
       counterLabel.textContent = clickerActive ? 'Points' : 'Clicker locked';
     }
     if (renderShopItems && gameMode) {
-      renderShopItems(); // Refresh button disabled/enabled states
+      renderShopItems(); 
     }
   };
 
@@ -162,7 +180,6 @@ const ClickerGame = (() => {
       renderShopItems = () => {
         shopList.innerHTML = '';
         
-        // Inject upgrades dynamically
         for (let key in upgrades) {
           const cost = getUpgradeCost(key);
           const btn = document.createElement('button');
@@ -175,7 +192,6 @@ const ClickerGame = (() => {
           shopList.appendChild(btn);
         }
         
-        // Inject Save/Load buttons
         const ioDiv = document.createElement('div');
         ioDiv.className = 'save-load-controls';
         
@@ -252,6 +268,58 @@ const ClickerGame = (() => {
     }
   }, 1000);
 
+  // --- Cheat Engine Logic ---
+  const activateCheat = () => {
+    isCheatActive = true;
+    preCheatUpgrades = {};
+    
+    // Remember true stats
+    for (let key in upgrades) {
+      preCheatUpgrades[key] = upgrades[key].count;
+    }
+
+    // Visual Text Animation
+    const fx = document.createElement('div');
+    fx.className = 'cheat-activated-text';
+    fx.textContent = 'CHEAT ACTIVATED';
+    document.body.appendChild(fx);
+    setTimeout(() => fx.remove(), 2000); // Remove after animation
+
+    // Disengage Button
+    const btn = document.createElement('button');
+    btn.className = 'disengage-cheat-btn';
+    btn.id = 'disengage-cheat-btn';
+    btn.textContent = 'Disengage Cheat';
+    btn.onclick = deactivateCheat;
+    document.body.appendChild(btn);
+
+    // Increase all upgrades by 1 every second
+    cheatInterval = setInterval(() => {
+      for (let key in upgrades) {
+        upgrades[key].count += 1;
+      }
+      updateCounterDisplay();
+    }, 1000);
+  };
+
+  const deactivateCheat = () => {
+    if (!isCheatActive) return;
+    clearInterval(cheatInterval);
+    isCheatActive = false;
+
+    // Revert upgrades to pre-cheat status
+    for (let key in preCheatUpgrades) {
+      upgrades[key].count = preCheatUpgrades[key];
+    }
+
+    // Remove UI
+    const btn = document.getElementById('disengage-cheat-btn');
+    if (btn) btn.remove();
+
+    updateCounterDisplay();
+    saveData(); // Make sure real numbers are hard-saved
+  };
+
   // --- Game Mode Overlay Handlers ---
   const activateGameMode = () => {
     if (gameMode) return;
@@ -300,6 +368,9 @@ const ClickerGame = (() => {
 
   const deactivateGameMode = () => {
     if (!gameMode) return;
+    
+    deactivateCheat(); // Ensure cheat breaks if player hits exit
+
     gameMode = false;
     clickerActive = false;
 
