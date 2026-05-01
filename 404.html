@@ -115,11 +115,7 @@
 </head>
 <body>
   <h1 id="title">404</h1>
-<p id="demo"></p>
-  <script>
-document.getElementById("demo").innerHTML = 
-window.location.href + "<br> does not exist";
-</script>
+
 
   <div class="message">Not sure what you're looking for but its not here 🤷‍♂️ <br><br> Going back home…</div>
 
@@ -130,6 +126,12 @@ window.location.href + "<br> does not exist";
 
   <!-- Optional manual redirect button (keeps style consistent) -->
   <a id="manual" class="tilt-btn" href="/"> Go now</a>
+
+  <p id="demo"></p>
+  <script>
+document.getElementById("demo").innerHTML = 
+window.location.href + "<br> does not exist";
+</script>
 
   <script>
     // Safe, readable palette (avoids neon/over-bright tones)
