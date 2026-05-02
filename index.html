@@ -201,14 +201,19 @@
 
     /* Fixes the bounce area on mobile to use the animated background! */
     html {
-      min-height: 100%;
-      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
+      background-color: #1a0033; /* Fallback dark color to prevent white flashes */
+      background-image: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
       animation: bgShift 20s ease infinite;
       
-      /* Locks the page in place to stop iPhone dragging/bouncing */
+      /* Force it to fill the entire device height to kill white borders */
+      min-height: 100vh;
+      min-height: 100dvh; 
+      
+      /* Allows pull-to-refresh (y) but stops horizontal dragging (x) */
       overflow-x: hidden; 
-      overscroll-behavior: none; 
+      overscroll-behavior-y: auto; 
+      overscroll-behavior-x: none; 
       width: 100%;
     }
 
@@ -228,7 +233,8 @@
       
       /* Locks the body from side-to-side panning */
       overflow-x: hidden;
-      overscroll-behavior: none;
+      overscroll-behavior-y: auto;
+      overscroll-behavior-x: none;
       width: 100%;
       
       user-select: none;
@@ -236,6 +242,9 @@
       -moz-user-select: none;
       -ms-user-select: none;
       padding: 20px;
+      
+      /* Transparent so the html background shines through fully */
+      background: transparent; 
     }
 
     @keyframes bgShift {
