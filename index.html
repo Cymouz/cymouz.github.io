@@ -33,6 +33,76 @@
   <title>Cymouz</title>
   <style>
 
+/* ==========================================
+   🛒 Custom Shop Scrollbar
+   ========================================== */
+.shop-list::-webkit-scrollbar {
+  width: 8px; /* Makes the scrollbar nice and thin */
+}
+
+.shop-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2); /* Dark, semi-transparent track */
+  border-radius: 10px;
+}
+
+.shop-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* Subtle white thumb */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.shop-list::-webkit-scrollbar-thumb:hover {
+  background: #ff4d6d; /* Lights up with your accent color when hovered! */
+}
+
+
+
+/* --- Shop Tabs & Save/Load Styles --- */
+    .shop-tabs {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(26, 26, 46, 0.95);
+      padding: 10px 5px;
+      border-bottom: 2px solid #b366ff;
+    }
+    
+    .tab-btn {
+      background: transparent;
+      color: #fff;
+      border: 1px solid transparent;
+      padding: 8px 15px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      background: rgba(179, 102, 255, 0.2);
+    }
+
+    .tab-btn.active {
+      background: #b366ff;
+      border-color: #fff;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(179, 102, 255, 0.5);
+    }
+
+    .save-load-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px;
+      background: rgba(26, 26, 46, 0.95);
+      border-top: 2px solid #b366ff;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+
+
+
+
 
 
 /* --- Update Banner Styles --- */
@@ -130,10 +200,17 @@
     }
 
 
+    /* Fixes the white bounce bars on mobile */
+    html {
+      background-color: #1a0033; 
+    }
+
     /* Layout */
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh; /* Modern fix for mobile address bars */
+      box-sizing: border-box; /* This fixes the unwanted scrollbar! */
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -148,6 +225,7 @@
       -ms-user-select: none;
       background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
+      background-attachment: fixed; /* Keeps the background perfectly pinned */
       animation: bgShift 20s ease infinite;
       padding: 20px;
     }
@@ -769,7 +847,7 @@
   <div class="interests">
     <div class="skills-grid">
       <div class="skill-card">
-        <div class="skill-card-icon">📷</div>
+        <div class="skill-card-icon">📸</div>
         <div class="skill-card-title">Photography</div>
       </div>
       <div class="skill-card">
