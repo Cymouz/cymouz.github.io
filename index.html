@@ -55,8 +55,6 @@
   background: #ff4d6d; /* Lights up with your accent color when hovered! */
 }
 
-
-
 /* --- Shop Tabs & Save/Load Styles --- */
     .shop-tabs {
       display: flex;
@@ -99,12 +97,6 @@
       border-bottom-right-radius: 12px;
     }
 
-
-
-
-
-
-
 /* --- Update Banner Styles --- */
 .update-banner {
   position: fixed;
@@ -144,10 +136,6 @@
 .update-banner button:hover {
   background: #9933ff;
 }
-
-
-
-
 
 /* --- Cheat Code Styles --- */
     .cheat-activated-text {
@@ -199,25 +187,29 @@
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.8);
     }
 
-    /* Fixes the bounce area on mobile to use the animated background! */
-    html {
-      background-color: #1a0033; /* Fallback dark color to prevent white flashes */
-      background-image: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
+    /* Fixed Seamless Animated Background Layer */
+    .animated-background {
+      position: fixed;
+      inset: 0; /* Stretches edge-to-edge natively */
+      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
       animation: bgShift 20s ease infinite;
-      
-      /* Force it to fill the entire device height to kill white borders */
-      min-height: 100vh;
-      min-height: 100dvh; 
-      
-      /* Allows pull-to-refresh (y) but stops horizontal dragging (x) */
+      z-index: -9999; /* Locked way behind your content */
+      pointer-events: none;
+    }
+
+    /* Layout Roots */
+    html {
+      background-color: #1a0033; /* Deep fallback layer */
+      min-height: 100%;
       overflow-x: hidden; 
+      
+      /* THIS enables pull-to-refresh (Y), but stops horizontal dragging (X)! */
       overscroll-behavior-y: auto; 
       overscroll-behavior-x: none; 
       width: 100%;
     }
 
-    /* Layout */
     body {
       margin: 0;
       min-height: 100vh;
@@ -231,7 +223,6 @@
       color: white;
       text-align: center;
       
-      /* Locks the body from side-to-side panning */
       overflow-x: hidden;
       overscroll-behavior-y: auto;
       overscroll-behavior-x: none;
@@ -243,7 +234,7 @@
       -ms-user-select: none;
       padding: 20px;
       
-      /* Transparent so the html background shines through fully */
+      /* Make transparent so the fixed animated gradient shines through */
       background: transparent; 
     }
 
@@ -850,6 +841,8 @@
   </style>
 </head>
 <body>
+  <div class="animated-background" id="animated-background"></div>
+
   <div class="particle-container" id="particle-container"></div>
   <div class="cookie-counter" id="cookie-counter">
     <span class="label" id="cookie-counter-label">Clicker locked</span>
@@ -1119,7 +1112,11 @@
         currentBackgroundX += (targetBackgroundX - currentBackgroundX) * 0.1;
         currentBackgroundY += (targetBackgroundY - currentBackgroundY) * 0.1;
         
-        document.body.style.backgroundPosition = `${currentBackgroundX}% ${currentBackgroundY}%`;
+        // NOW TARGETS THE NEW FIXED BACKGROUND DIV!
+        const animBg = document.getElementById('animated-background');
+        if (animBg) {
+          animBg.style.backgroundPosition = `${currentBackgroundX}% ${currentBackgroundY}%`;
+        }
         
         requestAnimationFrame(updateParallax);
       }
