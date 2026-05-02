@@ -42,23 +42,25 @@
    🛒 Custom Shop Scrollbar
    ========================================== */
 .shop-list::-webkit-scrollbar {
-  width: 8px; 
+  width: 8px; /* Makes the scrollbar nice and thin */
 }
 
 .shop-list::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2); 
+  background: rgba(0, 0, 0, 0.2); /* Dark, semi-transparent track */
   border-radius: 10px;
 }
 
 .shop-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2); 
+  background: rgba(255, 255, 255, 0.2); /* Subtle white thumb */
   border-radius: 10px;
   transition: background 0.3s ease;
 }
 
 .shop-list::-webkit-scrollbar-thumb:hover {
-  background: #ff4d6d; 
+  background: #ff4d6d; /* Lights up with your accent color when hovered! */
 }
+
+
 
 /* --- Shop Tabs & Save/Load Styles --- */
     .shop-tabs {
@@ -105,9 +107,9 @@
 /* --- Update Banner Styles --- */
 .update-banner {
   position: fixed;
-  bottom: calc(20px + env(safe-area-inset-bottom)); 
+  bottom: calc(20px + env(safe-area-inset-bottom)); /* Pushed safely above iPhone home bar */
   left: 50%;
-  transform: translateX(-50%) translateY(150px); 
+  transform: translateX(-50%) translateY(150px); /* Hidden off-screen by default */
   background: #1a1a2e;
   border: 1px solid #b366ff;
   box-shadow: 0 4px 15px rgba(179, 102, 255, 0.3);
@@ -124,7 +126,7 @@
 }
 
 .update-banner.show {
-  transform: translateX(-50%) translateY(0); 
+  transform: translateX(-50%) translateY(0); /* Slides up into view */
 }
 
 .update-banner button {
@@ -192,59 +194,38 @@
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.8);
     }
 
-    /* THE FIX: Oversized Seamless Animated Background Layer */
-    .animated-background {
-      position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
-      background-size: 400% 400%;
-      animation: bgShift 20s ease infinite;
-      z-index: -9999; 
-      pointer-events: none;
-    }
+    /* =========================================
+       NEW LAYOUT: Background, Wrapper, Content 
+       ========================================= */
 
-    /* Layout Roots */
-    html {
-      background-color: #1a0033;
-      min-height: 100%;
-      overflow-x: hidden; 
-      overscroll-behavior-y: auto; 
-      overscroll-behavior-x: none; 
-      width: 100%;
-    }
-
-    body {
+    /* 1. Prevent white flashes during scroll-bounce */
+    html, body {
+      height: 100%;
       margin: 0;
-      min-height: 100vh;
-      min-height: 100dvh; 
-      box-sizing: border-box; 
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      padding: 0;
+      background-color: #1a0033; /* Fallback base color */
+      overflow-x: hidden;
       font-family: 'Segoe UI', sans-serif;
       color: white;
       text-align: center;
-      
-      overflow-x: hidden;
-      overscroll-behavior-y: auto;
-      overscroll-behavior-x: none;
-      width: 100%;
-      
       user-select: none;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
-      
-      padding-top: calc(20px + env(safe-area-inset-top));
-      padding-bottom: calc(20px + env(safe-area-inset-bottom));
-      padding-left: calc(20px + env(safe-area-inset-left));
-      padding-right: calc(20px + env(safe-area-inset-right));
-      
-      background: transparent; 
+    }
+
+    /* 2. The Fixed Background Layer (The Fix for iOS Clipping) */
+    #fixed-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2; /* Safely behind everything */
+      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
+      background-size: 400% 400%;
+      animation: bgShift 20s ease infinite;
+      pointer-events: none;
     }
 
     @keyframes bgShift {
@@ -252,6 +233,26 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
+    /* 3. The Content Wrapper (Fixes the flexbox scroll trap) */
+    .main-wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      /* Add safe padding for notch and home bar */
+      padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+      box-sizing: border-box;
+    }
+
+    /* 4. Safe Centering: Uses margins so content can overflow natively */
+    .content-container {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
 
     /* Title with animated gradient */
     h1 {
@@ -585,12 +586,6 @@
       }
     }
 
-    @keyframes titleSpin {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(180deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     /* Game Mode Styles */
     .game-mode-overlay {
       position: fixed;
@@ -761,12 +756,8 @@
 
     /* Mobile optimizations */
     @media (max-width: 768px) {
-      body {
-        /* Adjusted for mobile padding */
-        padding-top: calc(15px + env(safe-area-inset-top));
-        padding-bottom: calc(15px + env(safe-area-inset-bottom));
-        padding-left: calc(15px + env(safe-area-inset-left));
-        padding-right: calc(15px + env(safe-area-inset-right));
+      .main-wrapper {
+        padding: calc(15px + env(safe-area-inset-top)) 15px calc(15px + env(safe-area-inset-bottom)) 15px;
       }
 
       h1 {
@@ -823,11 +814,8 @@
     }
 
     @media (max-width: 480px) {
-      body {
-        padding-top: calc(12px + env(safe-area-inset-top));
-        padding-bottom: calc(12px + env(safe-area-inset-bottom));
-        padding-left: calc(12px + env(safe-area-inset-left));
-        padding-right: calc(12px + env(safe-area-inset-right));
+      .main-wrapper {
+        padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)) 12px;
       }
 
       .socials-mobile.open {
@@ -857,70 +845,77 @@
   </style>
 </head>
 <body>
-  <div class="animated-background" id="animated-background"></div>
-
+  
+  <div id="fixed-bg"></div>
+  
   <div class="particle-container" id="particle-container"></div>
   <div class="cookie-counter" id="cookie-counter">
     <span class="label" id="cookie-counter-label">Clicker locked</span>
     <span class="value" id="cookie-counter-value">0</span>
   </div>
-  <h1 id="title">Cymouz</h1>
 
-  <div class="bio">
-    Hi, I'm Cymouz, aka Drake Lousberg. I'm a tech enthusiast, photographer, gamer, and snowboarder in Alaska.
-  </div>
+  <div class="main-wrapper">
+    <div class="content-container">
+      
+      <h1 id="title">Cymouz</h1>
 
-  <div class="interests">
-    <div class="skills-grid">
-      <div class="skill-card">
-        <div class="skill-card-icon">📸</div>
-        <div class="skill-card-title">Photography</div>
+      <div class="bio">
+        Hi, I'm Cymouz, aka Drake Lousberg. I'm a tech enthusiast, photographer, gamer, and snowboarder in Alaska.
       </div>
-      <div class="skill-card">
-        <div class="skill-card-icon">💻</div>
-        <div class="skill-card-title">Tech</div>
+
+      <div class="interests">
+        <div class="skills-grid">
+          <div class="skill-card">
+            <div class="skill-card-icon">📸</div>
+            <div class="skill-card-title">Photography</div>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-icon">💻</div>
+            <div class="skill-card-title">Tech</div>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-icon">🎮</div>
+            <div class="skill-card-title">Gaming</div>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-icon">🏂</div>
+            <div class="skill-card-title">Snowboarding</div>
+          </div>
+        </div>
       </div>
-      <div class="skill-card">
-        <div class="skill-card-icon">🎮</div>
-        <div class="skill-card-title">Gaming</div>
+
+      <h2 class="links-title">Socials</h2>
+
+      <div class="socials" id="desktop-socials">
+        <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/instagram.svg" alt="Instagram" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Instagram</a>
+        <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/youtube.svg" alt="YouTube" style="width: 25px; height: auto; vertical-align: middle; margin-right: 8px;">YouTube</a>
+        <a href="https://discord.com/users/cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/discord.svg" alt="Discord" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Discord</a>
+        <a href="https://steamcommunity.com/id/Cymouz/" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/steam.svg" alt="Steam" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Steam</a>
+        <a href="https://www.roblox.com/users/1574140524/profile" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/roblox.svg" alt="Roblox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Roblox</a>
+        <a href="https://www.xbox.com/play/user/Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/xbox.svg" alt="Xbox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Xbox</a>
+        <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/makerworld.svg" alt="Maker World" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Maker World</a>
       </div>
-      <div class="skill-card">
-        <div class="skill-card-icon">🏂</div>
-        <div class="skill-card-title">Snowboarding</div>
+
+      <div class="links-section">
+        <div class="links-header">
+          <h2>Socials</h2>
+          <span class="links-toggle">▼</span>
+        </div>
+        <div class="socials-mobile" id="mobile-socials">
+          <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/instagram.svg" alt="Instagram" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Instagram</a>
+          <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/youtube.svg" alt="YouTube" style="width: 25px; height: auto; vertical-align: middle; margin-right: 8px;">YouTube</a>
+          <a href="https://discord.com/users/cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/discord.svg" alt="Discord" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Discord</a>
+          <a href="https://steamcommunity.com/id/Cymouz/" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/steam.svg" alt="Steam" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Steam</a>
+          <a href="https://www.roblox.com/users/1574140524/profile" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/roblox.svg" alt="Roblox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Roblox</a>
+          <a href="https://www.xbox.com/play/user/Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/xbox.svg" alt="Xbox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Xbox</a>
+          <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/makerworld.svg" alt="Maker World" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Maker World</a>
+        </div>
       </div>
+
     </div>
-  </div>
-
-  <h2 class="links-title">Socials</h2>
-
-  <div class="socials" id="desktop-socials">
-    <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/instagram.svg" alt="Instagram" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Instagram</a>
-    <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/youtube.svg" alt="YouTube" style="width: 25px; height: auto; vertical-align: middle; margin-right: 8px;">YouTube</a>
-    <a href="https://discord.com/users/cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/discord.svg" alt="Discord" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Discord</a>
-    <a href="https://steamcommunity.com/id/Cymouz/" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/steam.svg" alt="Steam" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Steam</a>
-    <a href="https://www.roblox.com/users/1574140524/profile" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/roblox.svg" alt="Roblox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Roblox</a>
-    <a href="https://www.xbox.com/play/user/Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/xbox.svg" alt="Xbox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Xbox</a>
-    <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/makerworld.svg" alt="Maker World" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Maker World</a>
-  </div>
-
-  <div class="links-section">
-    <div class="links-header">
-      <h2>Socials</h2>
-      <span class="links-toggle">▼</span>
-    </div>
-    <div class="socials-mobile" id="mobile-socials">
-      <a href="https://www.instagram.com/cy.mouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/instagram.svg" alt="Instagram" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Instagram</a>
-      <a href="https://www.youtube.com/channel/UClm4T3lL7sb0FSg9FBaokDw" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/youtube.svg" alt="YouTube" style="width: 25px; height: auto; vertical-align: middle; margin-right: 8px;">YouTube</a>
-      <a href="https://discord.com/users/cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/discord.svg" alt="Discord" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Discord</a>
-      <a href="https://steamcommunity.com/id/Cymouz/" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/steam.svg" alt="Steam" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Steam</a>
-      <a href="https://www.roblox.com/users/1574140524/profile" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/roblox.svg" alt="Roblox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Roblox</a>
-      <a href="https://www.xbox.com/play/user/Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/xbox.svg" alt="Xbox" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Xbox</a>
-      <a href="https://makerworld.com/en/@Cymouz" target="_blank" rel="noopener noreferrer" class="social-btn"> <img src="Icons/makerworld.svg" alt="Maker World" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">Maker World</a>
-    </div>
-  </div>
-
-  <script src="game.js"></script>
+  </div> <script src="game.js"></script>
   <script>
+    // Violet/Purple and Dark Red gradient - no random colors
     const title = document.getElementById("title");
     title.style.backgroundImage = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%)";
     title.style.backgroundSize = "200% 100%";
@@ -992,6 +987,7 @@
       }
     });
 
+    // Mobile collapsible links section
     const linksHeader = document.querySelector('.links-header');
     const mobileSocials = document.getElementById('mobile-socials');
     const linksToggle = document.querySelector('.links-toggle');
@@ -1005,8 +1001,10 @@
       });
     }
 
+    // Detect whether the current pointer can hover reliably
     const canHover = window.matchMedia('(hover: hover)').matches || window.matchMedia('(any-hover: hover)').matches;
 
+    // Use requestAnimationFrame for smooth 60fps+ animations
     let mouseX = 0;
     let mouseY = 0;
     let targetBackgroundX = 0;
@@ -1014,6 +1012,7 @@
     let currentBackgroundX = 0;
     let currentBackgroundY = 0;
 
+    // Smooth tilt + shine for social buttons on hover-capable devices
     const socialBtns = document.querySelectorAll('.social-btn');
     const maxTilt = 12;
     
@@ -1037,6 +1036,7 @@
         });
       });
     } else {
+      // Touch device: simplify interactions
       socialBtns.forEach(btn => {
         btn.addEventListener('touchstart', () => {
           btn.style.background = 'rgba(255, 102, 204, 0.2)';
@@ -1047,6 +1047,7 @@
       });
     }
 
+    // Floating animation for skill cards with requestAnimationFrame
     const skillCards = document.querySelectorAll('.skill-card');
     const cardAnimations = new Map();
     
@@ -1096,6 +1097,7 @@
       });
     });
 
+    // Add floating keyframes dynamically
     const style = document.createElement('style');
     style.textContent = `
       @keyframes float {
@@ -1105,6 +1107,7 @@
     `;
     document.head.appendChild(style);
 
+    // High-performance parallax using requestAnimationFrame (unlimited FPS)
     if (canHover) {
       document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
@@ -1113,13 +1116,16 @@
         targetBackgroundY = (mouseY / window.innerHeight) * 10 - 5;
       });
 
+      // Animation loop for smooth parallax
       function updateParallax() {
+        // Smooth easing for parallax
         currentBackgroundX += (targetBackgroundX - currentBackgroundX) * 0.1;
         currentBackgroundY += (targetBackgroundY - currentBackgroundY) * 0.1;
         
-        const animBg = document.getElementById('animated-background');
-        if (animBg) {
-          animBg.style.backgroundPosition = `${currentBackgroundX}% ${currentBackgroundY}%`;
+        // --- UPDATED: Targets the new fixed background div ---
+        const fixedBg = document.getElementById('fixed-bg');
+        if (fixedBg) {
+          fixedBg.style.backgroundPosition = `${currentBackgroundX}% ${currentBackgroundY}%`;
         }
         
         requestAnimationFrame(updateParallax);
@@ -1128,16 +1134,21 @@
       updateParallax();
     }
 
+    // Handle responsive animations on window resize
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
+      // Don't restart animation on resize to prevent flickering
+      // Animation continues smoothly in the background
       resizeTimeout = setTimeout(() => {
+        // Just update variables if needed, but don't interrupt animation
       }, 250);
     });
   </script>
+  
   <div id="update-banner" class="update-banner">
-  <span>A new version of the site is available!</span>
-  <button onclick="window.location.reload(true)">Refresh</button>
-</div>
+    <span>A new version of the site is available!</span>
+    <button onclick="window.location.reload(true)">Refresh</button>
+  </div>
 </body>
 </html>
