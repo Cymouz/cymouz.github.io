@@ -199,7 +199,9 @@
     html {
       width: 100%;
       height: 100%;
-      background-color: #3d0a3d;
+      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 25%, #6b1a3a 50%, #4a0a4a 75%, #3d0a3d 100%);
+      background-size: 400% 400%;
+      animation: bgShift 20s ease infinite;
       overflow: hidden;
     }
 
@@ -208,7 +210,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      background-color: #3d0a3d;
+      background: transparent;
       overflow-y: auto;
       overflow-x: hidden;
       font-family: 'Segoe UI', sans-serif;
