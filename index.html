@@ -196,14 +196,18 @@
        LAYOUT: Background, Wrapper, Content 
        ========================================= */
 
+    :root {
+      --full-vh: 100vh;
+    }
+
     html {
-      min-height: 100dvh;
+      min-height: var(--full-vh);
       background-color: #1a0033; /* Fallback color for iOS bounce area ONLY */
       overflow-x: hidden;
     }
 
     body {
-      min-height: 100dvh;
+      min-height: var(--full-vh);
       margin: 0;
       padding: 0;
       background: transparent; /* THIS was the fix! Makes the body clear so the animated bg shows */
@@ -222,9 +226,9 @@
       position: fixed;
       inset: 0;
       min-width: 100vw;
-      min-height: 100dvh;
+      min-height: var(--full-vh);
       width: 100vw;
-      height: 100dvh;
+      height: var(--full-vh);
       z-index: -2; 
       background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
@@ -1138,13 +1142,22 @@
       updateParallax();
     }
 
+    function setViewportHeight() {
+      const vh = window.innerHeight;
+      document.documentElement.style.setProperty('--full-vh', `${vh}px`);
+    }
+
+    setViewportHeight();
+
     // Handle responsive animations on window resize
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
+        setViewportHeight();
       }, 250);
     });
+    window.addEventListener('orientationchange', setViewportHeight);
   </script>
   
   <div id="update-banner" class="update-banner">
