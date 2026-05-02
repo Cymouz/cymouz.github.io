@@ -230,16 +230,15 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      background: linear-gradient(135deg, #1a0033 10%, #4a0a4a 30%, #6b1a3a 50%, #4a0a4a 70%, #3d0a3d 90%);
-      background-size: 300% 300%;
-      animation: bgShift 20s ease infinite;
+      background: linear-gradient(45deg, #1a0033, #4a0a4a, #6b1a3a);
+      background-size: 400% 400%;
+      animation: bgShift 15s ease-in-out infinite;
       pointer-events: none;
     }
 
     @keyframes bgShift {
-      0% { background-position: 0% 50%; }
+      0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
 
     /* The Content Wrapper */
