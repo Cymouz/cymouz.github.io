@@ -179,12 +179,26 @@ const ClickerGame = (() => {
     return autoPower;
   };
 
+  const formatNumberWithSuffix = (value) => {
+    const absValue = Math.abs(value);
+    if (absValue >= 1e12) {
+      return `${(value / 1e12).toFixed(2).replace(/\.?0+$/, '')}T`;
+    }
+    if (absValue >= 1e9) {
+      return `${(value / 1e9).toFixed(2).replace(/\.?0+$/, '')}B`;
+    }
+    if (absValue >= 1e6) {
+      return `${(value / 1e6).toFixed(2).replace(/\.?0+$/, '')}M`;
+    }
+    return Math.floor(value).toLocaleString();
+  };
+
   // --- Display Updates ---
   const updateCounterDisplay = () => {
     const counterValue = document.getElementById('cookie-counter-value');
     const counterLabel = document.getElementById('cookie-counter-label');
     if (counterValue) {
-      counterValue.textContent = Math.floor(clickerScore);
+      counterValue.textContent = formatNumberWithSuffix(clickerScore);
     }
     if (counterLabel) {
       counterLabel.textContent = clickerActive ? 'Points' : 'Clicker locked';
@@ -197,7 +211,7 @@ const ClickerGame = (() => {
   const showClickFeedback = (x, y) => {
     const feedback = document.createElement('div');
     feedback.className = 'click-feedback';
-    feedback.textContent = `+${getClickValue()}`;
+    feedback.textContent = `+${formatNumberWithSuffix(getClickValue())}`;
     feedback.style.left = `${x}px`;
     feedback.style.top = `${y}px`;
     document.body.appendChild(feedback);
@@ -317,7 +331,7 @@ const ClickerGame = (() => {
           btn.className = 'upgrade-btn';
           btn.innerHTML = `<strong>${upgrades[key].name}</strong> (Lvl ${upgrades[key].count})<br>
                            <span style="font-size: 0.75rem; opacity: 0.8;">${upgrades[key].desc}</span><br>
-                           <span style="color: #ff4d6d;">Cost: ${cost}</span>`;
+                           <span style="color: #ff4d6d;">Cost: ${formatNumberWithSuffix(cost)}</span>`;
           btn.disabled = clickerScore < cost;
           btn.onclick = () => buyUpgrade(key);
           shopList.appendChild(btn);
