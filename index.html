@@ -31,7 +31,6 @@
   <meta charset="UTF-8" />
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  
   <meta name="theme-color" content="#1a0033" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -106,7 +105,7 @@
 /* --- Update Banner Styles --- */
 .update-banner {
   position: fixed;
-  bottom: calc(20px + env(safe-area-inset-bottom)); /* Pushes above iPhone home bar */
+  bottom: calc(20px + env(safe-area-inset-bottom)); 
   left: 50%;
   transform: translateX(-50%) translateY(150px); 
   background: #1a1a2e;
@@ -193,13 +192,13 @@
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.8);
     }
 
-    /* Fixed Seamless Animated Background Layer */
+    /* THE FIX: Oversized Seamless Animated Background Layer */
     .animated-background {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
       background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
       animation: bgShift 20s ease infinite;
@@ -240,7 +239,6 @@
       -moz-user-select: none;
       -ms-user-select: none;
       
-      /* NEW: Uses env() to mathematically push your content past the iPhone notch and home bar! */
       padding-top: calc(20px + env(safe-area-inset-top));
       padding-bottom: calc(20px + env(safe-area-inset-bottom));
       padding-left: calc(20px + env(safe-area-inset-left));
