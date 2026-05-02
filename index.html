@@ -197,13 +197,13 @@
        ========================================= */
 
     html {
-      height: 100%;
+      min-height: 100dvh;
       background-color: #1a0033; /* Fallback color for iOS bounce area ONLY */
       overflow-x: hidden;
     }
 
     body {
-      height: 100%;
+      min-height: 100dvh;
       margin: 0;
       padding: 0;
       background: transparent; /* THIS was the fix! Makes the body clear so the animated bg shows */
@@ -220,10 +220,11 @@
     /* Fixed Background Layer */
     #fixed-bg {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      min-width: 100vw;
+      min-height: 100dvh;
+      width: 100vw;
+      height: 100dvh;
       z-index: -2; 
       background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
