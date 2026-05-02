@@ -199,7 +199,9 @@
     html {
       width: 100%;
       height: 100%;
-      background-color: #1a0033; /* Fallback color for iOS bounce area ONLY */
+      background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
+      background-size: 400% 400%;
+      animation: bgShift 20s ease infinite;
       overflow: hidden;
     }
 
@@ -208,7 +210,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      background: transparent; /* THIS was the fix! Makes the body clear so the animated bg shows */
+      background: transparent;
       overflow-y: auto;
       overflow-x: hidden;
       font-family: 'Segoe UI', sans-serif;
@@ -227,11 +229,15 @@
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: -2; 
+      width: 100%;
+      height: 100%;
+      min-height: 100svh;
+      z-index: -1; 
       background: linear-gradient(135deg, #1a0033 0%, #4a0a4a 50%, #6b1a3a 100%);
       background-size: 400% 400%;
       animation: bgShift 20s ease infinite;
       pointer-events: none;
+      -webkit-touch-callout: none;
     }
 
     @keyframes bgShift {
