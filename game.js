@@ -437,7 +437,11 @@ const ClickerGame = (() => {
     if (shopPanel) {
       setTimeout(() => shopPanel.classList.add('active'), 10);
     }
-    title.classList.add('title-center');
+    
+    // Add title-center with a delay to allow smooth transition
+    setTimeout(() => {
+      title.classList.add('title-center');
+    }, 100);
 
     setTimeout(() => {
       dimOverlay.classList.add('active');
@@ -529,26 +533,60 @@ if (document.readyState === 'loading') {
 }
 
 // ==========================================
-// 🔄 Auto-Update Checker (Every 10 Seconds)
+// 🔄 Auto-Update Checker + Browser Notification
 // ==========================================
 (() => {
   let currentVersion = null;
+
+  const notifyUpdateAvailable = () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+
+    try {
+      new Notification('Website Updated', {
+        body: 'A new version is ready. Refresh to load the latest content.',
+        icon: '/favicon.ico'
+      });
+    } catch (err) {
+      // ignore notification failures
+    }
+  };
+
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+      try {
+        await Notification.requestPermission();
+      } catch (err) {
+        // ignore permission request errors
+      }
+    }
+  };
+
+  window.requestUpdateNotificationPermission = requestNotificationPermission;
+
   const fetchVersion = async () => {
     try {
       const response = await fetch('/version.json?t=' + Date.now());
       if (!response.ok) return null;
       const data = await response.json();
       return data.version;
-    } catch (err) { return null; }
+    } catch (err) {
+      return null;
+    }
   };
+
   fetchVersion().then(version => {
     if (version) currentVersion = version;
   });
+
   setInterval(async () => {
-    if (!currentVersion) return; 
+    if (!currentVersion) return;
     const liveVersion = await fetchVersion();
     if (liveVersion && liveVersion !== currentVersion) {
-      document.getElementById('update-banner').classList.add('show');
+      const banner = document.getElementById('update-banner');
+      if (banner) banner.classList.add('show');
+      notifyUpdateAvailable();
     }
   }, 10000); // 10000ms = 10 seconds!
 })();
