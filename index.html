@@ -1000,6 +1000,68 @@
   </div> 
 
   <script src="game.js"></script>
+  
+  <script>
+    // ==========================================
+// 🔄 Auto-Update Checker + Browser Notification
+// ==========================================
+(() => {
+  let currentVersion = null;
+
+  const notifyUpdateAvailable = () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+
+    try {
+      new Notification('Website Updated', {
+        body: 'A new version is ready. Refresh to load the latest content.',
+        icon: '/favicon.ico'
+      });
+    } catch (err) {
+      // ignore notification failures
+    }
+  };
+
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+      try {
+        await Notification.requestPermission();
+      } catch (err) {
+        // ignore permission request errors
+      }
+    }
+  };
+
+  window.requestUpdateNotificationPermission = requestNotificationPermission;
+
+  const fetchVersion = async () => {
+    try {
+      const response = await fetch('/version.json?t=' + Date.now());
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.version;
+    } catch (err) {
+      return null;
+    }
+  };
+
+  fetchVersion().then(version => {
+    if (version) currentVersion = version;
+  });
+
+  setInterval(async () => {
+    if (!currentVersion) return;
+    const liveVersion = await fetchVersion();
+    if (liveVersion && liveVersion !== currentVersion) {
+      const banner = document.getElementById('update-banner');
+      if (banner) banner.classList.add('show');
+      notifyUpdateAvailable();
+    }
+  }, 5000); 
+})();
+  </script>
+  
   <script>
     const title = document.getElementById("title");
     title.style.backgroundImage = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%)";
