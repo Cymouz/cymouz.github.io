@@ -1,10 +1,17 @@
 // Cookie Clicker Game Module
 const ClickerGame = (() => {
   let clickerScore = 0;
+  let rebirths = 0; // NEW: Tracks the amount of rebirths
   let clickerActive = false;
   let gameMode = false;
   let renderShopItems = null;
   let activeTab = 'click'; // Tracks which tab is currently open
+
+  // --- Rebirth Config ---
+  // Starts at 750M (half of your first elevated upgrade which is 1.5B)
+  const REBIRTH_BASE_GOAL = 750000000; 
+  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(5, rebirths));
+  const getGlobalMult = () => (rebirths + 1);
 
   // --- Cheat Variables ---
   let isCheatActive = false;
@@ -33,7 +40,7 @@ const ClickerGame = (() => {
     }
   });
 
-// Listen for Escape key to exit game mode
+  // Listen for Escape key to exit game mode
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && clickerActive) {
       deactivateGameMode();
@@ -70,16 +77,52 @@ const ClickerGame = (() => {
   };
 
   // ==========================================
+  // ✨ DYNAMIC ELEVATED GENERATION
+  // ==========================================
+  const generateElevatedUpgrades = () => {
+    const baseKeys = Object.keys(upgrades);
+    baseKeys.forEach(key => {
+      if (key.startsWith('elevated_')) return; // Safeguard
+      
+      const base = upgrades[key];
+      const elevatedKey = 'elevated_' + key;
+      
+      const nameParts = base.name.split(' ');
+      const emoji = nameParts.shift(); // Remove the emoji
+      const elevatedName = `${emoji} Elevated ${nameParts.join(' ')}`;
+      
+      let newEffectValue = base.effectValue;
+      let newDesc = "";
+      
+      if (base.type === 'discount') {
+        newEffectValue = base.effectValue * 2; // Double the discount
+        newDesc = `Costs reduced by ${(newEffectValue * 100).toFixed(0)}%`;
+      } else {
+        newEffectValue = base.effectValue * 100000000;
+        newDesc = `+${newEffectValue.toLocaleString()} Point${newEffectValue !== 1 ? 's' : ''} per ${base.type === 'click' ? 'click' : 'second'}`;
+      }
+
+      upgrades[elevatedKey] = {
+        ...base,
+        name: elevatedName,
+        desc: newDesc,
+        baseCost: base.baseCost * 100000000, // 100,000,000x more expensive
+        effectValue: newEffectValue,
+        isElevated: true,
+        count: 0
+      };
+    });
+  };
+
+  // ==========================================
   // 🔒 ANTI-CHEAT ENCRYPTION SYSTEM
   // ==========================================
   const SECRET_KEY = "cymouz_super_secret_anti_cheat_key_1337";
 
   const encryptData = (dataObj) => {
-    // FIX: encodeURIComponent safely converts emojis into standard ASCII characters before encrypting!
     const str = encodeURIComponent(JSON.stringify(dataObj));
     let encrypted = "";
     for (let i = 0; i < str.length; i++) {
-      // XOR Cipher
       encrypted += String.fromCharCode(str.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
     }
     return btoa(encrypted); 
@@ -92,10 +135,8 @@ const ClickerGame = (() => {
       for (let i = 0; i < decoded.length; i++) {
         decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
       }
-      // FIX: decodeURIComponent turns the safe characters back into emojis!
       return JSON.parse(decodeURIComponent(decrypted));
     } catch (e) {
-      // Fallback for old unencrypted saves
       try {
         return JSON.parse(encodedStr);
       } catch (err) {
@@ -108,7 +149,6 @@ const ClickerGame = (() => {
   const saveData = () => {
     let upgradesToSave = upgrades;
     
-    // SAFEGUARD: Don't save fake inflated cheat levels
     if (isCheatActive) {
       upgradesToSave = JSON.parse(JSON.stringify(upgrades)); 
       for (let key in preCheatUpgrades) {
@@ -116,7 +156,7 @@ const ClickerGame = (() => {
       }
     }
     
-    const data = { score: clickerScore, upgrades: upgradesToSave };
+    const data = { score: clickerScore, rebirths: rebirths, upgrades: upgradesToSave };
     localStorage.setItem('cymouz_game_data', encryptData(data));
   };
 
@@ -126,6 +166,7 @@ const ClickerGame = (() => {
       const data = decryptData(dataStr);
       if (data) {
         if (typeof data.score === 'number') clickerScore = data.score;
+        if (typeof data.rebirths === 'number') rebirths = data.rebirths || 0;
         if (data.upgrades) {
           for (let key in upgrades) {
             if (data.upgrades[key]) {
@@ -135,7 +176,6 @@ const ClickerGame = (() => {
         }
       }
     } else {
-      // Old cookie migration fallback
       const match = document.cookie.match(/(?:^|; )cymouz_clicker_score=([^;]*)/);
       if (match) {
         const oldScore = Number(decodeURIComponent(match[1]));
@@ -152,7 +192,7 @@ const ClickerGame = (() => {
         mult *= Math.pow(1 - upgrades[key].effectValue, upgrades[key].count);
       }
     }
-    return mult;
+    return Math.max(mult, 0.001); // Prevent free items
   };
 
   const getUpgradeCost = (key) => {
@@ -167,7 +207,7 @@ const ClickerGame = (() => {
         clickPower += (upgrades[key].count * upgrades[key].effectValue);
       }
     }
-    return clickPower;
+    return clickPower * getGlobalMult(); // Multiplied by Rebirths
   };
 
   const getAutoClickValue = () => {
@@ -177,7 +217,7 @@ const ClickerGame = (() => {
         autoPower += (upgrades[key].count * upgrades[key].effectValue);
       }
     }
-    return autoPower;
+    return autoPower * getGlobalMult(); // Multiplied by Rebirths
   };
 
   const formatNumberWithSuffix = (value) => {
@@ -194,16 +234,50 @@ const ClickerGame = (() => {
     return Math.floor(value).toLocaleString();
   };
 
+  // --- Rebirth Mechanic ---
+  const performRebirth = () => {
+    const goal = getRebirthGoal();
+    if (clickerScore < goal) return;
+    
+    rebirths++;
+    clickerScore = 0;
+    
+    // Reset upgrades
+    for (let key in upgrades) {
+      upgrades[key].count = 0;
+    }
+    
+    saveData();
+    updateCounterDisplay();
+    alert(`Rebirth Complete! Global Multiplier is now ${rebirths + 1}x`);
+  };
+
   // --- Display Updates ---
   const updateCounterDisplay = () => {
     const counterValue = document.getElementById('cookie-counter-value');
     const counterLabel = document.getElementById('cookie-counter-label');
+    const rbCont = document.getElementById('rebirth-container');
+
     if (counterValue) {
       counterValue.textContent = formatNumberWithSuffix(clickerScore);
     }
     if (counterLabel) {
       counterLabel.textContent = clickerActive ? 'Points' : 'Clicker locked';
     }
+
+    if (rbCont) {
+      const goal = getRebirthGoal();
+      if (clickerScore >= goal) {
+        rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${getGlobalMult() + 1}x MULT</button>`;
+      } else {
+        const prog = Math.min((clickerScore / goal) * 100, 100);
+        rbCont.innerHTML = `
+          <div class="rebirth-progress-bg" title="Next Rebirth at ${formatNumberWithSuffix(goal)}">
+            <div class="rebirth-progress-fill" style="width: ${prog}%"></div>
+          </div>`;
+      }
+    }
+
     if (renderShopItems && gameMode) {
       renderShopItems(); 
     }
@@ -241,7 +315,6 @@ const ClickerGame = (() => {
       shopHeader.className = 'shop-header';
       shopHeader.innerHTML = '🛒 Upgrades <span style="float: right;">▼</span>';
       
-      // 1. Create Tabs Container
       const tabContainer = document.createElement('div');
       tabContainer.className = 'shop-tabs';
       tabContainer.innerHTML = `
@@ -250,7 +323,6 @@ const ClickerGame = (() => {
         <button class="tab-btn" data-tab="discount">📉 Costs</button>
       `;
 
-      // Tab Switching Logic
       tabContainer.querySelectorAll('.tab-btn').forEach(btn => {
         btn.onclick = (e) => {
           activeTab = e.target.dataset.tab;
@@ -260,26 +332,23 @@ const ClickerGame = (() => {
         };
       });
 
-      // 2. Create the scrolling list container
       const shopList = document.createElement('div');
       shopList.className = 'shop-list';
       shopList.style.maxHeight = '60vh';
       shopList.style.padding = '12px';
       shopList.style.overflowY = 'auto';
       
-      // 3. Create the pinned Save/Load container
       const ioDiv = document.createElement('div');
       ioDiv.className = 'save-load-controls';
       
       const dlBtn = document.createElement('button');
       dlBtn.textContent = '💾 Export';
       dlBtn.onclick = () => {
-        // Export an ENCRYPTED file
-        const blob = new Blob([encryptData({ score: clickerScore, upgrades })], { type: 'text/plain' });
+        const blob = new Blob([encryptData({ score: clickerScore, rebirths, upgrades })], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'cymouz_data.save'; // Changed extension to .save!
+        a.download = 'cymouz_data.save'; 
         a.click();
         URL.revokeObjectURL(url);
       };
@@ -291,7 +360,7 @@ const ClickerGame = (() => {
       const ulInput = document.createElement('input');
       ulInput.type = 'file';
       ulInput.id = 'save-upload';
-      ulInput.accept = '.save,.json'; // Accepts both old and new file types
+      ulInput.accept = '.save,.json'; 
       ulInput.style.display = 'none';
       ulInput.onchange = (e) => {
         const file = e.target.files[0];
@@ -305,6 +374,7 @@ const ClickerGame = (() => {
           }
           
           clickerScore = data.score;
+          rebirths = data.rebirths || 0;
           if (data.upgrades) {
             for (let key in upgrades) {
               if (data.upgrades[key]) upgrades[key].count = data.upgrades[key].count || 0;
@@ -314,37 +384,68 @@ const ClickerGame = (() => {
           updateCounterDisplay();
         };
         reader.readAsText(file);
-        e.target.value = ''; // reset
+        e.target.value = ''; 
       };
 
       ioDiv.appendChild(dlBtn);
       ioDiv.appendChild(ulBtn);
       ioDiv.appendChild(ulInput);
 
-      // Rendering Logic
+      // Rendering Logic with Elevated Section
       renderShopItems = () => {
         shopList.innerHTML = ''; 
-        for (let key in upgrades) {
-          if (upgrades[key].type !== activeTab) continue; 
+        
+        const normalUpgrades = [];
+        const elevatedUpgrades = [];
 
+        for (let key in upgrades) {
+          if (upgrades[key].type !== activeTab) continue;
+          if (upgrades[key].isElevated) {
+            elevatedUpgrades.push(key);
+          } else {
+            normalUpgrades.push(key);
+          }
+        }
+
+        normalUpgrades.sort((a,b) => upgrades[a].baseCost - upgrades[b].baseCost);
+        elevatedUpgrades.sort((a,b) => upgrades[a].baseCost - upgrades[b].baseCost);
+
+        const renderBtn = (key) => {
           const cost = getUpgradeCost(key);
           const btn = document.createElement('button');
-          btn.className = 'upgrade-btn';
+          btn.className = `upgrade-btn ${upgrades[key].isElevated ? 'elevated-variant' : ''}`;
           btn.innerHTML = `<strong>${upgrades[key].name}</strong> (Lvl ${upgrades[key].count})<br>
                            <span style="font-size: 0.75rem; opacity: 0.8;">${upgrades[key].desc}</span><br>
                            <span style="color: #ff4d6d;">Cost: ${formatNumberWithSuffix(cost)}</span>`;
           btn.disabled = clickerScore < cost;
           btn.onclick = () => buyUpgrade(key);
           shopList.appendChild(btn);
+        };
+
+        normalUpgrades.forEach(renderBtn);
+
+        if (elevatedUpgrades.length > 0) {
+          const divider = document.createElement('div');
+          divider.innerHTML = '✨ Elevated Upgrades ✨';
+          divider.style.textAlign = 'center';
+          divider.style.margin = '20px 0 10px 0';
+          divider.style.fontWeight = 'bold';
+          divider.style.color = '#ff4d6d';
+          divider.style.borderBottom = '1px dashed rgba(255, 77, 109, 0.4)';
+          divider.style.paddingBottom = '5px';
+          divider.style.fontSize = '0.85rem';
+          divider.style.textTransform = 'uppercase';
+          divider.style.letterSpacing = '0.05em';
+          shopList.appendChild(divider);
+
+          elevatedUpgrades.forEach(renderBtn);
         }
       };
 
-      // Set Initial State to Collapsed
       tabContainer.style.display = 'none';
       shopList.style.display = 'none';
       ioDiv.style.display = 'none';
 
-      // Toggle Logic to open/close
       shopHeader.onclick = () => {
         const isClosed = shopList.style.display === 'none';
         
@@ -361,7 +462,6 @@ const ClickerGame = (() => {
         }
       };
 
-      // Append everything in the correct order
       shopPanel.appendChild(shopHeader);
       shopPanel.appendChild(tabContainer);
       shopPanel.appendChild(shopList);
@@ -453,7 +553,6 @@ const ClickerGame = (() => {
       setTimeout(() => shopPanel.classList.add('active'), 10);
     }
     
-    // Add title-center with a delay to allow smooth transition
     setTimeout(() => {
       title.classList.add('title-center');
     }, 100);
@@ -490,7 +589,6 @@ const ClickerGame = (() => {
       const shopSpan = shopPanel.querySelector('.shop-header span');
       if (shopSpan) shopSpan.textContent = '▼';
       
-      // Hide internals when closing
       const tabContainer = shopPanel.querySelector('.shop-tabs');
       const shopList = shopPanel.querySelector('.shop-list');
       const ioDiv = shopPanel.querySelector('.save-load-controls');
@@ -522,6 +620,7 @@ const ClickerGame = (() => {
   };
 
   const init = () => {
+    generateElevatedUpgrades(); // NEW: Generates the upgrades before loading
     loadData();
     clickerActive = false;
     gameMode = false;
@@ -534,6 +633,7 @@ const ClickerGame = (() => {
     activateGameMode,
     deactivateGameMode,
     increaseScore,
+    performRebirth, // Exported to be called from the HTML button
     isActive: () => clickerActive,
     isGameMode: () => gameMode,
     getScore: () => clickerScore,
@@ -603,5 +703,5 @@ if (document.readyState === 'loading') {
       if (banner) banner.classList.add('show');
       notifyUpdateAvailable();
     }
-  }, 10000); // 10000ms = 10 seconds!
+  }, 10000); 
 })();

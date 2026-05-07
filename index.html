@@ -487,6 +487,53 @@
       font-size: 1.2rem;
     }
 
+    /* === NEW: REBIRTH UI === */
+    #rebirth-container {
+      width: 100%;
+      margin-top: 8px;
+      pointer-events: auto;
+    }
+
+    .rebirth-btn {
+      background: linear-gradient(135deg, #ff4d6d, #b366ff);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+      animation: pulseRebirth 2s infinite;
+    }
+
+    @keyframes pulseRebirth {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); box-shadow: 0 4px 25px rgba(255, 77, 109, 0.6); }
+      100% { transform: scale(1); }
+    }
+
+    .rebirth-progress-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .rebirth-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4d6d, #b366ff);
+      transition: width 0.4s ease;
+    }
+
+    .upgrade-btn.elevated-variant {
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      background: rgba(255, 215, 0, 0.05);
+    }
+
     /* === SHOP PANEL STYLES === */
     .shop-panel {
       position: fixed;
@@ -639,9 +686,7 @@
       left: 50% !important;
       z-index: 1000 !important;
       margin: 0 !important;
-      transform: translate(-50%, -50%) scale(1) !important;
-      animation: none !important;
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+      transform: translate(-50%, -50%) scale(1);
     }
 
     .click-feedback {
@@ -670,9 +715,9 @@
       margin-top: 16px;
       width: 100%;
       padding: 10px 14px;
-      background: rgba(179, 102, 255, 0.15);
-      border: 1px solid rgba(179, 102, 255, 0.25);
-      color: #fff;
+      background: rgba(255, 77, 109, 0.2);
+      border: 1.5px solid rgba(255, 77, 109, 0.6);
+      color: #ff4d6d;
       border-radius: 10px;
       font-size: 0.8rem;
       font-weight: 600;
@@ -683,9 +728,9 @@
     }
 
     .exit-clicker-btn:hover {
-      background: rgba(179, 102, 255, 0.25);
-      border-color: rgba(179, 102, 255, 0.5);
-      box-shadow: 0 8px 20px rgba(179, 102, 255, 0.15);
+      background: rgba(255, 77, 109, 0.35);
+      border-color: rgba(255, 77, 109, 0.8);
+      box-shadow: 0 8px 20px rgba(255, 77, 109, 0.25);
     }
 
     .exit-clicker-btn:active {
@@ -821,8 +866,8 @@
       }
 
       .social-btn:hover {
-        background: rgba(179, 102, 255, 0.25);
-        border-color: rgba(179, 102, 255, 0.5);
+        background: rgba(255, 102, 204, 0.15);
+        border-color: rgba(179, 102, 255, 0.6);
       }
 
       /* Disable tilt effect on touch devices */
@@ -872,9 +917,10 @@
   <div class="cookie-counter" id="cookie-counter">
     <span class="label" id="cookie-counter-label">Clicker locked</span>
     <span class="value" id="cookie-counter-value">0</span>
+    <div id="rebirth-container"></div>
   </div>
 
-  <main class="main-wrapper">
+  <div class="main-wrapper">
     <div class="content-container">
       
       <h1 id="title">Cymouz</h1>
@@ -932,26 +978,11 @@
         </div>
       </div>
 
-      
     </div>
-  </main>
-  <script>
-    // Lazy-load game.js on first click
-    let gameScriptLoaded = false;
-    
-    const loadGameScript = () => {
-      if (gameScriptLoaded) return;
-      gameScriptLoaded = true;
-      
-      const script = document.createElement('script');
-      script.src = 'game.js';
-      script.onload = () => {
-        // Game script is now loaded and ready
-      };
-      document.body.appendChild(script);
-    };
+  </div> 
 
-    // Violet/Purple and Dark Red gradient - no random colors
+  <script src="game.js"></script>
+  <script>
     const title = document.getElementById("title");
     title.style.backgroundImage = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%)";
     title.style.backgroundSize = "200% 100%";
@@ -959,12 +990,13 @@
     title.style.webkitBackgroundClip = "text";
     title.style.webkitTextFillColor = "transparent";
 
-    // Disable right-click context menu on the Cymouz clicker title
-    title.addEventListener('contextmenu', (e) => e.preventDefault());
-
     const particleContainer = document.getElementById('particle-container');
 
-    const spawnParticlesAtPosition = (centerX, centerY, count) => {
+    const spawnParticles = (count) => {
+      const rect = title.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
       for (let i = 0; i < count; i += 1) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -989,13 +1021,6 @@
       }
     };
 
-    const spawnParticles = (count) => {
-      const rect = title.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      spawnParticlesAtPosition(centerX, centerY, count);
-    };
-
     const titleClicksTarget = 5;
     let titleClicks = 0;
     let titleResetTimer = null;
@@ -1005,51 +1030,30 @@
       titleResetTimer = null;
     };
 
-    title.addEventListener('click', (e) => {
-      // Load game script on first click
-      loadGameScript();
+    title.addEventListener('click', () => {
       titleClicks += 1;
       clearTimeout(titleResetTimer);
       titleResetTimer = setTimeout(resetTitleClicks, 1200);
 
-      // Check if ClickerGame is available (will be after first click loads the script)
-      if (typeof ClickerGame !== 'undefined') {
-        if (ClickerGame.isActive()) {
-          ClickerGame.increaseScore(1);
-          ClickerGame.showClickFeedback(e.clientX, e.clientY);
-          spawnParticlesAtPosition(e.clientX, e.clientY, 6);
-        }
+      if (ClickerGame.isActive()) {
+        ClickerGame.increaseScore(1);
+        const rect = title.getBoundingClientRect();
+        ClickerGame.showClickFeedback(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        spawnParticles(6);
+      }
 
-        if (titleClicks >= titleClicksTarget && !ClickerGame.isActive()) {
-          titleClicks = 0;
-          title.classList.add('title-spin');
-          setTimeout(() => {
-            title.classList.remove('title-spin');
-            ClickerGame.activateGameMode();
-            ClickerGame.increaseScore(5);
-          }, 800);
-          spawnParticlesAtPosition(e.clientX, e.clientY, 20);
-        }
+      if (titleClicks >= titleClicksTarget && !ClickerGame.isActive()) {
+        titleClicks = 0;
+        title.classList.add('title-spin');
+        setTimeout(() => {
+          title.classList.remove('title-spin');
+          ClickerGame.activateGameMode();
+          ClickerGame.increaseScore(5);
+        }, 800);
+        spawnParticles(20);
       }
     });
 
-    const requestUpdateNotificationPermission = () => {
-      if (!('Notification' in window)) return;
-      if (Notification.permission === 'default') {
-        Notification.requestPermission().catch(() => {});
-      }
-    };
-
-    window.addEventListener('beforeunload', (event) => {
-      if (typeof ClickerGame !== 'undefined' && ClickerGame.isGameMode()) {
-        event.preventDefault();
-        event.returnValue = '';
-      }
-    });
-
-    requestUpdateNotificationPermission();
-
-    // Mobile collapsible links section
     const linksHeader = document.querySelector('.links-header');
     const mobileSocials = document.getElementById('mobile-socials');
     const linksToggle = document.querySelector('.links-toggle');
@@ -1063,10 +1067,8 @@
       });
     }
 
-    // Detect whether the current pointer can hover reliably
     const canHover = window.matchMedia('(hover: hover)').matches || window.matchMedia('(any-hover: hover)').matches;
 
-    // Use requestAnimationFrame for smooth 60fps+ animations
     let mouseX = 0;
     let mouseY = 0;
     let targetBackgroundX = 0;
@@ -1074,7 +1076,6 @@
     let currentBackgroundX = 0;
     let currentBackgroundY = 0;
 
-    // Smooth tilt + shine for social buttons on hover-capable devices
     const socialBtns = document.querySelectorAll('.social-btn');
     const maxTilt = 12;
     
@@ -1098,20 +1099,17 @@
         });
       });
     } else {
-      // Touch device: simplify interactions
       socialBtns.forEach(btn => {
         btn.addEventListener('touchstart', () => {
-          btn.style.background = 'rgba(255, 102, 204, 0.2)';
+          btn.style.background = 'rgba(179, 102, 255, 0.25)';
         });
         btn.addEventListener('touchend', () => {
-          btn.style.background = 'rgba(75, 10, 74, 0.6)';
+          btn.style.background = 'rgba(179, 102, 255, 0.15)';
         });
       });
     }
 
-    // Floating animation for skill cards with requestAnimationFrame
     const skillCards = document.querySelectorAll('.skill-card');
-    const cardAnimations = new Map();
     
     skillCards.forEach((card) => {
       let targetY = 0;
@@ -1159,7 +1157,6 @@
       });
     });
 
-    // Add floating keyframes dynamically
     const style = document.createElement('style');
     style.textContent = `
       @keyframes float {
@@ -1178,13 +1175,10 @@
         targetBackgroundY = (mouseY / window.innerHeight) * 10 - 5;
       });
 
-      // Animation loop for smooth parallax
       function updateParallax() {
-        // Smooth easing for parallax
         currentBackgroundX += (targetBackgroundX - currentBackgroundX) * 0.1;
         currentBackgroundY += (targetBackgroundY - currentBackgroundY) * 0.1;
         
-        // Targets the new fixed background div
         const fixedBg = document.getElementById('fixed-bg');
         if (fixedBg) {
           fixedBg.style.backgroundPosition = `${currentBackgroundX}% ${currentBackgroundY}%`;
@@ -1196,7 +1190,6 @@
       updateParallax();
     }
 
-    // Handle responsive animations on window resize
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
