@@ -65,7 +65,8 @@ const ClickerGame = (() => {
     efficiency: { name: "📉 Efficiency", desc: "Costs reduced by 3%", count: 0, baseCost: 500, costScale: 1.8, type: "discount", effectValue: 0.03 },
     coupons: { name: "✂️ Digital Coupons", desc: "Costs reduced by 5%", count: 0, baseCost: 3000, costScale: 2.0, type: "discount", effectValue: 0.05 },
     solarPanels: { name: "🔋 Solar Panels", desc: "Costs reduced by 8%", count: 0, baseCost: 25000, costScale: 2.5, type: "discount", effectValue: 0.08 },
-    stonks: { name: "🤵📈 Stonks", desc: "Costs reduced by 12%", count: 0, baseCost: 500000, costScale: 3.5, type: "discount", effectValue: 0.12 }
+    stonks: { name: "🤵📈 Stonks", desc: "Costs reduced by 12%", count: 0, baseCost: 500000, costScale: 3.5, type: "discount", effectValue: 0.12 },
+    tos: { name: "📄 Terms of Service", desc: "Costs reduced by 15%", count: 0, baseCost: 750000, costScale: 4.0, type: "discount", effectValue: 0.15 }
   };
 
   // ==========================================
