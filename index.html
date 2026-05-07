@@ -959,6 +959,9 @@
     title.style.webkitBackgroundClip = "text";
     title.style.webkitTextFillColor = "transparent";
 
+    // Disable right-click context menu on the Cymouz clicker title
+    title.addEventListener('contextmenu', (e) => e.preventDefault());
+
     const particleContainer = document.getElementById('particle-container');
 
     const spawnParticlesAtPosition = (centerX, centerY, count) => {
