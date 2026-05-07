@@ -650,8 +650,21 @@ const showClickFeedback = (x, y, customValue = null) => {
     updateCounterDisplay();
   };
 
-  // --- TungTung Bonus Event Logic ---
+// --- TungTung Bonus Event Logic ---
   const spawnTungTung = () => {
+    // 1. Tab-Out Notification
+    if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification('Tung Tung Sahur!', {
+          body: 'A wild Tung Tung has appeared! Hurry back!',
+          icon: 'tungtungtungsahur.png' 
+        });
+      } catch (err) {
+        // ignore notification failures
+      }
+    }
+
+    // 2. Create and Position the Image
     const img = document.createElement('img');
     img.src = 'tungtungtungsahur.png';
     img.className = 'falling-tung';
@@ -659,24 +672,30 @@ const showClickFeedback = (x, y, customValue = null) => {
     // Random horizontal position (between 10% and 90% of screen width)
     img.style.left = `${Math.floor(Math.random() * 80) + 10}%`;
     
+    // 3. Click Event (The Bonus)
     img.onclick = (e) => {
-      e.stopPropagation(); // Stops the click from hitting the background
+      e.stopPropagation(); // Stops the click from triggering the background
       const bonus = Math.floor(clickerScore / 2); // Exactly half of current points
       
       clickerScore += bonus;
       saveData();
       updateCounterDisplay();
-      showClickFeedback(e.clientX, e.clientY, bonus); // Shows the massive number!
       
-      img.remove(); // Delete it once clicked
+      // Ensure showClickFeedback exists and handles 3 arguments (x, y, customValue)
+      if (typeof showClickFeedback === 'function') {
+        showClickFeedback(e.clientX, e.clientY, bonus);
+      }
+      
+      img.remove(); // Delete the image once clicked
     };
 
+    // 4. Add to screen
     document.body.appendChild(img);
 
-    // Clean up if the player misses it
+    // 5. Clean up if the player misses it
     setTimeout(() => {
       if (img.parentNode) img.remove();
-    }, 5000); // 5 seconds matches the CSS animation length
+    }, 5000); // 5 seconds (must match your CSS animation duration)
   };
 
   // Run a check every 15 seconds
