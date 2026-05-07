@@ -907,6 +907,24 @@
         display: block;
       }
     }
+
+    /* --- TungTung Bonus Event --- */
+.falling-tung {
+  position: fixed;
+  top: -150px;
+  width: 100px; /* Adjust this if the image is too big/small */
+  z-index: 10000;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: fallDown 5s linear forwards;
+}
+
+@keyframes fallDown {
+  0% { top: -150px; transform: rotate(-20deg); }
+  100% { top: 110vh; transform: rotate(360deg); }
+}
+
   </style>
 </head>
 <body>

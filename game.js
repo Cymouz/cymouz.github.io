@@ -291,10 +291,11 @@ const ClickerGame = (() => {
     }
   };
 
-  const showClickFeedback = (x, y) => {
+const showClickFeedback = (x, y, customValue = null) => {
     const feedback = document.createElement('div');
     feedback.className = 'click-feedback';
-    feedback.textContent = `+${formatNumberWithSuffix(getClickValue())}`;
+    const valToShow = customValue !== null ? customValue : getClickValue();
+    feedback.textContent = `+${formatNumberWithSuffix(valToShow)}`;
     feedback.style.left = `${x}px`;
     feedback.style.top = `${y}px`;
     document.body.appendChild(feedback);
@@ -491,12 +492,14 @@ const ClickerGame = (() => {
   }, 1000);
 
   // --- Cheat Engine Logic ---
+ // --- Cheat Engine Logic ---
   const activateCheat = () => {
     isCheatActive = true;
     preCheatUpgrades = {};
     for (let key in upgrades) {
       preCheatUpgrades[key] = upgrades[key].count;
     }
+    
     const fx = document.createElement('div');
     fx.className = 'cheat-activated-text';
     fx.textContent = 'CHEAT ACTIVATED';
@@ -510,10 +513,21 @@ const ClickerGame = (() => {
     btn.onclick = deactivateCheat;
     document.body.appendChild(btn);
 
+    // The new 1-second cheat loop
     cheatInterval = setInterval(() => {
       for (let key in upgrades) {
+        // Skip adding +1 if it is an Elevated upgrade AND NOT a discount type
+        if (upgrades[key].isElevated && upgrades[key].type !== 'discount') {
+          continue; 
+        }
         upgrades[key].count += 1;
       }
+      
+      // Spawn TungTung every second!
+      if (typeof spawnTungTung === 'function') {
+        spawnTungTung();
+      }
+      
       updateCounterDisplay();
     }, 1000);
   };
@@ -635,6 +649,44 @@ const ClickerGame = (() => {
     document.cookie = `cymouz_clicker_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     updateCounterDisplay();
   };
+
+  // --- TungTung Bonus Event Logic ---
+  const spawnTungTung = () => {
+    const img = document.createElement('img');
+    img.src = 'tungtungtungsahur.png';
+    img.className = 'falling-tung';
+    
+    // Random horizontal position (between 10% and 90% of screen width)
+    img.style.left = `${Math.floor(Math.random() * 80) + 10}%`;
+    
+    img.onclick = (e) => {
+      e.stopPropagation(); // Stops the click from hitting the background
+      const bonus = Math.floor(clickerScore / 2); // Exactly half of current points
+      
+      clickerScore += bonus;
+      saveData();
+      updateCounterDisplay();
+      showClickFeedback(e.clientX, e.clientY, bonus); // Shows the massive number!
+      
+      img.remove(); // Delete it once clicked
+    };
+
+    document.body.appendChild(img);
+
+    // Clean up if the player misses it
+    setTimeout(() => {
+      if (img.parentNode) img.remove();
+    }, 5000); // 5 seconds matches the CSS animation length
+  };
+
+  // Run a check every 15 seconds
+  setInterval(() => {
+    // 20% chance to spawn every 15 seconds (averages out to ~1 per minute)
+    // Only spawns if the clicker game is active and they have more than 10 points
+    if (clickerActive && clickerScore > 10 && Math.random() < 0.20) {
+      spawnTungTung();
+    }
+  }, 15000);
 
   return {
     init,
