@@ -1,7 +1,7 @@
 // Cookie Clicker Game Module
 const ClickerGame = (() => {
   let clickerScore = 0;
-  let rebirths = 0; // NEW: Tracks the amount of rebirths
+  let rebirths = 0; //Tracks the amount of rebirths
   let clickerActive = false;
   let gameMode = false;
   let renderShopItems = null;
@@ -16,7 +16,7 @@ const ClickerGame = (() => {
   let isCheatActive = false;
   let cheatInterval = null;
   let preCheatUpgrades = {};
-  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
+  const konamiCode = ['Enter', 'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
   let konamiIndex = 0;
 
   // Listen for cheat code
@@ -75,7 +75,7 @@ const ClickerGame = (() => {
     tos: { name: "📄 Terms of Service", desc: "Costs reduced by 15%", count: 0, baseCost: 750000, costScale: 4.0, type: "discount", effectValue: 0.15 }
   };
 
-  // ==========================================
+// ==========================================
   // ✨ DYNAMIC ELEVATED GENERATION
   // ==========================================
   const generateElevatedUpgrades = () => {
@@ -84,8 +84,9 @@ const ClickerGame = (() => {
       if (key.startsWith('elevated_')) return; // Safeguard
       
       const base = upgrades[key];
-      const elevatedKey = 'elevated_' + key;
+      base.tier = 0; //Explicitly assign Level 0 to base upgrades
       
+      const elevatedKey = 'elevated_' + key;
       const nameParts = base.name.split(' ');
       const emoji = nameParts.shift(); // Remove the emoji
       const elevatedName = `${emoji} Elevated ${nameParts.join(' ')}`;
@@ -108,6 +109,7 @@ const ClickerGame = (() => {
         baseCost: base.baseCost * 100000000, // 100,000,000x more expensive
         effectValue: newEffectValue,
         isElevated: true,
+        tier: 1, //Assign Level 1 to elevated upgrades
         count: 0
       };
     });
@@ -183,15 +185,26 @@ const ClickerGame = (() => {
     }
   };
 
-  // --- Dynamic Math & Formulas ---
-  const getDiscountMult = () => {
+// --- Dynamic Math & Formulas ---
+  const getDiscountMult = (targetTier) => {
     let mult = 1;
     for (let key in upgrades) {
-      if (upgrades[key].type === "discount") {
-        mult *= Math.pow(1 - upgrades[key].effectValue, upgrades[key].count);
+      const u = upgrades[key];
+      const uTier = u.tier || 0; // Default to 0 just in case
+      
+      //Only apply discount if the upgrade tier matches the item's tier
+      if (u.type === "discount" && uTier === targetTier) {
+        mult *= Math.pow(1 - u.effectValue, u.count);
       }
     }
     return Math.max(mult, 0.001); // Prevent free items
+  };
+
+  const getUpgradeCost = (key) => {
+    const u = upgrades[key];
+    const uTier = u.tier || 0;
+    
+    return Math.floor(u.baseCost * Math.pow(u.costScale, u.count) * getDiscountMult(uTier));
   };
 
   const getUpgradeCost = (key) => {
@@ -619,7 +632,7 @@ const ClickerGame = (() => {
   };
 
   const init = () => {
-    generateElevatedUpgrades(); // NEW: Generates the upgrades before loading
+    generateElevatedUpgrades(); //Generates the upgrades before loading
     loadData();
     clickerActive = false;
     gameMode = false;
