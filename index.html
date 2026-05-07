@@ -933,8 +933,23 @@
       </div>
 
     </div>
-  </div> <script src="game.js"></script>
+  </div>
   <script>
+    // Lazy-load game.js on first click
+    let gameScriptLoaded = false;
+    
+    const loadGameScript = () => {
+      if (gameScriptLoaded) return;
+      gameScriptLoaded = true;
+      
+      const script = document.createElement('script');
+      script.src = 'game.js';
+      script.onload = () => {
+        // Game script is now loaded and ready
+      };
+      document.body.appendChild(script);
+    };
+
     // Violet/Purple and Dark Red gradient - no random colors
     const title = document.getElementById("title");
     title.style.backgroundImage = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%)";
@@ -987,25 +1002,30 @@
     };
 
     title.addEventListener('click', (e) => {
+      // Load game script on first click
+      loadGameScript();
       titleClicks += 1;
       clearTimeout(titleResetTimer);
       titleResetTimer = setTimeout(resetTitleClicks, 1200);
 
-      if (ClickerGame.isActive()) {
-        ClickerGame.increaseScore(1);
-        ClickerGame.showClickFeedback(e.clientX, e.clientY);
-        spawnParticlesAtPosition(e.clientX, e.clientY, 6);
-      }
+      // Check if ClickerGame is available (will be after first click loads the script)
+      if (typeof ClickerGame !== 'undefined') {
+        if (ClickerGame.isActive()) {
+          ClickerGame.increaseScore(1);
+          ClickerGame.showClickFeedback(e.clientX, e.clientY);
+          spawnParticlesAtPosition(e.clientX, e.clientY, 6);
+        }
 
-      if (titleClicks >= titleClicksTarget && !ClickerGame.isActive()) {
-        titleClicks = 0;
-        title.classList.add('title-spin');
-        setTimeout(() => {
-          title.classList.remove('title-spin');
-          ClickerGame.activateGameMode();
-          ClickerGame.increaseScore(5);
-        }, 800);
-        spawnParticlesAtPosition(e.clientX, e.clientY, 20);
+        if (titleClicks >= titleClicksTarget && !ClickerGame.isActive()) {
+          titleClicks = 0;
+          title.classList.add('title-spin');
+          setTimeout(() => {
+            title.classList.remove('title-spin');
+            ClickerGame.activateGameMode();
+            ClickerGame.increaseScore(5);
+          }, 800);
+          spawnParticlesAtPosition(e.clientX, e.clientY, 20);
+        }
       }
     });
 
@@ -1017,7 +1037,7 @@
     };
 
     window.addEventListener('beforeunload', (event) => {
-      if (ClickerGame.isGameMode()) {
+      if (typeof ClickerGame !== 'undefined' && ClickerGame.isGameMode()) {
         event.preventDefault();
         event.returnValue = '';
       }
