@@ -207,10 +207,6 @@ const ClickerGame = (() => {
     return Math.floor(u.baseCost * Math.pow(u.costScale, u.count) * getDiscountMult(uTier));
   };
 
-  const getUpgradeCost = (key) => {
-    const u = upgrades[key];
-    return Math.floor(u.baseCost * Math.pow(u.costScale, u.count) * getDiscountMult());
-  };
 
   const getClickValue = () => {
     let clickPower = 1;
