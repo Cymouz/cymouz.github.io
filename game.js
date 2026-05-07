@@ -8,9 +8,8 @@ const ClickerGame = (() => {
   let activeTab = 'click'; // Tracks which tab is currently open
 
   // --- Rebirth Config ---
-  // Starts at 750M (half of your first elevated upgrade which is 1.5B)
-  const REBIRTH_BASE_GOAL = 750000000; 
-  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(5, rebirths));
+  const REBIRTH_BASE_GOAL = 500000000; 
+  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(3, rebirths));
   const getGlobalMult = () => (rebirths + 1);
 
   // --- Cheat Variables ---
