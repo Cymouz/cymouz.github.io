@@ -656,7 +656,7 @@ const showClickFeedback = (x, y, customValue = null) => {
     if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
       try {
         new Notification('Tung Tung Sahur!', {
-          body: 'A wild Tung Tung has appeared! Hurry back!',
+          body: 'A wild Tung Tung Tung Sahur has appeared! Hurry back!',
           icon: 'tungtungtungsahur.png' 
         });
       } catch (err) {
