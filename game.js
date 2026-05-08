@@ -8,9 +8,11 @@ const ClickerGame = (() => {
   let activeTab = 'click'; // Tracks which tab is currently open
 
   // --- Rebirth Config ---
-  const REBIRTH_BASE_GOAL = 500000000; 
-  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(3, rebirths));
-  const getGlobalMult = () => (rebirths + 1);
+  const REBIRTH_BASE_GOAL = 250000000; // 250 Million
+  // Goal multiplies by 100 every rebirth (250M, 25B, 2.5T...)
+  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(100, rebirths));
+  // Multiplier multiplies by 25 every rebirth (1x, 25x, 625x, 15625x...)
+  const getGlobalMult = () => Math.max(1, Math.pow(25, rebirths));
 
   // --- Cheat Variables ---
   let isCheatActive = false;
@@ -51,21 +53,21 @@ const ClickerGame = (() => {
   // ==========================================
   let upgrades = {
     // --- Click Power ---
-    multiplier: { name: "🖱️ Multiplier", desc: "+1 Point per click", count: 0, baseCost: 15, costScale: 1.35, type: "click", effectValue: 1 },
-    heavyMouse: { name: "🔨 Heavy Mouse", desc: "+5 Points per click", count: 0, baseCost: 100, costScale: 1.4, type: "click", effectValue: 5 },
-    motorizedMouse: { name: "⚡ Motorized Mouse", desc: "+15 Points per click", count: 0, baseCost: 500, costScale: 1.45, type: "click", effectValue: 15 },
-    gamingChair: { name: "💺 Gaming Chair", desc: "+50 Points per click", count: 0, baseCost: 3000, costScale: 1.5, type: "click", effectValue: 50 },
-    neuralLink: { name: "🧠 Neural Link", desc: "+200 Points per click", count: 0, baseCost: 15000, costScale: 1.55, type: "click", effectValue: 200 },
-    quantumCursor: { name: "🌌 Quantum Cursor", desc: "+1,000 Points per click", count: 0, baseCost: 100000, costScale: 1.6, type: "click", effectValue: 1000 },
-    godFinger: { name: "👇 God's Finger", desc: "+10,000 Points per click", count: 0, baseCost: 1500000, costScale: 1.65, type: "click", effectValue: 10000 },
+    multiplier: { name: "🖱️ Multiplier", desc: "+1 Point per click", count: 0, baseCost: 15, costScale: 1.15, type: "click", effectValue: 1 },
+    heavyMouse: { name: "🔨 Heavy Mouse", desc: "+5 Points per click", count: 0, baseCost: 100, costScale: 1.16, type: "click", effectValue: 5 },
+    motorizedMouse: { name: "⚡ Motorized Mouse", desc: "+15 Points per click", count: 0, baseCost: 500, costScale: 1.17, type: "click", effectValue: 15 },
+    gamingChair: { name: "💺 Gaming Chair", desc: "+50 Points per click", count: 0, baseCost: 3000, costScale: 1.18, type: "click", effectValue: 50 },
+    neuralLink: { name: "🧠 Neural Link", desc: "+200 Points per click", count: 0, baseCost: 15000, costScale: 1.19, type: "click", effectValue: 200 },
+    quantumCursor: { name: "🌌 Quantum Cursor", desc: "+1,000 Points per click", count: 0, baseCost: 100000, costScale: 1.20, type: "click", effectValue: 1000 },
+    godFinger: { name: "👇 God's Finger", desc: "+10,000 Points per click", count: 0, baseCost: 1500000, costScale: 1.22, type: "click", effectValue: 10000 },
 
     // --- Auto-Clicker ---
-    autoClicker: { name: "⚙️ Auto-Clicker", desc: "+1 Point per second", count: 0, baseCost: 25, costScale: 1.3, type: "auto", effectValue: 1 },
-    robotFriend: { name: "🤖 Robot Friend", desc: "+5 Points per second", count: 0, baseCost: 150, costScale: 1.35, type: "auto", effectValue: 5 },
-    clone: { name: "👥 Clone", desc: "+25 Points per second", count: 0, baseCost: 1000, costScale: 1.4, type: "auto", effectValue: 25 },
-    botnet: { name: "🛜 Botnet", desc: "+100 Points per second", count: 0, baseCost: 5000, costScale: 1.45, type: "auto", effectValue: 100 },
-    factory: { name: "🏭 Factory", desc: "+500 Points per second", count: 0, baseCost: 35000, costScale: 1.5, type: "auto", effectValue: 500 },
-    aiOverlord: { name: "👁️ AI Overlord", desc: "+2,500 Points per second", count: 0, baseCost: 250000, costScale: 1.55, type: "auto", effectValue: 2500 },
+    autoClicker: { name: "⚙️ Auto-Clicker", desc: "+1 Point per second", count: 0, baseCost: 25, costScale: 1.15, type: "auto", effectValue: 1 },
+    robotFriend: { name: "🤖 Robot Friend", desc: "+5 Points per second", count: 0, baseCost: 150, costScale: 1.16, type: "auto", effectValue: 5 },
+    clone: { name: "👥 Clone", desc: "+25 Points per second", count: 0, baseCost: 1000, costScale: 1.17, type: "auto", effectValue: 25 },
+    botnet: { name: "🛜 Botnet", desc: "+100 Points per second", count: 0, baseCost: 5000, costScale: 1.18, type: "auto", effectValue: 100 },
+    factory: { name: "🏭 Factory", desc: "+500 Points per second", count: 0, baseCost: 35000, costScale: 1.19, type: "auto", effectValue: 500 },
+    aiOverlord: { name: "👁️ AI Overlord", desc: "+2,500 Points per second", count: 0, baseCost: 250000, costScale: 1.20, type: "auto", effectValue: 2500 },
 
     // --- Global Buffs ---
     efficiency: { name: "📉 Efficiency", desc: "Costs reduced by 3%", count: 0, baseCost: 500, costScale: 1.8, type: "discount", effectValue: 0.03 },
@@ -75,41 +77,41 @@ const ClickerGame = (() => {
     tos: { name: "📄 Terms of Service", desc: "Costs reduced by 15%", count: 0, baseCost: 750000, costScale: 4.0, type: "discount", effectValue: 0.15 }
   };
 
-  // ==========================================
+ // ==========================================
   // ✨ DYNAMIC ELEVATED GENERATION
   // ==========================================
   const generateElevatedUpgrades = () => {
     const baseKeys = Object.keys(upgrades);
     baseKeys.forEach(key => {
-      if (key.startsWith('elevated_')) return; // Safeguard
+      if (key.startsWith('elevated_')) return; 
       
       const base = upgrades[key];
-      base.tier = 0; //Explicitly assign Level 0 to base upgrades
+      base.tier = 0; 
       
       const elevatedKey = 'elevated_' + key;
       const nameParts = base.name.split(' ');
-      const emoji = nameParts.shift(); // Remove the emoji
+      const emoji = nameParts.shift(); 
       const elevatedName = `${emoji} Elevated ${nameParts.join(' ')}`;
       
       let newEffectValue = base.effectValue;
       let newDesc = "";
       
       if (base.type === 'discount') {
-        newEffectValue = base.effectValue * 2; // Double the discount
-        newDesc = `Costs reduced by ${(newEffectValue * 100).toFixed(0)}%`;
+        newEffectValue = base.effectValue * 1.5; // Safely scales discounts so items don't become free
+        newDesc = `Costs reduced by ${(newEffectValue * 100).toFixed(1)}%`;
       } else {
-        newEffectValue = base.effectValue * 100000000;
-        newDesc = `+${newEffectValue.toLocaleString()} Point${newEffectValue !== 1 ? 's' : ''} per ${base.type === 'click' ? 'click' : 'second'}`;
+        newEffectValue = base.effectValue * 1000000; // 1 Million x Base Power
+        newDesc = `+${formatNumberWithSuffix(newEffectValue)} per ${base.type === 'click' ? 'click' : 'second'}`;
       }
 
       upgrades[elevatedKey] = {
         ...base,
         name: elevatedName,
         desc: newDesc,
-        baseCost: base.baseCost * 100000000, // 100,000,000x more expensive
+        baseCost: base.baseCost * 100000000, // 100 Million x Cost
         effectValue: newEffectValue,
         isElevated: true,
-        tier: 1, //Assign Level 1 to elevated upgrades
+        tier: 1, 
         count: 0
       };
     });
@@ -254,10 +256,11 @@ const ClickerGame = (() => {
     
     saveData();
     updateCounterDisplay();
-    alert(`Rebirth Complete! Global Multiplier is now ${rebirths + 1}x`);
+    // FIX: Show the exact current multiplier instead of raw rebirth count
+    alert(`Rebirth Complete! Global Multiplier is now ${getGlobalMult()}x`);
   };
 
-  // --- Display Updates ---
+// --- Display Updates ---
   const updateCounterDisplay = () => {
     const counterValue = document.getElementById('cookie-counter-value');
     const counterLabel = document.getElementById('cookie-counter-label');
@@ -273,7 +276,9 @@ const ClickerGame = (() => {
     if (rbCont) {
       const goal = getRebirthGoal();
       if (clickerScore >= goal) {
-        rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${getGlobalMult() + 1}x MULT</button>`;
+        // FIX: Calculate the exact next multiplier based on the 25x math
+        const nextMult = Math.max(1, Math.pow(25, rebirths + 1));
+        rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${nextMult}x MULT</button>`;
       } else {
         const prog = Math.min((clickerScore / goal) * 100, 100);
         rbCont.innerHTML = `
@@ -670,7 +675,12 @@ const ClickerGame = (() => {
     
     img.onclick = (e) => {
       e.stopPropagation(); 
-      const bonus = Math.floor(clickerScore / 2); 
+      
+      // BALANCED BONUS: 5 minutes of auto-clicking + 5 minutes of manual clicking (assumes 5 clicks/sec) + 1000 flat
+      const autoBonus = getAutoClickValue() * 300; 
+      const clickBonus = getClickValue() * 5 * 300; 
+      const bonus = Math.floor(autoBonus + clickBonus + 1000); 
+      
       clickerScore += bonus;
       saveData();
       updateCounterDisplay();
