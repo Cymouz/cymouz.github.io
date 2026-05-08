@@ -788,6 +788,21 @@ const ClickerGame = (() => {
   }, 15000);
 
   const init = () => {
+
+    // Allow Spacebar to click
+    window.addEventListener('keydown', (e) => {
+      if (ClickerGame.isActive() && e.code === 'Space') {
+        e.preventDefault(); // Prevents the page from jumping down
+        ClickerGame.increaseScore();
+        
+        // Optional: Trigger visual feedback at the center of the screen 
+        // since we don't have a mouse cursor position for a keypress
+        const x = window.innerWidth / 2;
+        const y = window.innerHeight / 2;
+        ClickerGame.showClickFeedback(x, y);
+      }
+    });
+
     generateElevatedUpgrades(); 
     loadData();
     clickerActive = false; 
