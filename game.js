@@ -16,10 +16,9 @@ const ClickerGame = (() => {
   let isCheatActive = false;
   let cheatInterval = null;
   let preCheatUpgrades = {};
-  const konamiCode = ['Space', 'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
+  const konamiCode = [' ', 'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
   let konamiIndex = 0;
 
-  // Listen for cheat code
   document.addEventListener('keydown', (e) => {
     if (!clickerActive || isCheatActive) { 
       konamiIndex = 0; 
@@ -38,7 +37,6 @@ const ClickerGame = (() => {
     }
   });
 
-  // Listen for Escape key to exit game mode
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && clickerActive) {
       deactivateGameMode();
@@ -49,7 +47,6 @@ const ClickerGame = (() => {
   // 🛒 UPGRADES DICTIONARY
   // ==========================================
   let upgrades = {
-    // --- Click Power ---
     multiplier: { name: "🖱️ Multiplier", desc: "+1 Point per click", count: 0, baseCost: 15, costScale: 1.15, type: "click", effectValue: 1 },
     heavyMouse: { name: "🔨 Heavy Mouse", desc: "+5 Points per click", count: 0, baseCost: 100, costScale: 1.16, type: "click", effectValue: 5 },
     motorizedMouse: { name: "⚡ Motorized Mouse", desc: "+15 Points per click", count: 0, baseCost: 500, costScale: 1.17, type: "click", effectValue: 15 },
@@ -58,7 +55,6 @@ const ClickerGame = (() => {
     quantumCursor: { name: "🌌 Quantum Cursor", desc: "+1,000 Points per click", count: 0, baseCost: 100000, costScale: 1.20, type: "click", effectValue: 1000 },
     godFinger: { name: "👇 God's Finger", desc: "+10,000 Points per click", count: 0, baseCost: 1500000, costScale: 1.22, type: "click", effectValue: 10000 },
 
-    // --- Auto-Clicker ---
     autoClicker: { name: "⚙️ Auto-Clicker", desc: "+1 Point per second", count: 0, baseCost: 25, costScale: 1.15, type: "auto", effectValue: 1 },
     robotFriend: { name: "🤖 Robot Friend", desc: "+5 Points per second", count: 0, baseCost: 150, costScale: 1.16, type: "auto", effectValue: 5 },
     clone: { name: "👥 Clone", desc: "+25 Points per second", count: 0, baseCost: 1000, costScale: 1.17, type: "auto", effectValue: 25 },
@@ -66,7 +62,6 @@ const ClickerGame = (() => {
     factory: { name: "🏭 Factory", desc: "+500 Points per second", count: 0, baseCost: 35000, costScale: 1.19, type: "auto", effectValue: 500 },
     aiOverlord: { name: "👁️ AI Overlord", desc: "+2,500 Points per second", count: 0, baseCost: 250000, costScale: 1.20, type: "auto", effectValue: 2500 },
 
-    // --- Global Buffs ---
     efficiency: { name: "📉 Efficiency", desc: "Costs reduced by 3%", count: 0, baseCost: 500, costScale: 1.8, type: "discount", effectValue: 0.03 },
     coupons: { name: "✂️ Digital Coupons", desc: "Costs reduced by 5%", count: 0, baseCost: 3000, costScale: 2.0, type: "discount", effectValue: 0.05 },
     solarPanels: { name: "🔋 Solar Panels", desc: "Costs reduced by 8%", count: 0, baseCost: 25000, costScale: 2.5, type: "discount", effectValue: 0.08 },
@@ -74,9 +69,6 @@ const ClickerGame = (() => {
     tos: { name: "📄 Terms of Service", desc: "Costs reduced by 15%", count: 0, baseCost: 750000, costScale: 4.0, type: "discount", effectValue: 0.15 }
   };
 
-  // ==========================================
-  // ✨ DYNAMIC ELEVATED GENERATION
-  // ==========================================
   const generateElevatedUpgrades = () => {
     const baseKeys = Object.keys(upgrades);
     baseKeys.forEach(key => {
@@ -114,9 +106,6 @@ const ClickerGame = (() => {
     });
   };
 
-  // ==========================================
-  // 🔒 ANTI-CHEAT ENCRYPTION SYSTEM
-  // ==========================================
   const SECRET_KEY = "cymouz_super_secret_anti_cheat_key_1337";
 
   const encryptData = (dataObj) => {
@@ -145,7 +134,6 @@ const ClickerGame = (() => {
     }
   };
 
-  // --- Save / Load Logic ---
   const saveData = () => {
     let upgradesToSave = upgrades;
     if (isCheatActive) {
@@ -182,16 +170,14 @@ const ClickerGame = (() => {
     }
   };
 
-  // --- Hard Reset Mechanics ---
   const hardReset = () => {
     if (confirm("⚠️ Are you absolutely sure you want to wipe ALL your progress? This includes your score, upgrades, and rebirths. This CANNOT be undone!")) {
-      window.skipExitWarning = true; // Skip exit warning on hard reset reload
+      window.skipExitWarning = true; 
       localStorage.removeItem('cymouz_game_data');
       location.reload();
     }
   };
 
-  // --- Dynamic Math & Formulas ---
   const getDiscountMult = (targetTier) => {
     let mult = 1;
     for (let key in upgrades) {
@@ -232,13 +218,89 @@ const ClickerGame = (() => {
 
   const formatNumberWithSuffix = (value) => {
     const absValue = Math.abs(value);
-    if (absValue >= 1e12) return `${(value / 1e12).toFixed(2).replace(/\.?0+$/, '')}T`;
-    if (absValue >= 1e9) return `${(value / 1e9).toFixed(2).replace(/\.?0+$/, '')}B`;
-    if (absValue >= 1e6) return `${(value / 1e6).toFixed(2).replace(/\.?0+$/, '')}M`;
-    return Math.floor(value).toLocaleString();
+    
+    if (absValue < 1000000) {
+      return Math.floor(value).toLocaleString();
+    }
+
+    if (!isFinite(value)) return "Infinity";
+
+    const suffixes = [
+      "", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", 
+      "Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nod", "Vg", 
+      "Uvg", "Dvg", "Tvg", "Qavg", "Qivg", "Sxvg", "Spvg", "Ocvg", "Novg", "Tg", 
+      "Utg", "Dtg", "Ttg", "Qatg", "Qitg", "Sxtg", "Sptg", "Octg", "Notg", "Qg", 
+      "Uqg", "Dqg", "Tqg", "Qaqg", "Qiqg", "Sxqg", "Spqg", "Ocqg", "Noqg", "Qq", 
+      "Uqq", "Dqq", "Tqq", "Qaqq", "Qiqq", "Sxqq", "Spqq", "Ocqq", "Noqq", "Sg", 
+      "Usg", "Dsg", "Tsg", "Qasg", "Qisg", "Sxsg", "Spsg", "Ocsg", "Nosg", "St", 
+      "Ust", "Dst", "Tst", "Qast", "Qist", "Sxst", "Spst", "Ocst", "Nost", "Og", 
+      "Uog", "Dog", "Tog", "Qaog", "Qiog", "Sxog", "Spog", "Ocog", "Noog", "Ng", 
+      "Ung", "Dng", "Tng", "Qang", "Qing", "Sxng", "Spng", "Ocng", "Nong", "Ce"  
+    ];
+
+    const suffixNum = Math.floor(Math.log10(absValue) / 3);
+
+    if (suffixNum >= suffixes.length) {
+      return (value < 0 ? "-" : "") + absValue.toExponential(2).replace('e+', 'e');
+    }
+
+    const shortValue = absValue / Math.pow(10, suffixNum * 3);
+    return (value < 0 ? "-" : "") + shortValue.toFixed(2).replace(/\.?0+$/, '') + suffixes[suffixNum];
   };
 
-  // --- Rebirth Mechanic ---
+  const getFullSuffixName = (suffixNum) => {
+    if (suffixNum === 0) return "";
+    if (suffixNum === 1) return "Thousand";
+    if (suffixNum === 2) return "Million";
+    if (suffixNum === 3) return "Billion";
+    if (suffixNum === 4) return "Trillion";
+    if (suffixNum === 5) return "Quadrillion";
+    if (suffixNum === 6) return "Quintillion";
+    if (suffixNum === 7) return "Sextillion";
+    if (suffixNum === 8) return "Septillion";
+    if (suffixNum === 9) return "Octillion";
+    if (suffixNum === 10) return "Nonillion";
+    if (suffixNum === 101) return "Centillion";
+
+    const units = ["", "Un", "Duo", "Tre", "Quattuor", "Quin", "Sex", "Septen", "Octo", "Novem"];
+    const tens = ["", "Dec", "Vigint", "Trigint", "Quadragint", "Quinquagint", "Sexagint", "Septuagint", "Octogint", "Nonagint"];
+    
+    const num = suffixNum - 1;
+    const unitIdx = num % 10;
+    const tenIdx = Math.floor(num / 10);
+    
+    if (unitIdx === 0) {
+      return tens[tenIdx] + "illion";
+    }
+    return units[unitIdx] + tens[tenIdx].toLowerCase() + "illion";
+  };
+
+  const getNumberTooltip = (value) => {
+    const absValue = Math.abs(value);
+    if (absValue < 1000) return Math.floor(value).toString();
+    
+    const suffixNum = Math.floor(Math.log10(absValue) / 3);
+    
+    let exactStr = "";
+    if (absValue < 1e21) {
+      exactStr = Math.floor(value).toLocaleString();
+    } else {
+      exactStr = (value < 0 ? "-" : "") + absValue.toExponential(2).replace('e+', 'e');
+    }
+    
+    if (suffixNum >= 102) return exactStr; 
+    
+    const shortValue = absValue / Math.pow(10, suffixNum * 3);
+    const shortStr = shortValue.toFixed(2).replace(/\.?0+$/, '');
+    const fullName = getFullSuffixName(suffixNum);
+    
+    if (absValue < 1e21) {
+      return `${exactStr} (${shortStr} ${fullName})`;
+    } else {
+      return `${shortStr} ${fullName} (${exactStr})`; 
+    }
+  };
+
   const performRebirth = () => {
     const goal = getRebirthGoal();
     if (clickerScore < goal) return;
@@ -253,7 +315,6 @@ const ClickerGame = (() => {
     saveData(); 
     updateCounterDisplay();
     
-    // Check setting before showing Rebirth Alert
     if (localStorage.getItem('cymouz_setting_rebirth_alerts') !== 'false') {
       alert(`Rebirth Complete! Global Multiplier is now ${getGlobalMult()}x`);
     }
@@ -264,10 +325,31 @@ const ClickerGame = (() => {
     const counterValue = document.getElementById('cookie-counter-value');
     const counterLabel = document.getElementById('cookie-counter-label');
     const rbCont = document.getElementById('rebirth-container');
+    
+    const showExactAlways = localStorage.getItem('cymouz_setting_always_show_exact') === 'true';
 
     if (counterValue) {
       counterValue.textContent = formatNumberWithSuffix(clickerScore);
+      counterValue.title = getNumberTooltip(clickerScore);
+      counterValue.style.cursor = 'help';
+      
+      let exactSub = document.getElementById('cookie-counter-exact');
+      if (showExactAlways) {
+        if (!exactSub) {
+          exactSub = document.createElement('div');
+          exactSub.id = 'cookie-counter-exact';
+          exactSub.style.fontSize = '0.9rem';
+          exactSub.style.opacity = '0.7';
+          exactSub.style.marginTop = '4px';
+          exactSub.style.fontWeight = 'normal';
+          counterValue.parentNode.insertBefore(exactSub, counterValue.nextSibling);
+        }
+        exactSub.textContent = getNumberTooltip(clickerScore);
+      } else if (exactSub) {
+        exactSub.remove();
+      }
     }
+    
     if (counterLabel) {
       counterLabel.textContent = clickerActive ? 'Points' : 'Clicker locked';
     }
@@ -279,7 +361,17 @@ const ClickerGame = (() => {
         rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${nextMult}x MULT</button>`;
       } else {
         const prog = Math.min((clickerScore / goal) * 100, 100);
-        rbCont.innerHTML = `<div class="rebirth-progress-bg" title="Next Rebirth at ${formatNumberWithSuffix(goal)}"><div class="rebirth-progress-fill" style="width: ${prog}%"></div></div>`;
+        const tooltipStr = `Progress: ${formatNumberWithSuffix(clickerScore)} / ${formatNumberWithSuffix(goal)}`;
+        
+        let html = `<div class="rebirth-progress-bg" title="${tooltipStr}"><div class="rebirth-progress-fill" style="width: ${prog}%"></div></div>`;
+        
+        if (showExactAlways) {
+          let exactScoreStr = clickerScore < 1e21 ? Math.floor(clickerScore).toLocaleString() : clickerScore.toExponential(2).replace('e+', 'e');
+          let exactGoalStr = goal < 1e21 ? Math.floor(goal).toLocaleString() : goal.toExponential(2).replace('e+', 'e');
+          html += `<div style="font-size: 0.8rem; opacity: 0.7; margin-top: 6px; text-align: center;">${exactScoreStr} / ${exactGoalStr}</div>`;
+        }
+        
+        rbCont.innerHTML = html;
       }
     }
     if (renderShopItems && gameMode) {
@@ -288,7 +380,6 @@ const ClickerGame = (() => {
   };
 
   const showClickFeedback = (x, y, customValue = null) => {
-    // Check setting before showing numbers
     if (localStorage.getItem('cymouz_setting_click_numbers') === 'false') return;
 
     const feedback = document.createElement('div');
@@ -301,7 +392,6 @@ const ClickerGame = (() => {
     setTimeout(() => feedback.remove(), 1000);
   };
 
-  // --- Shop Mechanics ---
   const buyUpgrade = (key) => {
     const cost = getUpgradeCost(key);
     if (clickerScore >= cost) {
@@ -472,7 +562,6 @@ const ClickerGame = (() => {
     renderShopItems();
   };
 
-  // --- Dynamic Auto-Clicker Loop ---
   setInterval(() => {
     const autoPower = getAutoClickValue();
     if (autoPower > 0) { 
@@ -482,7 +571,6 @@ const ClickerGame = (() => {
     }
   }, 1000);
 
-  // --- Cheat Engine Logic ---
   const activateCheat = () => {
     isCheatActive = true; 
     preCheatUpgrades = {};
@@ -535,14 +623,14 @@ const ClickerGame = (() => {
     saveData(); 
   };
 
-  // --- Game Mode Overlay Handlers ---
   const activateGameMode = () => {
     if (gameMode) return;
     
     gameMode = true; 
     clickerActive = true;
 
-    if ('Notification' in window && Notification.permission === 'default') {
+    if ('Notification' in window && Notification.permission === 'default' && !localStorage.getItem('cymouz_has_asked_notifs')) {
+      localStorage.setItem('cymouz_has_asked_notifs', 'true');
       Notification.requestPermission();
     }
 
@@ -572,7 +660,6 @@ const ClickerGame = (() => {
 
     counter.classList.add('counter-active');
     
-    // Show settings button
     const settingsBtn = document.getElementById('settings-btn');
     if (settingsBtn) {
       settingsBtn.classList.add('visible');
@@ -615,7 +702,6 @@ const ClickerGame = (() => {
 
     counter.classList.remove('counter-active');
     
-    // Hide settings button & force close panel if open
     const settingsBtn = document.getElementById('settings-btn');
     const settingsPanel = document.getElementById('settings-panel');
     if (settingsBtn) settingsBtn.classList.remove('visible');
@@ -656,9 +742,7 @@ const ClickerGame = (() => {
     updateCounterDisplay();
   };
 
-  // --- TungTung Bonus Event Logic ---
   const spawnTungTung = () => {
-    // Event will ALWAYS spawn, but Notification is based on settings
     if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && localStorage.getItem('cymouz_setting_event_notifs') !== 'false') {
       try {
         new Notification('Tung Tung Sahur!', {
@@ -709,6 +793,17 @@ const ClickerGame = (() => {
     clickerActive = false; 
     gameMode = false;
     document.cookie = `cymouz_clicker_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    
+    // Wire up the exact numbers settings toggle dynamically if it exists in the HTML
+    const exactNumbersCheckbox = document.getElementById('setting-exact-numbers');
+    if (exactNumbersCheckbox) {
+      exactNumbersCheckbox.checked = localStorage.getItem('cymouz_setting_always_show_exact') === 'true';
+      exactNumbersCheckbox.addEventListener('change', (e) => {
+        localStorage.setItem('cymouz_setting_always_show_exact', e.target.checked);
+        updateCounterDisplay(); 
+      });
+    }
+
     updateCounterDisplay();
   };
 
@@ -754,7 +849,6 @@ window.addEventListener('keydown', (e) => {
     if (!('Notification' in window)) return;
     if (Notification.permission !== 'granted') return;
     
-    // Check "Update Notifications" setting
     if (localStorage.getItem('cymouz_setting_update_notifs') === 'false') return;
 
     try {
