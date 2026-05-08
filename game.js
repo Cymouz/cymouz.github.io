@@ -782,7 +782,7 @@ const ClickerGame = (() => {
   };
 
   setInterval(() => {
-    if (clickerActive && clickerScore > 10 && Math.random() < 0.20) {
+    if (clickerActive && clickerScore > 10 && Math.random() < 0.05) {
       spawnTungTung();
     }
   }, 15000);
