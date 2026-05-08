@@ -273,7 +273,6 @@
       animation: titleShift 12s linear infinite;
       transition: none;
       
-      /* Stop mobile text selection & double-tap zoom */
       -webkit-touch-callout: none; 
       touch-action: manipulation;  
       user-select: none;
@@ -615,6 +614,108 @@
       cursor: not-allowed;
     }
 
+    /* === SETTINGS MENU STYLES === */
+    .settings-btn {
+      position: fixed;
+      bottom: calc(20px + env(safe-area-inset-bottom));
+      left: calc(20px + env(safe-area-inset-left));
+      font-size: 1.8rem;
+      cursor: pointer;
+      z-index: 1002;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+
+    .settings-btn:hover {
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    .settings-panel {
+      position: fixed;
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      left: calc(20px + env(safe-area-inset-left));
+      width: clamp(220px, 70vw, 280px);
+      background: rgba(179, 102, 255, 0.1);
+      border: 1px solid rgba(179, 102, 255, 0.25);
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+      z-index: 1002;
+      color: white;
+      padding: 16px;
+      transform: scale(0.8) translateY(20px) translateX(-20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      text-align: left;
+    }
+
+    .settings-panel.active {
+      transform: scale(1) translateY(0) translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(179, 102, 255, 0.3);
+      padding-bottom: 8px;
+    }
+
+    .settings-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .close-btn:hover { opacity: 1; }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .setting-row input[type="checkbox"] {
+      accent-color: #b366ff;
+      width: 16px;
+      height: 16px;
+    }
+
+    .reset-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(255, 77, 109, 0.2);
+      border: 1px solid rgba(255, 77, 109, 0.6);
+      color: #ff4d6d;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: rgba(255, 77, 109, 0.4);
+      box-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
+    }
+
+    /* --- Extra UI --- */
     .save-load-controls {
       display: flex;
       justify-content: space-between;
@@ -654,6 +755,14 @@
         min-width: 110px;
         font-size: 0.8rem;
       }
+      .settings-btn {
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        left: calc(12px + env(safe-area-inset-left));
+      }
+      .settings-panel {
+        bottom: calc(60px + env(safe-area-inset-bottom));
+        left: calc(12px + env(safe-area-inset-left));
+      }
     }
 
     /* Game Mode Styles */
@@ -675,14 +784,8 @@
     }
 
     @keyframes fadeOutElement {
-      from {
-        opacity: 1;
-        visibility: visible;
-      }
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
+      from { opacity: 1; visibility: visible; }
+      to { opacity: 0; visibility: hidden; }
     }
 
     .title-center {
@@ -706,14 +809,8 @@
     }
 
     @keyframes clickFeedbackRise {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-60px) scale(0.8);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-60px) scale(0.8); opacity: 0; }
     }
 
     .exit-clicker-btn {
@@ -830,29 +927,11 @@
         padding: calc(15px + env(safe-area-inset-top)) 15px calc(15px + env(safe-area-inset-bottom)) 15px;
       }
 
-      h1 {
-        margin-bottom: 12px;
-      }
+      h1 { margin-bottom: 12px; }
+      .bio { margin-bottom: 20px; padding: 0 15px; }
+      .interests { margin: 16px 0 32px 0; padding: 0 15px; }
+      .socials, .links-title { display: none; }
 
-      .bio {
-        margin-bottom: 20px;
-        padding: 0 15px;
-      }
-
-      .interests {
-        margin: 16px 0 32px 0;
-        padding: 0 15px;
-      }
-
-      .socials {
-        display: none;
-      }
-
-      .links-title {
-        display: none;
-      }
-
-      /* Show collapsible links on mobile */
       .links-section {
         display: block;
         width: 100%;
@@ -875,48 +954,27 @@
         border-color: rgba(179, 102, 255, 0.6);
       }
 
-      /* Disable tilt effect on touch devices */
       @media (hover: none) and (pointer: coarse) {
-        .social-btn {
-          transform-style: flat;
-        }
+        .social-btn { transform-style: flat; }
       }
     }
 
     @media (max-width: 480px) {
-      .main-wrapper {
-        padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)) 12px;
-      }
-
-      .socials-mobile.open {
-        gap: 8px;
-      }
-
-      .social-btn {
-        padding: 12px 14px;
-        font-size: 0.9rem;
-      }
+      .main-wrapper { padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)) 12px; }
+      .socials-mobile.open { gap: 8px; }
+      .social-btn { padding: 12px 14px; font-size: 0.9rem; }
     }
 
-    /* Desktop - hide mobile links section, show title */
     @media (min-width: 769px) {
-      .links-section {
-        display: none;
-      }
-
-      .socials-mobile {
-        display: none;
-      }
-
-      .links-title {
-        display: block;
-      }
+      .links-section { display: none; }
+      .socials-mobile { display: none; }
+      .links-title { display: block; }
     }
 
 /* --- TungTung Bonus Event --- */
 .falling-tung {
   position: fixed;
-  top: -500px; /* Pushed way further off-screen */
+  top: -500px; 
   width: 100px; 
   z-index: 10000;
   cursor: pointer;
@@ -940,6 +998,29 @@
     <span class="label" id="cookie-counter-label">Clicker locked</span>
     <span class="value" id="cookie-counter-value">0</span>
     <div id="rebirth-container"></div>
+  </div>
+
+  <div id="settings-btn" class="settings-btn">⚙️</div>
+  <div id="settings-panel" class="settings-panel">
+    <div class="settings-header">
+      <h3>Settings</h3>
+      <button id="close-settings" class="close-btn">✖</button>
+    </div>
+    <div class="settings-content">
+      <label class="setting-row">
+        <span>Show Particles</span>
+        <input type="checkbox" id="toggle-particles" checked>
+      </label>
+      <label class="setting-row">
+        <span>Background Notifications</span>
+        <input type="checkbox" id="toggle-notifs" checked>
+      </label>
+      <label class="setting-row">
+        <span>Random Events (TungTung)</span>
+        <input type="checkbox" id="toggle-events" checked>
+      </label>
+      <button id="reset-progress-btn" class="reset-btn">Reset Progress</button>
+    </div>
   </div>
 
   <div class="main-wrapper">
@@ -1014,15 +1095,16 @@
 
     const particleContainer = document.getElementById('particle-container');
 
-    // --- FIX: Pass x and y so particles spawn right where you click!
     const spawnParticles = (count, x, y) => {
+      // Respect the user's particle setting
+      if (localStorage.getItem('cymouz_setting_particles') === 'false') return;
+
       for (let i = 0; i < count; i += 1) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         const hue = 280 + Math.random() * 80;
         particle.style.background = `hsl(${hue}, 100%, 78%)`;
         
-        // Exact mouse coordinates
         particle.style.left = `${x}px`;
         particle.style.top = `${y}px`;
         particleContainer.appendChild(particle);
@@ -1051,7 +1133,6 @@
       titleResetTimer = null;
     };
 
-    // --- FIX: Pass 'e' to track mouse/finger coordinates
     title.addEventListener('click', (e) => {
       titleClicks += 1;
       clearTimeout(titleResetTimer);
@@ -1059,8 +1140,6 @@
 
       if (ClickerGame.isActive()) {
         ClickerGame.increaseScore(1);
-        
-        // Feed the exact X/Y coordinates to both the number pop-up and the particles
         ClickerGame.showClickFeedback(e.clientX, e.clientY);
         spawnParticles(6, e.clientX, e.clientY);
       }
@@ -1074,11 +1153,45 @@
           ClickerGame.increaseScore(5);
         }, 800);
         
-        // For the big starting burst, fallback to centering it
         const rect = title.getBoundingClientRect();
         spawnParticles(20, rect.left + rect.width / 2, rect.top + rect.height / 2);
       }
     });
+
+    // --- SETTINGS LOGIC ---
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const closeSettings = document.getElementById('close-settings');
+    const resetBtn = document.getElementById('reset-progress-btn');
+
+    const toggleParticles = document.getElementById('toggle-particles');
+    const toggleNotifs = document.getElementById('toggle-notifs');
+    const toggleEvents = document.getElementById('toggle-events');
+
+    // Load saved settings (Default to true)
+    toggleParticles.checked = localStorage.getItem('cymouz_setting_particles') !== 'false';
+    toggleNotifs.checked = localStorage.getItem('cymouz_setting_notifs') !== 'false';
+    toggleEvents.checked = localStorage.getItem('cymouz_setting_events') !== 'false';
+
+    // Save settings when user clicks toggles
+    toggleParticles.addEventListener('change', (e) => localStorage.setItem('cymouz_setting_particles', e.target.checked));
+    toggleNotifs.addEventListener('change', (e) => localStorage.setItem('cymouz_setting_notifs', e.target.checked));
+    toggleEvents.addEventListener('change', (e) => localStorage.setItem('cymouz_setting_events', e.target.checked));
+
+    settingsBtn.addEventListener('click', () => {
+      settingsPanel.classList.add('active');
+    });
+
+    closeSettings.addEventListener('click', () => {
+      settingsPanel.classList.remove('active');
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if (window.ClickerGame && window.ClickerGame.hardReset) {
+        window.ClickerGame.hardReset();
+      }
+    });
+    // ----------------------
 
     const linksHeader = document.querySelector('.links-header');
     const mobileSocials = document.getElementById('mobile-socials');

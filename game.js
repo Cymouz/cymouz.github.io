@@ -8,10 +8,8 @@ const ClickerGame = (() => {
   let activeTab = 'click'; // Tracks which tab is currently open
 
   // --- Rebirth Config ---
-  const REBIRTH_BASE_GOAL = 250000000; // 250 Million
-  // Goal multiplies by 100 every rebirth (250M, 25B, 2.5T...)
+  const REBIRTH_BASE_GOAL = 250000000; 
   const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(100, rebirths));
-  // Multiplier multiplies by 25 every rebirth (1x, 25x, 625x, 15625x...)
   const getGlobalMult = () => Math.max(1, Math.pow(25, rebirths));
 
   // --- Cheat Variables ---
@@ -77,30 +75,30 @@ const ClickerGame = (() => {
     tos: { name: "📄 Terms of Service", desc: "Costs reduced by 15%", count: 0, baseCost: 750000, costScale: 4.0, type: "discount", effectValue: 0.15 }
   };
 
- // ==========================================
+  // ==========================================
   // ✨ DYNAMIC ELEVATED GENERATION
   // ==========================================
   const generateElevatedUpgrades = () => {
     const baseKeys = Object.keys(upgrades);
     baseKeys.forEach(key => {
-      if (key.startsWith('elevated_')) return; 
+      if (key.startsWith('elevated_')) return; // Safeguard
       
       const base = upgrades[key];
-      base.tier = 0; 
+      base.tier = 0; //Explicitly assign Level 0 to base upgrades
       
       const elevatedKey = 'elevated_' + key;
       const nameParts = base.name.split(' ');
-      const emoji = nameParts.shift(); 
+      const emoji = nameParts.shift(); // Remove the emoji
       const elevatedName = `${emoji} Elevated ${nameParts.join(' ')}`;
       
       let newEffectValue = base.effectValue;
       let newDesc = "";
       
       if (base.type === 'discount') {
-        newEffectValue = base.effectValue * 1.5; // Safely scales discounts so items don't become free
+        newEffectValue = base.effectValue * 1.5; // Double the discount
         newDesc = `Costs reduced by ${(newEffectValue * 100).toFixed(1)}%`;
       } else {
-        newEffectValue = base.effectValue * 1000000; // 1 Million x Base Power
+        newEffectValue = base.effectValue * 1000000;
         newDesc = `+${formatNumberWithSuffix(newEffectValue)} per ${base.type === 'click' ? 'click' : 'second'}`;
       }
 
@@ -108,10 +106,10 @@ const ClickerGame = (() => {
         ...base,
         name: elevatedName,
         desc: newDesc,
-        baseCost: base.baseCost * 100000000, // 100 Million x Cost
+        baseCost: base.baseCost * 100000000, // 100,000,000x more expensive
         effectValue: newEffectValue,
         isElevated: true,
-        tier: 1, 
+        tier: 1, //Assign Level 1 to elevated upgrades
         count: 0
       };
     });
@@ -187,6 +185,14 @@ const ClickerGame = (() => {
     }
   };
 
+  // --- Hard Reset Mechanics ---
+  const hardReset = () => {
+    if (confirm("⚠️ Are you absolutely sure you want to wipe ALL your progress? This includes your score, upgrades, and rebirths. This CANNOT be undone!")) {
+      localStorage.removeItem('cymouz_game_data');
+      location.reload();
+    }
+  };
+
   // --- Dynamic Math & Formulas ---
   const getDiscountMult = (targetTier) => {
     let mult = 1;
@@ -256,11 +262,10 @@ const ClickerGame = (() => {
     
     saveData();
     updateCounterDisplay();
-    // FIX: Show the exact current multiplier instead of raw rebirth count
     alert(`Rebirth Complete! Global Multiplier is now ${getGlobalMult()}x`);
   };
 
-// --- Display Updates ---
+  // --- Display Updates ---
   const updateCounterDisplay = () => {
     const counterValue = document.getElementById('cookie-counter-value');
     const counterLabel = document.getElementById('cookie-counter-label');
@@ -276,7 +281,6 @@ const ClickerGame = (() => {
     if (rbCont) {
       const goal = getRebirthGoal();
       if (clickerScore >= goal) {
-        // FIX: Calculate the exact next multiplier based on the 25x math
         const nextMult = Math.max(1, Math.pow(25, rebirths + 1));
         rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${nextMult}x MULT</button>`;
       } else {
@@ -550,12 +554,10 @@ const ClickerGame = (() => {
     gameMode = true;
     clickerActive = true;
 
-    // --- FIX: Request Notification Permission explicitly on user click
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 
-    // --- FIX: Aggressively disable mobile zooming
     let meta = document.querySelector('meta[name="viewport"]');
     if (meta) {
       meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
@@ -610,7 +612,6 @@ const ClickerGame = (() => {
     gameMode = false;
     clickerActive = false;
 
-    // --- FIX: Restore mobile zooming capabilities
     let meta = document.querySelector('meta[name="viewport"]');
     if (meta) {
       meta.content = "width=device-width, initial-scale=1.0, viewport-fit=cover";
@@ -659,7 +660,10 @@ const ClickerGame = (() => {
 
   // --- TungTung Bonus Event Logic ---
   const spawnTungTung = () => {
-    if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+    // Only spawn if settings allow
+    if (localStorage.getItem('cymouz_setting_events') === 'false') return;
+
+    if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && localStorage.getItem('cymouz_setting_notifs') !== 'false') {
       try {
         new Notification('Tung Tung Sahur!', {
           body: 'A wild Tung Tung has appeared! Hurry back!',
@@ -675,11 +679,9 @@ const ClickerGame = (() => {
     
     img.onclick = (e) => {
       e.stopPropagation(); 
-      
-      // BALANCED BONUS: 5 minutes of auto-clicking + 5 minutes of manual clicking (assumes 5 clicks/sec) + 1000 flat
       const autoBonus = getAutoClickValue() * 300; 
       const clickBonus = getClickValue() * 5 * 300; 
-      const bonus = Math.floor(autoBonus + clickBonus + 1000); 
+      const bonus = Math.floor(autoBonus + clickBonus + (1000 * getGlobalMult())); 
       
       clickerScore += bonus;
       saveData();
@@ -699,6 +701,9 @@ const ClickerGame = (() => {
   };
 
   setInterval(() => {
+    // Also block automated spawns if settings disabled
+    if (localStorage.getItem('cymouz_setting_events') === 'false') return;
+
     if (clickerActive && clickerScore > 10 && Math.random() < 0.20) {
       spawnTungTung();
     }
@@ -719,6 +724,7 @@ const ClickerGame = (() => {
     deactivateGameMode,
     increaseScore,
     performRebirth,
+    hardReset, // Expose for the Settings Menu
     isActive: () => clickerActive,
     isGameMode: () => gameMode,
     getScore: () => clickerScore,
@@ -726,7 +732,6 @@ const ClickerGame = (() => {
   };
 })();
 
-// --- FIX: Removed Duplicate Click Listeners & Added Anti-Zoom for Desktop ---
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => ClickerGame.init());
 } else {
@@ -746,7 +751,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 // ==========================================
-// 🔄 Auto-Update Checker + Browser Notification
+// 🔄 Auto-Update Checker
 // ==========================================
 (() => {
   let currentVersion = null;
