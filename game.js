@@ -75,7 +75,7 @@ const ClickerGame = (() => {
     tos: { name: "📄 Terms of Service", desc: "Costs reduced by 15%", count: 0, baseCost: 750000, costScale: 4.0, type: "discount", effectValue: 0.15 }
   };
 
-// ==========================================
+  // ==========================================
   // ✨ DYNAMIC ELEVATED GENERATION
   // ==========================================
   const generateElevatedUpgrades = () => {
@@ -185,14 +185,13 @@ const ClickerGame = (() => {
     }
   };
 
-// --- Dynamic Math & Formulas ---
+  // --- Dynamic Math & Formulas ---
   const getDiscountMult = (targetTier) => {
     let mult = 1;
     for (let key in upgrades) {
       const u = upgrades[key];
-      const uTier = u.tier || 0; // Default to 0 just in case
+      const uTier = u.tier || 0;
       
-      //Only apply discount if the upgrade tier matches the item's tier
       if (u.type === "discount" && uTier === targetTier) {
         mult *= Math.pow(1 - u.effectValue, u.count);
       }
@@ -203,10 +202,8 @@ const ClickerGame = (() => {
   const getUpgradeCost = (key) => {
     const u = upgrades[key];
     const uTier = u.tier || 0;
-    
     return Math.floor(u.baseCost * Math.pow(u.costScale, u.count) * getDiscountMult(uTier));
   };
-
 
   const getClickValue = () => {
     let clickPower = 1;
@@ -291,7 +288,7 @@ const ClickerGame = (() => {
     }
   };
 
-const showClickFeedback = (x, y, customValue = null) => {
+  const showClickFeedback = (x, y, customValue = null) => {
     const feedback = document.createElement('div');
     feedback.className = 'click-feedback';
     const valToShow = customValue !== null ? customValue : getClickValue();
@@ -492,7 +489,6 @@ const showClickFeedback = (x, y, customValue = null) => {
   }, 1000);
 
   // --- Cheat Engine Logic ---
- // --- Cheat Engine Logic ---
   const activateCheat = () => {
     isCheatActive = true;
     preCheatUpgrades = {};
@@ -513,17 +509,15 @@ const showClickFeedback = (x, y, customValue = null) => {
     btn.onclick = deactivateCheat;
     document.body.appendChild(btn);
 
-    // The new 1-second cheat loop
+    // The 1-second cheat loop
     cheatInterval = setInterval(() => {
       for (let key in upgrades) {
-        // Skip adding +1 if it is an Elevated upgrade AND NOT a discount type
         if (upgrades[key].isElevated && upgrades[key].type !== 'discount') {
           continue; 
         }
         upgrades[key].count += 1;
       }
       
-      // Spawn TungTung every second!
       if (typeof spawnTungTung === 'function') {
         spawnTungTung();
       }
@@ -550,6 +544,17 @@ const showClickFeedback = (x, y, customValue = null) => {
     if (gameMode) return;
     gameMode = true;
     clickerActive = true;
+
+    // --- FIX: Request Notification Permission explicitly on user click
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    // --- FIX: Aggressively disable mobile zooming
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (meta) {
+      meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
+    }
 
     setupShopUI();
 
@@ -600,6 +605,12 @@ const showClickFeedback = (x, y, customValue = null) => {
     gameMode = false;
     clickerActive = false;
 
+    // --- FIX: Restore mobile zooming capabilities
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (meta) {
+      meta.content = "width=device-width, initial-scale=1.0, viewport-fit=cover";
+    }
+
     const title = document.getElementById('title');
     const counter = document.getElementById('cookie-counter');
     const shopPanel = document.getElementById('shop-panel');
@@ -641,8 +652,50 @@ const showClickFeedback = (x, y, customValue = null) => {
     updateCounterDisplay();
   };
 
+  // --- TungTung Bonus Event Logic ---
+  const spawnTungTung = () => {
+    if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification('Tung Tung Sahur!', {
+          body: 'A wild Tung Tung has appeared! Hurry back!',
+          icon: 'tungtungtungsahur.png' 
+        });
+      } catch (err) { }
+    }
+
+    const img = document.createElement('img');
+    img.src = 'tungtungtungsahur.png';
+    img.className = 'falling-tung';
+    img.style.left = `${Math.floor(Math.random() * 80) + 10}%`;
+    
+    img.onclick = (e) => {
+      e.stopPropagation(); 
+      const bonus = Math.floor(clickerScore / 2); 
+      clickerScore += bonus;
+      saveData();
+      updateCounterDisplay();
+      
+      if (typeof showClickFeedback === 'function') {
+        showClickFeedback(e.clientX, e.clientY, bonus);
+      }
+      
+      img.remove(); 
+    };
+
+    document.body.appendChild(img);
+    setTimeout(() => {
+      if (img.parentNode) img.remove();
+    }, 5000); 
+  };
+
+  setInterval(() => {
+    if (clickerActive && clickerScore > 10 && Math.random() < 0.20) {
+      spawnTungTung();
+    }
+  }, 15000);
+
   const init = () => {
-    generateElevatedUpgrades(); //Generates the upgrades before loading
+    generateElevatedUpgrades(); 
     loadData();
     clickerActive = false;
     gameMode = false;
@@ -650,69 +703,12 @@ const showClickFeedback = (x, y, customValue = null) => {
     updateCounterDisplay();
   };
 
-// --- TungTung Bonus Event Logic ---
-  const spawnTungTung = () => {
-    // 1. Tab-Out Notification
-    if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification('Tung Tung Sahur!', {
-          body: 'A wild Tung Tung Tung Sahur has appeared! Hurry back!',
-          icon: 'tungtungtungsahur.png' 
-        });
-      } catch (err) {
-        // ignore notification failures
-      }
-    }
-
-    // 2. Create and Position the Image
-    const img = document.createElement('img');
-    img.src = 'tungtungtungsahur.png';
-    img.className = 'falling-tung';
-    
-    // Random horizontal position (between 10% and 90% of screen width)
-    img.style.left = `${Math.floor(Math.random() * 80) + 10}%`;
-    
-    // 3. Click Event (The Bonus)
-    img.onclick = (e) => {
-      e.stopPropagation(); // Stops the click from triggering the background
-      const bonus = Math.floor(clickerScore / 2); // Exactly half of current points
-      
-      clickerScore += bonus;
-      saveData();
-      updateCounterDisplay();
-      
-      // Ensure showClickFeedback exists and handles 3 arguments (x, y, customValue)
-      if (typeof showClickFeedback === 'function') {
-        showClickFeedback(e.clientX, e.clientY, bonus);
-      }
-      
-      img.remove(); // Delete the image once clicked
-    };
-
-    // 4. Add to screen
-    document.body.appendChild(img);
-
-    // 5. Clean up if the player misses it
-    setTimeout(() => {
-      if (img.parentNode) img.remove();
-    }, 5000); // 5 seconds (must match your CSS animation duration)
-  };
-
-  // Run a check every 15 seconds
-  setInterval(() => {
-    // 20% chance to spawn every 15 seconds (averages out to ~1 per minute)
-    // Only spawns if the clicker game is active and they have more than 10 points
-    if (clickerActive && clickerScore > 10 && Math.random() < 0.20) {
-      spawnTungTung();
-    }
-  }, 15000);
-
   return {
     init,
     activateGameMode,
     deactivateGameMode,
     increaseScore,
-    performRebirth, // Exported to be called from the HTML button
+    performRebirth,
     isActive: () => clickerActive,
     isGameMode: () => gameMode,
     getScore: () => clickerScore,
@@ -720,8 +716,76 @@ const showClickFeedback = (x, y, customValue = null) => {
   };
 })();
 
+// --- FIX: Removed Duplicate Click Listeners & Added Anti-Zoom for Desktop ---
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => ClickerGame.init());
 } else {
   ClickerGame.init();
 }
+
+window.addEventListener('wheel', (e) => {
+  if (ClickerGame.isGameMode() && e.ctrlKey) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+window.addEventListener('keydown', (e) => {
+  if (ClickerGame.isGameMode() && e.ctrlKey && (e.key === '=' || e.key === '-' || e.key === '+')) {
+    e.preventDefault();
+  }
+});
+
+// ==========================================
+// 🔄 Auto-Update Checker + Browser Notification
+// ==========================================
+(() => {
+  let currentVersion = null;
+
+  const notifyUpdateAvailable = () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+
+    try {
+      new Notification('Website Updated', {
+        body: 'A new version is ready. Refresh to load the latest content.',
+        icon: '/favicon.ico'
+      });
+    } catch (err) { }
+  };
+
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+      try {
+        await Notification.requestPermission();
+      } catch (err) { }
+    }
+  };
+
+  window.requestUpdateNotificationPermission = requestNotificationPermission;
+
+  const fetchVersion = async () => {
+    try {
+      const response = await fetch('/version.json?t=' + Date.now());
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.version;
+    } catch (err) {
+      return null;
+    }
+  };
+
+  fetchVersion().then(version => {
+    if (version) currentVersion = version;
+  });
+
+  setInterval(async () => {
+    if (!currentVersion) return;
+    const liveVersion = await fetchVersion();
+    if (liveVersion && liveVersion !== currentVersion) {
+      const banner = document.getElementById('update-banner');
+      if (banner) banner.classList.add('show');
+      notifyUpdateAvailable();
+    }
+  }, 10000); 
+})();

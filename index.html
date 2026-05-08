@@ -272,6 +272,11 @@
       -webkit-text-fill-color: transparent;
       animation: titleShift 12s linear infinite;
       transition: none;
+      
+      /* Stop mobile text selection & double-tap zoom */
+      -webkit-touch-callout: none; 
+      touch-action: manipulation;  
+      user-select: none;
     }
 
     @keyframes titleShift {
@@ -487,7 +492,7 @@
       font-size: 1.2rem;
     }
 
-    /* === NEW: REBIRTH UI === */
+    /* === REBIRTH UI === */
     #rebirth-container {
       width: 100%;
       margin-top: 8px;
@@ -908,11 +913,11 @@
       }
     }
 
-    /* --- TungTung Bonus Event --- */
+/* --- TungTung Bonus Event --- */
 .falling-tung {
   position: fixed;
-  top: -500px;
-  width: 100px; /* Adjust this if the image is too big/small */
+  top: -500px; /* Pushed way further off-screen */
+  width: 100px; 
   z-index: 10000;
   cursor: pointer;
   user-select: none;
@@ -921,10 +926,9 @@
 }
 
 @keyframes fallDown {
-  0% { top: -500px; transform: rotate(-20deg); }
+  0% { top: -500px; transform: rotate(-20deg); } 
   100% { top: 110vh; transform: rotate(360deg); }
 }
-
   </style>
 </head>
 <body>
@@ -1000,68 +1004,6 @@
   </div> 
 
   <script src="game.js"></script>
-  
-  <script>
-    // ==========================================
-// 🔄 Auto-Update Checker + Browser Notification
-// ==========================================
-(() => {
-  let currentVersion = null;
-
-  const notifyUpdateAvailable = () => {
-    if (!('Notification' in window)) return;
-    if (Notification.permission !== 'granted') return;
-
-    try {
-      new Notification('Website Updated', {
-        body: 'A new version is ready. Refresh to load the latest content.',
-        icon: '/favicon.ico'
-      });
-    } catch (err) {
-      // ignore notification failures
-    }
-  };
-
-  const requestNotificationPermission = async () => {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'default') {
-      try {
-        await Notification.requestPermission();
-      } catch (err) {
-        // ignore permission request errors
-      }
-    }
-  };
-
-  window.requestUpdateNotificationPermission = requestNotificationPermission;
-
-  const fetchVersion = async () => {
-    try {
-      const response = await fetch('/version.json?t=' + Date.now());
-      if (!response.ok) return null;
-      const data = await response.json();
-      return data.version;
-    } catch (err) {
-      return null;
-    }
-  };
-
-  fetchVersion().then(version => {
-    if (version) currentVersion = version;
-  });
-
-  setInterval(async () => {
-    if (!currentVersion) return;
-    const liveVersion = await fetchVersion();
-    if (liveVersion && liveVersion !== currentVersion) {
-      const banner = document.getElementById('update-banner');
-      if (banner) banner.classList.add('show');
-      notifyUpdateAvailable();
-    }
-  }, 5000); 
-})();
-  </script>
-  
   <script>
     const title = document.getElementById("title");
     title.style.backgroundImage = "linear-gradient(135deg, #b366ff 0%, #ff4d6d 50%, #b366ff 100%)";
@@ -1072,18 +1014,17 @@
 
     const particleContainer = document.getElementById('particle-container');
 
-    const spawnParticles = (count) => {
-      const rect = title.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
+    // --- FIX: Pass x and y so particles spawn right where you click!
+    const spawnParticles = (count, x, y) => {
       for (let i = 0; i < count; i += 1) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         const hue = 280 + Math.random() * 80;
         particle.style.background = `hsl(${hue}, 100%, 78%)`;
-        particle.style.left = `${centerX}px`;
-        particle.style.top = `${centerY}px`;
+        
+        // Exact mouse coordinates
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
         particleContainer.appendChild(particle);
 
         const angle = Math.random() * Math.PI * 2;
@@ -1110,16 +1051,18 @@
       titleResetTimer = null;
     };
 
-    title.addEventListener('click', () => {
+    // --- FIX: Pass 'e' to track mouse/finger coordinates
+    title.addEventListener('click', (e) => {
       titleClicks += 1;
       clearTimeout(titleResetTimer);
       titleResetTimer = setTimeout(resetTitleClicks, 1200);
 
       if (ClickerGame.isActive()) {
         ClickerGame.increaseScore(1);
-        const rect = title.getBoundingClientRect();
-        ClickerGame.showClickFeedback(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        spawnParticles(6);
+        
+        // Feed the exact X/Y coordinates to both the number pop-up and the particles
+        ClickerGame.showClickFeedback(e.clientX, e.clientY);
+        spawnParticles(6, e.clientX, e.clientY);
       }
 
       if (titleClicks >= titleClicksTarget && !ClickerGame.isActive()) {
@@ -1130,7 +1073,10 @@
           ClickerGame.activateGameMode();
           ClickerGame.increaseScore(5);
         }, 800);
-        spawnParticles(20);
+        
+        // For the big starting burst, fallback to centering it
+        const rect = title.getBoundingClientRect();
+        spawnParticles(20, rect.left + rect.width / 2, rect.top + rect.height / 2);
       }
     });
 
