@@ -240,12 +240,37 @@
       50% { background-position: 100% 50%; }
     }
 
+    /* === OLED MODES === */
+    body.oled-mode #fixed-bg {
+      background: #000 !important;
+      animation: none !important;
+    }
+
+    body.super-oled-mode #fixed-bg {
+      background: #000 !important;
+      animation: none !important;
+    }
+
+    body.super-oled-mode .cookie-counter,
+    body.super-oled-mode .shop-panel,
+    body.super-oled-mode .settings-panel,
+    body.super-oled-mode .skill-card,
+    body.super-oled-mode .social-btn,
+    body.super-oled-mode .links-header,
+    body.super-oled-mode .upgrade-btn,
+    body.super-oled-mode .tab-btn,
+    body.super-oled-mode .save-load-controls button {
+      background: #000 !important;
+      border-color: #333 !important;
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+    }
+
     /* The Content Wrapper */
     .main-wrapper {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      /* Safe padding for iOS notch and home bar */
       padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
       box-sizing: border-box;
     }
@@ -258,7 +283,6 @@
       align-items: center;
       width: 100%;
     }
-
 
     /* Title with animated gradient */
     h1 {
@@ -301,14 +325,8 @@
     }
 
     @keyframes slideUp {
-      from { 
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 0.95;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 0.95; transform: translateY(0); }
     }
 
     /* Skills section */
@@ -622,11 +640,21 @@
       font-size: 1.8rem;
       cursor: pointer;
       z-index: 1002;
-      transition: transform 0.3s ease, filter 0.3s ease;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+      
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.5);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .settings-btn:hover {
+    .settings-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .settings-btn.visible:hover {
       transform: rotate(90deg) scale(1.1);
     }
 
@@ -634,7 +662,7 @@
       position: fixed;
       bottom: calc(70px + env(safe-area-inset-bottom));
       left: calc(20px + env(safe-area-inset-left));
-      width: clamp(220px, 70vw, 280px);
+      width: clamp(220px, 70vw, 300px);
       background: rgba(179, 102, 255, 0.1);
       border: 1px solid rgba(179, 102, 255, 0.25);
       border-radius: 14px;
@@ -660,7 +688,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       border-bottom: 1px solid rgba(179, 102, 255, 0.3);
       padding-bottom: 8px;
     }
@@ -682,12 +710,23 @@
 
     .close-btn:hover { opacity: 1; }
 
+    .settings-content {
+      max-height: 50vh;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    /* Custom scrollbar for settings */
+    .settings-content::-webkit-scrollbar { width: 6px; }
+    .settings-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+    .settings-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
     .setting-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       cursor: pointer;
     }
 
@@ -1009,15 +1048,40 @@
     <div class="settings-content">
       <label class="setting-row">
         <span>Show Particles</span>
-        <input type="checkbox" id="toggle-particles" checked>
+        <input type="checkbox" id="set-particles" checked>
       </label>
       <label class="setting-row">
-        <span>Background Notifications</span>
-        <input type="checkbox" id="toggle-notifs" checked>
+        <span>Show Click Numbers</span>
+        <input type="checkbox" id="set-click-numbers" checked>
       </label>
       <label class="setting-row">
-        <span>Random Events (TungTung)</span>
-        <input type="checkbox" id="toggle-events" checked>
+        <span>Update Notifications</span>
+        <input type="checkbox" id="set-update-notifs" checked>
+      </label>
+      <label class="setting-row">
+        <span>Event Notifications</span>
+        <input type="checkbox" id="set-event-notifs" checked>
+      </label>
+      <label class="setting-row">
+        <span>Rebirth Alerts</span>
+        <input type="checkbox" id="set-rebirth-alerts" checked>
+      </label>
+      <label class="setting-row">
+        <span>Anti-Exit Warning</span>
+        <input type="checkbox" id="set-exit-warning" checked>
+      </label>
+      <label class="setting-row">
+        <span>Sounds (Coming Soon)</span>
+        <input type="checkbox" id="set-sounds" checked>
+      </label>
+      <hr style="border: 0; border-top: 1px dashed rgba(179,102,255,0.3); margin: 12px 0;">
+      <label class="setting-row">
+        <span>OLED Mode</span>
+        <input type="checkbox" id="set-oled">
+      </label>
+      <label class="setting-row">
+        <span>Super OLED Mode</span>
+        <input type="checkbox" id="set-super-oled">
       </label>
       <button id="reset-progress-btn" class="reset-btn">Reset Progress</button>
     </div>
@@ -1096,7 +1160,6 @@
     const particleContainer = document.getElementById('particle-container');
 
     const spawnParticles = (count, x, y) => {
-      // Respect the user's particle setting
       if (localStorage.getItem('cymouz_setting_particles') === 'false') return;
 
       for (let i = 0; i < count; i += 1) {
@@ -1158,37 +1221,71 @@
       }
     });
 
+    // --- NEW: Exit Warning Logic ---
+    window.skipExitWarning = false;
+    window.addEventListener('beforeunload', (e) => {
+      if (window.skipExitWarning || localStorage.getItem('cymouz_setting_exit_warning') === 'false') return;
+      if (typeof ClickerGame !== 'undefined' && (ClickerGame.getScore() > 0 || ClickerGame.isGameMode())) {
+        e.preventDefault();
+        e.returnValue = ''; // Triggers the browser's built-in "Are you sure you want to leave?" prompt
+      }
+    });
+
     // --- SETTINGS LOGIC ---
     const settingsBtn = document.getElementById('settings-btn');
     const settingsPanel = document.getElementById('settings-panel');
     const closeSettings = document.getElementById('close-settings');
     const resetBtn = document.getElementById('reset-progress-btn');
 
-    const toggleParticles = document.getElementById('toggle-particles');
-    const toggleNotifs = document.getElementById('toggle-notifs');
-    const toggleEvents = document.getElementById('toggle-events');
+    const inputs = {
+      particles: document.getElementById('set-particles'),
+      clickNumbers: document.getElementById('set-click-numbers'),
+      updateNotifs: document.getElementById('set-update-notifs'),
+      eventNotifs: document.getElementById('set-event-notifs'),
+      rebirthAlerts: document.getElementById('set-rebirth-alerts'),
+      exitWarning: document.getElementById('set-exit-warning'),
+      sounds: document.getElementById('set-sounds'),
+      oled: document.getElementById('set-oled'),
+      superOled: document.getElementById('set-super-oled'),
+    };
 
-    // Load saved settings (Default to true)
-    toggleParticles.checked = localStorage.getItem('cymouz_setting_particles') !== 'false';
-    toggleNotifs.checked = localStorage.getItem('cymouz_setting_notifs') !== 'false';
-    toggleEvents.checked = localStorage.getItem('cymouz_setting_events') !== 'false';
+    const applyOledClasses = () => {
+      document.body.classList.toggle('oled-mode', localStorage.getItem('cymouz_setting_oled') === 'true');
+      document.body.classList.toggle('super-oled-mode', localStorage.getItem('cymouz_setting_super_oled') === 'true');
+    };
 
-    // Save settings when user clicks toggles
-    toggleParticles.addEventListener('change', (e) => localStorage.setItem('cymouz_setting_particles', e.target.checked));
-    toggleNotifs.addEventListener('change', (e) => localStorage.setItem('cymouz_setting_notifs', e.target.checked));
-    toggleEvents.addEventListener('change', (e) => localStorage.setItem('cymouz_setting_events', e.target.checked));
+    // Load saved settings
+    const loadSetting = (key, defaultVal) => {
+      const stored = localStorage.getItem(`cymouz_setting_${key}`);
+      return stored === null ? defaultVal : stored === 'true';
+    };
 
-    settingsBtn.addEventListener('click', () => {
-      settingsPanel.classList.add('active');
+    inputs.particles.checked = loadSetting('particles', true);
+    inputs.clickNumbers.checked = loadSetting('click_numbers', true);
+    inputs.updateNotifs.checked = loadSetting('update_notifs', true);
+    inputs.eventNotifs.checked = loadSetting('event_notifs', true);
+    inputs.rebirthAlerts.checked = loadSetting('rebirth_alerts', true);
+    inputs.exitWarning.checked = loadSetting('exit_warning', true);
+    inputs.sounds.checked = loadSetting('sounds', true);
+    inputs.oled.checked = loadSetting('oled', false);
+    inputs.superOled.checked = loadSetting('super_oled', false);
+
+    applyOledClasses(); // Apply CSS immediately
+
+    // Save and apply settings when toggled
+    Object.keys(inputs).forEach(key => {
+      inputs[key].addEventListener('change', (e) => {
+        localStorage.setItem(`cymouz_setting_${key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)}`, e.target.checked);
+        if (key === 'oled' || key === 'superOled') applyOledClasses();
+      });
     });
 
-    closeSettings.addEventListener('click', () => {
-      settingsPanel.classList.remove('active');
-    });
+    settingsBtn.addEventListener('click', () => { settingsPanel.classList.add('active'); });
+    closeSettings.addEventListener('click', () => { settingsPanel.classList.remove('active'); });
 
     resetBtn.addEventListener('click', () => {
-      if (window.ClickerGame && window.ClickerGame.hardReset) {
-        window.ClickerGame.hardReset();
+      if (typeof ClickerGame !== 'undefined' && ClickerGame.hardReset) {
+        ClickerGame.hardReset();
       }
     });
     // ----------------------
@@ -1305,7 +1402,6 @@
     `;
     document.head.appendChild(style);
 
-    // High-performance parallax using requestAnimationFrame
     if (canHover) {
       document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
@@ -1332,15 +1428,13 @@
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        // Recalculate on resize if needed
-      }, 250);
+      resizeTimeout = setTimeout(() => { }, 250);
     });
   </script>
   
   <div id="update-banner" class="update-banner">
     <span>A new version of the site is available!</span>
-    <button onclick="window.location.reload(true)">Refresh</button>
+    <button onclick="window.skipExitWarning = true; window.location.reload(true)">Refresh</button>
   </div>
 </body>
 </html>

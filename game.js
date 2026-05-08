@@ -1,11 +1,11 @@
 // Cookie Clicker Game Module
 const ClickerGame = (() => {
   let clickerScore = 0;
-  let rebirths = 0; //Tracks the amount of rebirths
+  let rebirths = 0; 
   let clickerActive = false;
   let gameMode = false;
   let renderShopItems = null;
-  let activeTab = 'click'; // Tracks which tab is currently open
+  let activeTab = 'click'; 
 
   // --- Rebirth Config ---
   const REBIRTH_BASE_GOAL = 250000000; 
@@ -21,18 +21,17 @@ const ClickerGame = (() => {
 
   // Listen for cheat code
   document.addEventListener('keydown', (e) => {
-    if (!clickerActive || isCheatActive) {
-      konamiIndex = 0;
-      return;
+    if (!clickerActive || isCheatActive) { 
+      konamiIndex = 0; 
+      return; 
     }
-    
     const key = e.key;
     const expected = konamiCode[konamiIndex];
     if (key.toLowerCase() === expected.toLowerCase()) {
       konamiIndex++;
-      if (konamiIndex === konamiCode.length) {
-        activateCheat();
-        konamiIndex = 0;
+      if (konamiIndex === konamiCode.length) { 
+        activateCheat(); 
+        konamiIndex = 0; 
       }
     } else {
       konamiIndex = 0;
@@ -81,21 +80,21 @@ const ClickerGame = (() => {
   const generateElevatedUpgrades = () => {
     const baseKeys = Object.keys(upgrades);
     baseKeys.forEach(key => {
-      if (key.startsWith('elevated_')) return; // Safeguard
+      if (key.startsWith('elevated_')) return; 
       
       const base = upgrades[key];
-      base.tier = 0; //Explicitly assign Level 0 to base upgrades
+      base.tier = 0; 
       
       const elevatedKey = 'elevated_' + key;
       const nameParts = base.name.split(' ');
-      const emoji = nameParts.shift(); // Remove the emoji
+      const emoji = nameParts.shift(); 
       const elevatedName = `${emoji} Elevated ${nameParts.join(' ')}`;
       
       let newEffectValue = base.effectValue;
       let newDesc = "";
       
       if (base.type === 'discount') {
-        newEffectValue = base.effectValue * 1.5; // Double the discount
+        newEffectValue = base.effectValue * 1.5; 
         newDesc = `Costs reduced by ${(newEffectValue * 100).toFixed(1)}%`;
       } else {
         newEffectValue = base.effectValue * 1000000;
@@ -104,12 +103,12 @@ const ClickerGame = (() => {
 
       upgrades[elevatedKey] = {
         ...base,
-        name: elevatedName,
+        name: elevatedName, 
         desc: newDesc,
-        baseCost: base.baseCost * 100000000, // 100,000,000x more expensive
+        baseCost: base.baseCost * 100000000, 
         effectValue: newEffectValue,
-        isElevated: true,
-        tier: 1, //Assign Level 1 to elevated upgrades
+        isElevated: true, 
+        tier: 1, 
         count: 0
       };
     });
@@ -138,9 +137,9 @@ const ClickerGame = (() => {
       }
       return JSON.parse(decodeURIComponent(decrypted));
     } catch (e) {
-      try {
-        return JSON.parse(encodedStr);
-      } catch (err) {
+      try { 
+        return JSON.parse(encodedStr); 
+      } catch (err) { 
         return null; 
       }
     }
@@ -149,14 +148,12 @@ const ClickerGame = (() => {
   // --- Save / Load Logic ---
   const saveData = () => {
     let upgradesToSave = upgrades;
-    
     if (isCheatActive) {
       upgradesToSave = JSON.parse(JSON.stringify(upgrades)); 
       for (let key in preCheatUpgrades) {
         upgradesToSave[key].count = preCheatUpgrades[key];
       }
     }
-    
     const data = { score: clickerScore, rebirths: rebirths, upgrades: upgradesToSave };
     localStorage.setItem('cymouz_game_data', encryptData(data));
   };
@@ -188,6 +185,7 @@ const ClickerGame = (() => {
   // --- Hard Reset Mechanics ---
   const hardReset = () => {
     if (confirm("⚠️ Are you absolutely sure you want to wipe ALL your progress? This includes your score, upgrades, and rebirths. This CANNOT be undone!")) {
+      window.skipExitWarning = true; // Skip exit warning on hard reset reload
       localStorage.removeItem('cymouz_game_data');
       location.reload();
     }
@@ -199,12 +197,11 @@ const ClickerGame = (() => {
     for (let key in upgrades) {
       const u = upgrades[key];
       const uTier = u.tier || 0;
-      
       if (u.type === "discount" && uTier === targetTier) {
         mult *= Math.pow(1 - u.effectValue, u.count);
       }
     }
-    return Math.max(mult, 0.001); // Prevent free items
+    return Math.max(mult, 0.001); 
   };
 
   const getUpgradeCost = (key) => {
@@ -220,7 +217,7 @@ const ClickerGame = (() => {
         clickPower += (upgrades[key].count * upgrades[key].effectValue);
       }
     }
-    return clickPower * getGlobalMult(); // Multiplied by Rebirths
+    return clickPower * getGlobalMult(); 
   };
 
   const getAutoClickValue = () => {
@@ -230,20 +227,14 @@ const ClickerGame = (() => {
         autoPower += (upgrades[key].count * upgrades[key].effectValue);
       }
     }
-    return autoPower * getGlobalMult(); // Multiplied by Rebirths
+    return autoPower * getGlobalMult(); 
   };
 
   const formatNumberWithSuffix = (value) => {
     const absValue = Math.abs(value);
-    if (absValue >= 1e12) {
-      return `${(value / 1e12).toFixed(2).replace(/\.?0+$/, '')}T`;
-    }
-    if (absValue >= 1e9) {
-      return `${(value / 1e9).toFixed(2).replace(/\.?0+$/, '')}B`;
-    }
-    if (absValue >= 1e6) {
-      return `${(value / 1e6).toFixed(2).replace(/\.?0+$/, '')}M`;
-    }
+    if (absValue >= 1e12) return `${(value / 1e12).toFixed(2).replace(/\.?0+$/, '')}T`;
+    if (absValue >= 1e9) return `${(value / 1e9).toFixed(2).replace(/\.?0+$/, '')}B`;
+    if (absValue >= 1e6) return `${(value / 1e6).toFixed(2).replace(/\.?0+$/, '')}M`;
     return Math.floor(value).toLocaleString();
   };
 
@@ -252,17 +243,20 @@ const ClickerGame = (() => {
     const goal = getRebirthGoal();
     if (clickerScore < goal) return;
     
-    rebirths++;
+    rebirths++; 
     clickerScore = 0;
     
-    // Reset upgrades
     for (let key in upgrades) {
       upgrades[key].count = 0;
     }
     
-    saveData();
+    saveData(); 
     updateCounterDisplay();
-    alert(`Rebirth Complete! Global Multiplier is now ${getGlobalMult()}x`);
+    
+    // Check setting before showing Rebirth Alert
+    if (localStorage.getItem('cymouz_setting_rebirth_alerts') !== 'false') {
+      alert(`Rebirth Complete! Global Multiplier is now ${getGlobalMult()}x`);
+    }
   };
 
   // --- Display Updates ---
@@ -285,19 +279,18 @@ const ClickerGame = (() => {
         rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${nextMult}x MULT</button>`;
       } else {
         const prog = Math.min((clickerScore / goal) * 100, 100);
-        rbCont.innerHTML = `
-          <div class="rebirth-progress-bg" title="Next Rebirth at ${formatNumberWithSuffix(goal)}">
-            <div class="rebirth-progress-fill" style="width: ${prog}%"></div>
-          </div>`;
+        rbCont.innerHTML = `<div class="rebirth-progress-bg" title="Next Rebirth at ${formatNumberWithSuffix(goal)}"><div class="rebirth-progress-fill" style="width: ${prog}%"></div></div>`;
       }
     }
-
     if (renderShopItems && gameMode) {
       renderShopItems(); 
     }
   };
 
   const showClickFeedback = (x, y, customValue = null) => {
+    // Check setting before showing numbers
+    if (localStorage.getItem('cymouz_setting_click_numbers') === 'false') return;
+
     const feedback = document.createElement('div');
     feedback.className = 'click-feedback';
     const valToShow = customValue !== null ? customValue : getClickValue();
@@ -361,10 +354,10 @@ const ClickerGame = (() => {
       dlBtn.onclick = () => {
         const blob = new Blob([encryptData({ score: clickerScore, rebirths, upgrades })], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
+        const a = document.createElement('a'); 
+        a.href = url; 
         a.download = 'cymouz_data.save'; 
-        a.click();
+        a.click(); 
         URL.revokeObjectURL(url);
       };
       
@@ -373,55 +366,52 @@ const ClickerGame = (() => {
       ulBtn.onclick = () => document.getElementById('save-upload').click();
 
       const ulInput = document.createElement('input');
-      ulInput.type = 'file';
-      ulInput.id = 'save-upload';
+      ulInput.type = 'file'; 
+      ulInput.id = 'save-upload'; 
       ulInput.accept = '.save,.json'; 
       ulInput.style.display = 'none';
       ulInput.onchange = (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files[0]; 
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {
           const data = decryptData(event.target.result);
-          if (!data || typeof data.score !== 'number') {
-            alert("Invalid or corrupted save file.");
-            return;
+          if (!data || typeof data.score !== 'number') { 
+            alert("Invalid or corrupted save file."); 
+            return; 
           }
-          
-          clickerScore = data.score;
+          clickerScore = data.score; 
           rebirths = data.rebirths || 0;
           if (data.upgrades) {
-            for (let key in upgrades) {
-              if (data.upgrades[key]) upgrades[key].count = data.upgrades[key].count || 0;
+            for (let key in upgrades) { 
+              if (data.upgrades[key]) {
+                upgrades[key].count = data.upgrades[key].count || 0; 
+              }
             }
           }
-          saveData();
+          saveData(); 
           updateCounterDisplay();
         };
-        reader.readAsText(file);
+        reader.readAsText(file); 
         e.target.value = ''; 
       };
 
-      ioDiv.appendChild(dlBtn);
-      ioDiv.appendChild(ulBtn);
-      ioDiv.appendChild(ulInput);
+      ioDiv.append(dlBtn, ulBtn, ulInput);
 
-      // Rendering Logic with Elevated Section
       renderShopItems = () => {
         shopList.innerHTML = ''; 
-        
-        const normalUpgrades = [];
+        const normalUpgrades = []; 
         const elevatedUpgrades = [];
-
+        
         for (let key in upgrades) {
           if (upgrades[key].type !== activeTab) continue;
           if (upgrades[key].isElevated) {
-            elevatedUpgrades.push(key);
+            elevatedUpgrades.push(key); 
           } else {
             normalUpgrades.push(key);
           }
         }
-
+        
         normalUpgrades.sort((a,b) => upgrades[a].baseCost - upgrades[b].baseCost);
         elevatedUpgrades.sort((a,b) => upgrades[a].baseCost - upgrades[b].baseCost);
 
@@ -438,87 +428,82 @@ const ClickerGame = (() => {
         };
 
         normalUpgrades.forEach(renderBtn);
-
+        
         if (elevatedUpgrades.length > 0) {
           const divider = document.createElement('div');
           divider.innerHTML = '✨ Elevated Upgrades ✨';
-          divider.style.textAlign = 'center';
+          divider.style.textAlign = 'center'; 
           divider.style.margin = '20px 0 10px 0';
-          divider.style.fontWeight = 'bold';
+          divider.style.fontWeight = 'bold'; 
           divider.style.color = '#ff4d6d';
           divider.style.borderBottom = '1px dashed rgba(255, 77, 109, 0.4)';
-          divider.style.paddingBottom = '5px';
+          divider.style.paddingBottom = '5px'; 
           divider.style.fontSize = '0.85rem';
-          divider.style.textTransform = 'uppercase';
+          divider.style.textTransform = 'uppercase'; 
           divider.style.letterSpacing = '0.05em';
           shopList.appendChild(divider);
-
+          
           elevatedUpgrades.forEach(renderBtn);
         }
       };
 
-      tabContainer.style.display = 'none';
-      shopList.style.display = 'none';
+      tabContainer.style.display = 'none'; 
+      shopList.style.display = 'none'; 
       ioDiv.style.display = 'none';
-
+      
       shopHeader.onclick = () => {
         const isClosed = shopList.style.display === 'none';
-        
         if (isClosed) {
-          tabContainer.style.display = 'flex';
-          shopList.style.display = 'flex';
+          tabContainer.style.display = 'flex'; 
+          shopList.style.display = 'flex'; 
           ioDiv.style.display = 'flex';
           shopHeader.querySelector('span').textContent = '▲';
         } else {
-          tabContainer.style.display = 'none';
-          shopList.style.display = 'none';
+          tabContainer.style.display = 'none'; 
+          shopList.style.display = 'none'; 
           ioDiv.style.display = 'none';
           shopHeader.querySelector('span').textContent = '▼';
         }
       };
 
-      shopPanel.appendChild(shopHeader);
-      shopPanel.appendChild(tabContainer);
-      shopPanel.appendChild(shopList);
-      shopPanel.appendChild(ioDiv);
+      shopPanel.append(shopHeader, tabContainer, shopList, ioDiv);
       document.body.appendChild(shopPanel);
     }
-    
     renderShopItems();
   };
 
   // --- Dynamic Auto-Clicker Loop ---
   setInterval(() => {
     const autoPower = getAutoClickValue();
-    if (autoPower > 0) {
-      clickerScore += autoPower;
-      saveData();
-      updateCounterDisplay();
+    if (autoPower > 0) { 
+      clickerScore += autoPower; 
+      saveData(); 
+      updateCounterDisplay(); 
     }
   }, 1000);
 
   // --- Cheat Engine Logic ---
   const activateCheat = () => {
-    isCheatActive = true;
+    isCheatActive = true; 
     preCheatUpgrades = {};
     for (let key in upgrades) {
       preCheatUpgrades[key] = upgrades[key].count;
     }
     
-    const fx = document.createElement('div');
-    fx.className = 'cheat-activated-text';
+    const fx = document.createElement('div'); 
+    fx.className = 'cheat-activated-text'; 
     fx.textContent = 'CHEAT ACTIVATED';
-    document.body.appendChild(fx);
+    document.body.appendChild(fx); 
+    
     setTimeout(() => fx.remove(), 2000); 
 
-    const btn = document.createElement('button');
-    btn.className = 'disengage-cheat-btn';
+    const btn = document.createElement('button'); 
+    btn.className = 'disengage-cheat-btn'; 
     btn.id = 'disengage-cheat-btn';
-    btn.textContent = 'Disengage Cheat';
-    btn.onclick = deactivateCheat;
+    btn.textContent = 'Disengage Cheat'; 
+    btn.onclick = deactivateCheat; 
     document.body.appendChild(btn);
 
-    // The 1-second cheat loop
     cheatInterval = setInterval(() => {
       for (let key in upgrades) {
         if (upgrades[key].isElevated && upgrades[key].type !== 'discount') {
@@ -526,32 +511,35 @@ const ClickerGame = (() => {
         }
         upgrades[key].count += 1;
       }
-      
       if (typeof spawnTungTung === 'function') {
         spawnTungTung();
       }
-      
       updateCounterDisplay();
     }, 1000);
   };
 
   const deactivateCheat = () => {
     if (!isCheatActive) return;
-    clearInterval(cheatInterval);
+    
+    clearInterval(cheatInterval); 
     isCheatActive = false;
+    
     for (let key in preCheatUpgrades) {
       upgrades[key].count = preCheatUpgrades[key];
     }
-    const btn = document.getElementById('disengage-cheat-btn');
+    
+    const btn = document.getElementById('disengage-cheat-btn'); 
     if (btn) btn.remove();
-    updateCounterDisplay();
+    
+    updateCounterDisplay(); 
     saveData(); 
   };
 
   // --- Game Mode Overlay Handlers ---
   const activateGameMode = () => {
     if (gameMode) return;
-    gameMode = true;
+    
+    gameMode = true; 
     clickerActive = true;
 
     if ('Notification' in window && Notification.permission === 'default') {
@@ -572,8 +560,8 @@ const ClickerGame = (() => {
     
     let dimOverlay = document.getElementById('game-mode-overlay');
     if (!dimOverlay) {
-      dimOverlay = document.createElement('div');
-      dimOverlay.className = 'game-mode-overlay';
+      dimOverlay = document.createElement('div'); 
+      dimOverlay.className = 'game-mode-overlay'; 
       dimOverlay.id = 'game-mode-overlay';
       body.appendChild(dimOverlay);
     }
@@ -583,24 +571,26 @@ const ClickerGame = (() => {
     });
 
     counter.classList.add('counter-active');
+    
+    // Show settings button
+    const settingsBtn = document.getElementById('settings-btn');
+    if (settingsBtn) {
+      settingsBtn.classList.add('visible');
+    }
+
     if (shopPanel) {
       setTimeout(() => shopPanel.classList.add('active'), 10);
     }
     
-    setTimeout(() => {
-      title.classList.add('title-center');
-    }, 100);
-
-    setTimeout(() => {
-      dimOverlay.classList.add('active');
-    }, 50);
+    setTimeout(() => title.classList.add('title-center'), 100);
+    setTimeout(() => dimOverlay.classList.add('active'), 50);
 
     let exitBtn = counter.querySelector('.exit-clicker-btn');
     if (!exitBtn) {
-      exitBtn = document.createElement('button');
-      exitBtn.className = 'exit-clicker-btn';
+      exitBtn = document.createElement('button'); 
+      exitBtn.className = 'exit-clicker-btn'; 
       exitBtn.textContent = 'Exit Clicker';
-      exitBtn.addEventListener('click', deactivateGameMode);
+      exitBtn.addEventListener('click', deactivateGameMode); 
       counter.appendChild(exitBtn);
     }
     updateCounterDisplay();
@@ -608,8 +598,9 @@ const ClickerGame = (() => {
 
   const deactivateGameMode = () => {
     if (!gameMode) return;
+    
     deactivateCheat(); 
-    gameMode = false;
+    gameMode = false; 
     clickerActive = false;
 
     let meta = document.querySelector('meta[name="viewport"]');
@@ -623,18 +614,27 @@ const ClickerGame = (() => {
     const dimOverlay = document.getElementById('game-mode-overlay');
 
     counter.classList.remove('counter-active');
+    
+    // Hide settings button & force close panel if open
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    if (settingsBtn) settingsBtn.classList.remove('visible');
+    if (settingsPanel) settingsPanel.classList.remove('active');
+
     if (shopPanel) {
       shopPanel.classList.remove('active');
-      const shopSpan = shopPanel.querySelector('.shop-header span');
+      const shopSpan = shopPanel.querySelector('.shop-header span'); 
       if (shopSpan) shopSpan.textContent = '▼';
       
-      const tabContainer = shopPanel.querySelector('.shop-tabs');
-      const shopList = shopPanel.querySelector('.shop-list');
+      const tabContainer = shopPanel.querySelector('.shop-tabs'); 
+      const shopList = shopPanel.querySelector('.shop-list'); 
       const ioDiv = shopPanel.querySelector('.save-load-controls');
-      if(tabContainer) tabContainer.style.display = 'none';
-      if(shopList) shopList.style.display = 'none';
+      
+      if(tabContainer) tabContainer.style.display = 'none'; 
+      if(shopList) shopList.style.display = 'none'; 
       if(ioDiv) ioDiv.style.display = 'none';
     }
+    
     title.classList.remove('title-center');
     if (dimOverlay) dimOverlay.classList.remove('active');
 
@@ -642,28 +642,24 @@ const ClickerGame = (() => {
       el.classList.remove('fade-out');
     });
 
-    const exitBtn = counter.querySelector('.exit-clicker-btn');
+    const exitBtn = counter.querySelector('.exit-clicker-btn'); 
     if (exitBtn) exitBtn.remove();
-
-    setTimeout(() => {
-      if (dimOverlay && dimOverlay.parentNode) {
-        dimOverlay.remove();
-      }
+    
+    setTimeout(() => { 
+      if (dimOverlay && dimOverlay.parentNode) dimOverlay.remove(); 
     }, 400);
   };
 
   const increaseScore = (multiplier = 1) => {
     clickerScore += getClickValue() * multiplier;
-    saveData();
+    saveData(); 
     updateCounterDisplay();
   };
 
   // --- TungTung Bonus Event Logic ---
   const spawnTungTung = () => {
-    // Only spawn if settings allow
-    if (localStorage.getItem('cymouz_setting_events') === 'false') return;
-
-    if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && localStorage.getItem('cymouz_setting_notifs') !== 'false') {
+    // Event will ALWAYS spawn, but Notification is based on settings
+    if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && localStorage.getItem('cymouz_setting_event_notifs') !== 'false') {
       try {
         new Notification('Tung Tung Sahur!', {
           body: 'A wild Tung Tung has appeared! Hurry back!',
@@ -684,7 +680,7 @@ const ClickerGame = (() => {
       const bonus = Math.floor(autoBonus + clickBonus + (1000 * getGlobalMult())); 
       
       clickerScore += bonus;
-      saveData();
+      saveData(); 
       updateCounterDisplay();
       
       if (typeof showClickFeedback === 'function') {
@@ -695,15 +691,13 @@ const ClickerGame = (() => {
     };
 
     document.body.appendChild(img);
-    setTimeout(() => {
-      if (img.parentNode) img.remove();
+    
+    setTimeout(() => { 
+      if (img.parentNode) img.remove(); 
     }, 5000); 
   };
 
   setInterval(() => {
-    // Also block automated spawns if settings disabled
-    if (localStorage.getItem('cymouz_setting_events') === 'false') return;
-
     if (clickerActive && clickerScore > 10 && Math.random() < 0.20) {
       spawnTungTung();
     }
@@ -712,22 +706,22 @@ const ClickerGame = (() => {
   const init = () => {
     generateElevatedUpgrades(); 
     loadData();
-    clickerActive = false;
+    clickerActive = false; 
     gameMode = false;
     document.cookie = `cymouz_clicker_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     updateCounterDisplay();
   };
 
   return {
-    init,
-    activateGameMode,
-    deactivateGameMode,
-    increaseScore,
-    performRebirth,
-    hardReset, // Expose for the Settings Menu
-    isActive: () => clickerActive,
-    isGameMode: () => gameMode,
-    getScore: () => clickerScore,
+    init, 
+    activateGameMode, 
+    deactivateGameMode, 
+    increaseScore, 
+    performRebirth, 
+    hardReset,
+    isActive: () => clickerActive, 
+    isGameMode: () => gameMode, 
+    getScore: () => clickerScore, 
     showClickFeedback
   };
 })();
@@ -759,6 +753,9 @@ window.addEventListener('keydown', (e) => {
   const notifyUpdateAvailable = () => {
     if (!('Notification' in window)) return;
     if (Notification.permission !== 'granted') return;
+    
+    // Check "Update Notifications" setting
+    if (localStorage.getItem('cymouz_setting_update_notifs') === 'false') return;
 
     try {
       new Notification('Website Updated', {
@@ -771,8 +768,8 @@ window.addEventListener('keydown', (e) => {
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) return;
     if (Notification.permission === 'default') {
-      try {
-        await Notification.requestPermission();
+      try { 
+        await Notification.requestPermission(); 
       } catch (err) { }
     }
   };
@@ -785,13 +782,13 @@ window.addEventListener('keydown', (e) => {
       if (!response.ok) return null;
       const data = await response.json();
       return data.version;
-    } catch (err) {
-      return null;
+    } catch (err) { 
+      return null; 
     }
   };
 
-  fetchVersion().then(version => {
-    if (version) currentVersion = version;
+  fetchVersion().then(version => { 
+    if (version) currentVersion = version; 
   });
 
   setInterval(async () => {
