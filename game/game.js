@@ -18,7 +18,7 @@ const ClickerGame = (() => {
   let isCheatActive = false;
   let cheatInterval = null;
   let preCheatUpgrades = {};
-  const konamiCode = [' ', 'Enter', 'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
+  const konamiCode = ['c', 'Enter', 'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a', 'Enter'];
   let konamiIndex = 0;
 
   document.addEventListener('keydown', (e) => {
