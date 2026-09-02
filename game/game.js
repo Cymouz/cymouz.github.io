@@ -8,9 +8,11 @@ const ClickerGame = (() => {
   let activeTab = 'click'; 
 
   // --- Rebirth Config ---
-  const REBIRTH_BASE_GOAL = 250000000; 
-  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(100, rebirths));
-  const getGlobalMult = () => Math.max(1, Math.pow(25, rebirths));
+  const REBIRTH_BASE_GOAL = 250000000;
+  const REBIRTH_GOAL_SCALE = 25;
+  const REBIRTH_MULTIPLIER = 3;
+  const getRebirthGoal = () => Math.floor(REBIRTH_BASE_GOAL * Math.pow(REBIRTH_GOAL_SCALE, rebirths));
+  const getGlobalMult = () => Math.max(1, Math.pow(REBIRTH_MULTIPLIER, rebirths));
 
   // --- Cheat Variables ---
   let isCheatActive = false;
@@ -89,7 +91,7 @@ const ClickerGame = (() => {
         newEffectValue = base.effectValue * 1.5; 
         newDesc = `Costs reduced by ${(newEffectValue * 100).toFixed(1)}%`;
       } else {
-        newEffectValue = base.effectValue * 1000000;
+        newEffectValue = base.effectValue * 1000;
         newDesc = `+${formatNumberWithSuffix(newEffectValue)} per ${base.type === 'click' ? 'click' : 'second'}`;
       }
 
@@ -97,9 +99,10 @@ const ClickerGame = (() => {
         ...base,
         name: elevatedName, 
         desc: newDesc,
-        baseCost: base.baseCost * 100000000, 
+        baseCost: base.baseCost * 250000,
         effectValue: newEffectValue,
         isElevated: true, 
+        unlockRebirths: 1,
         tier: 1, 
         count: 0
       };
@@ -357,7 +360,7 @@ const ClickerGame = (() => {
     if (rbCont) {
       const goal = getRebirthGoal();
       if (clickerScore >= goal) {
-        const nextMult = Math.max(1, Math.pow(25, rebirths + 1));
+        const nextMult = Math.max(1, Math.pow(REBIRTH_MULTIPLIER, rebirths + 1));
         rbCont.innerHTML = `<button class="rebirth-btn" onclick="ClickerGame.performRebirth()">REBIRTH FOR ${nextMult}x MULT</button>`;
       } else {
         const prog = Math.min((clickerScore / goal) * 100, 100);
@@ -390,6 +393,29 @@ const ClickerGame = (() => {
     feedback.style.top = `${y}px`;
     document.body.appendChild(feedback);
     setTimeout(() => feedback.remove(), 1000);
+  };
+
+  const spawnParticles = (count, x, y) => {
+    if (localStorage.getItem('cymouz_setting_particles') === 'false') return;
+    const particleContainer = document.getElementById('particle-container');
+    if (!particleContainer) return;
+
+    for (let i = 0; i < count; i += 1) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.background = `hsl(${280 + Math.random() * 80}, 100%, 78%)`;
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particleContainer.appendChild(particle);
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 120 + Math.random() * 80;
+      requestAnimationFrame(() => {
+        particle.style.transform = `translate(calc(-50% + ${Math.cos(angle) * distance}px), calc(-50% + ${Math.sin(angle) * distance}px)) scale(0.35)`;
+        particle.style.opacity = '0';
+      });
+      setTimeout(() => particle.remove(), 750 + Math.random() * 250);
+    }
   };
 
   const buyUpgrade = (key) => {
@@ -495,6 +521,7 @@ const ClickerGame = (() => {
         
         for (let key in upgrades) {
           if (upgrades[key].type !== activeTab) continue;
+          if (upgrades[key].isElevated && rebirths < upgrades[key].unlockRebirths) continue;
           if (upgrades[key].isElevated) {
             elevatedUpgrades.push(key); 
           } else {
@@ -759,9 +786,9 @@ const ClickerGame = (() => {
     
     img.onclick = (e) => {
       e.stopPropagation(); 
-      const autoBonus = getAutoClickValue() * 300; 
-      const clickBonus = getClickValue() * 5 * 300; 
-      const bonus = Math.floor(autoBonus + clickBonus + (1000 * getGlobalMult())); 
+      const autoBonus = getAutoClickValue() * 10;
+      const clickBonus = getClickValue() * 5 * 5;
+      const bonus = Math.floor(autoBonus + clickBonus + (100 * getGlobalMult()));
       
       clickerScore += bonus;
       saveData(); 
@@ -789,9 +816,63 @@ const ClickerGame = (() => {
 
   const init = () => {
 
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const closeSettings = document.getElementById('close-settings');
+    const resetBtn = document.getElementById('reset-progress-btn');
+    const inputs = {
+      particles: document.getElementById('set-particles'),
+      clickNumbers: document.getElementById('set-click-numbers'),
+      updateNotifs: document.getElementById('set-update-notifs'),
+      eventNotifs: document.getElementById('set-event-notifs'),
+      rebirthAlerts: document.getElementById('set-rebirth-alerts'),
+      exitWarning: document.getElementById('set-exit-warning'),
+      sounds: document.getElementById('set-sounds'),
+      oled: document.getElementById('set-oled'),
+      superOled: document.getElementById('set-super-oled')
+    };
+
+    const applyOledClasses = () => {
+      document.body.classList.toggle('oled-mode', localStorage.getItem('cymouz_setting_oled') === 'true');
+      document.body.classList.toggle('super-oled-mode', localStorage.getItem('cymouz_setting_super_oled') === 'true');
+    };
+
+    const loadSetting = (key, defaultVal) => {
+      const stored = localStorage.getItem(`cymouz_setting_${key}`);
+      return stored === null ? defaultVal : stored === 'true';
+    };
+
+    Object.entries(inputs).forEach(([key, input]) => {
+      if (!input) return;
+      input.checked = loadSetting(key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`), key !== 'oled' && key !== 'superOled');
+      input.addEventListener('change', (e) => {
+        const settingKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+        localStorage.setItem(`cymouz_setting_${settingKey}`, e.target.checked);
+        if (key === 'oled' || key === 'superOled') applyOledClasses();
+      });
+    });
+
+    applyOledClasses();
+    if (settingsBtn && settingsPanel) settingsBtn.addEventListener('click', () => settingsPanel.classList.add('active'));
+    if (closeSettings && settingsPanel) closeSettings.addEventListener('click', () => settingsPanel.classList.remove('active'));
+    if (resetBtn) resetBtn.addEventListener('click', hardReset);
+
+    window.skipExitWarning = false;
+    window.addEventListener('beforeunload', (e) => {
+      if (window.skipExitWarning || localStorage.getItem('cymouz_setting_exit_warning') === 'false') return;
+      if (clickerScore > 0 || gameMode) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    window.addEventListener('wheel', (e) => {
+      if (gameMode && e.ctrlKey) e.preventDefault();
+    }, { passive: false });
+
     // Allow Spacebar to click
     window.addEventListener('keydown', (e) => {
-      if (ClickerGame.isActive() && e.code === 'Space') {
+      if (ClickerGame.isActive() && e.code === 'Space' && !e.repeat) {
         e.preventDefault(); // Prevents the page from jumping down
         ClickerGame.increaseScore();
         
@@ -822,8 +903,44 @@ const ClickerGame = (() => {
     updateCounterDisplay();
   };
 
+  const mountUI = () => {
+    if (document.getElementById('cookie-counter')) return;
+
+    document.body.insertAdjacentHTML('afterbegin', `
+      <div class="particle-container" id="particle-container"></div>
+      <div class="cookie-counter" id="cookie-counter">
+        <span class="label" id="cookie-counter-label">Clicker locked</span>
+        <span class="value" id="cookie-counter-value">0</span>
+        <div id="rebirth-container"></div>
+      </div>
+      <div id="settings-btn" class="settings-btn">&#9881;</div>
+      <div id="settings-panel" class="settings-panel">
+        <div class="settings-header">
+          <h3>Settings</h3>
+          <button id="close-settings" class="close-btn">&#10006;</button>
+        </div>
+        <div class="settings-content">
+          <label class="setting-row"><span>Show Particles</span><input type="checkbox" id="set-particles" checked></label>
+          <label class="setting-row"><span>Show Click Numbers</span><input type="checkbox" id="set-click-numbers" checked></label>
+          <label class="setting-row"><span>Show Exact Numbers Always</span><input type="checkbox" id="setting-exact-numbers"></label>
+          <label class="setting-row"><span>Update Notifications</span><input type="checkbox" id="set-update-notifs" checked></label>
+          <label class="setting-row"><span>Event Notifications</span><input type="checkbox" id="set-event-notifs" checked></label>
+          <label class="setting-row"><span>Rebirth Alerts</span><input type="checkbox" id="set-rebirth-alerts" checked></label>
+          <label class="setting-row"><span>Anti-Exit Warning</span><input type="checkbox" id="set-exit-warning" checked></label>
+          <label class="setting-row"><span>Sounds (Coming Soon)</span><input type="checkbox" id="set-sounds" checked></label>
+          <hr>
+          <label class="setting-row"><span>OLED Mode</span><input type="checkbox" id="set-oled"></label>
+          <label class="setting-row"><span>Super OLED Mode</span><input type="checkbox" id="set-super-oled"></label>
+          <button id="reset-progress-btn" class="reset-btn">Reset Progress</button>
+        </div>
+      </div>
+      <div id="game-mode-overlay" class="game-mode-overlay"></div>
+    `);
+  };
+
   return {
-    init, 
+    init,
+    mountUI,
     activateGameMode, 
     deactivateGameMode, 
     increaseScore, 
@@ -832,21 +949,13 @@ const ClickerGame = (() => {
     isActive: () => clickerActive, 
     isGameMode: () => gameMode, 
     getScore: () => clickerScore, 
-    showClickFeedback
+    showClickFeedback,
+    spawnParticles
   };
 })();
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => ClickerGame.init());
-} else {
-  ClickerGame.init();
-}
+window.ClickerGame = ClickerGame;
 
-window.addEventListener('wheel', (e) => {
-  if (ClickerGame.isGameMode() && e.ctrlKey) {
-    e.preventDefault();
-  }
-}, { passive: false });
 
 window.addEventListener('keydown', (e) => {
   if (ClickerGame.isGameMode() && e.ctrlKey && (e.key === '=' || e.key === '-' || e.key === '+')) {

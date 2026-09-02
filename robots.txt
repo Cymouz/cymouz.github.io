@@ -1,6 +1,7 @@
 # Allow all search engines to crawl the site
 User-agent: *
 Allow: /
+Disallow: /game/
 
 # Sitemap location
 Sitemap: https://cymouz.github.io/sitemap.xml
