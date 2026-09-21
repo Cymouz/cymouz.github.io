@@ -93,16 +93,29 @@
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
   opacity: 0;
+  animation: privacy-banner-show 0.35s ease 0.2s forwards,
+    privacy-banner-hide 0.35s ease 6.2s forwards;
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.privacy-banner.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+@keyframes privacy-banner-show {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes privacy-banner-hide {
+  to {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }
 
 .privacy-banner.is-hidden {
   pointer-events: none;
+  animation: none;
+  opacity: 0;
   transform: translateY(12px);
 }
 
@@ -468,7 +481,7 @@
     </div>
   </div> 
 
-  <aside class="privacy-banner is-hidden" id="privacy-banner" aria-label="Privacy notice" aria-hidden="true">
+  <aside class="privacy-banner" id="privacy-banner" aria-label="Privacy notice">
     <a href="/privacy-policy.html">Privacy Policy</a>
     <button type="button" id="privacy-banner-close" aria-label="Dismiss privacy policy link">&times;</button>
   </aside>
@@ -478,21 +491,9 @@
     const privacyBanner = document.getElementById('privacy-banner');
     const privacyBannerClose = document.getElementById('privacy-banner-close');
 
-    const hidePrivacyBanner = () => {
-      privacyBanner.classList.remove('is-visible');
+    privacyBannerClose.addEventListener('click', () => {
       privacyBanner.classList.add('is-hidden');
-      privacyBanner.setAttribute('aria-hidden', 'true');
-    };
-
-    const showPrivacyBanner = () => {
-      privacyBanner.classList.remove('is-hidden');
-      privacyBanner.classList.add('is-visible');
-      privacyBanner.setAttribute('aria-hidden', 'false');
-      window.setTimeout(hidePrivacyBanner, 6000);
-    };
-
-    privacyBannerClose.addEventListener('click', hidePrivacyBanner);
-    window.requestAnimationFrame(showPrivacyBanner);
+    });
 
     const linksHeader = document.querySelector('.links-header');
     const mobileSocials = document.getElementById('mobile-socials');
