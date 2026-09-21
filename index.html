@@ -93,28 +93,17 @@
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
   opacity: 0;
-  animation: privacy-banner-show 0.35s ease 0.2s forwards,
-    privacy-banner-hide 0.35s ease 6.2s forwards;
+  transform: translateY(12px);
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-@keyframes privacy-banner-show {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes privacy-banner-hide {
-  to {
-    opacity: 0;
-    transform: translateY(12px);
-  }
+.privacy-banner.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .privacy-banner.is-hidden {
   pointer-events: none;
-  animation: none;
   opacity: 0;
   transform: translateY(12px);
 }
@@ -494,6 +483,13 @@
     privacyBannerClose.addEventListener('click', () => {
       privacyBanner.classList.add('is-hidden');
     });
+    window.setTimeout(() => {
+      privacyBanner.classList.add('is-visible');
+    }, 200);
+    window.setTimeout(() => {
+      privacyBanner.classList.remove('is-visible');
+      privacyBanner.classList.add('is-hidden');
+    }, 6200);
 
     const linksHeader = document.querySelector('.links-header');
     const mobileSocials = document.getElementById('mobile-socials');
