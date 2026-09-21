@@ -1,3 +1,3 @@
-# cymouz.github.io
+# cymouz.com
 
 just a website
