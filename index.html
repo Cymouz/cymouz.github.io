@@ -464,7 +464,7 @@
     </div>
   </div> 
 
-  <aside class="privacy-banner" id="privacy-banner" aria-label="Privacy notice">
+  <aside class="privacy-banner is-hidden" id="privacy-banner" aria-label="Privacy notice">
     <a href="/privacy-policy.html">Privacy Policy</a>
     <button type="button" id="privacy-banner-close" aria-label="Dismiss privacy policy link">&times;</button>
   </aside>
@@ -475,6 +475,7 @@
     const privacyBannerClose = document.getElementById('privacy-banner-close');
 
     const hidePrivacyBanner = () => privacyBanner.classList.add('is-hidden');
+    privacyBanner.classList.remove('is-hidden');
     privacyBannerClose.addEventListener('click', hidePrivacyBanner);
     window.setTimeout(hidePrivacyBanner, 7000);
 
